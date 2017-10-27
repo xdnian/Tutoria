@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Welcome to schedule, {{ user.username }}!</h2>
+    {% if context %}
+      {% for each in context %}
+        <p>
+          {{ each }}<br>
+        </p>
+      {% endfor %}
+    {% else %}
+    <p>No session scheduled currently.</p>
+    {% endif %}
+{% endblock %}

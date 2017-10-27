@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Welcome, {{ user.username }}!</h2>
+  {% if user.profile.identity == 'T' %}
+    <a href="{% url 'offerslot' %}">go to offer time slots</a><br>
+  {% else %}
+    <a href="{% url 'viewAll' %}">go to book a session</a><br>
+    <a href="{% url 'canceling' %}">go to cancel a session</a><br>
+  {% endif %}
+  <a href="{% url 'schedule' %}">view your schedule</a><br>
+  <p>Wallet balance: ${{ user.profile.wallet }}</p>
+{% endblock %}
