@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="./favicon.ico">
+
+  <title>Log In - Tutoria</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/static/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="/static/css/login.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <div class="container">
+    {% block content %}
+    <form class="form-signin" method="post">
+      <a class="brand" href="index.html">
+        <img src="/static/assets/brand/tutoria-logo.png" alt="Tutoria">
+      </a>
+      {% if form.errors %}
+      <p style="color: red">Your username and password didn't match. Please try again.</p>
+      {% endif %}
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}" />
+      {% for field in form %}
+      <div>
+        {{ field.label_tag }}
+        {{ field }}<br> 
+        {% for error in field.errors %}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %} 
+        {% if field.help_text %}
+          <p><small style="color: grey">{{ field.help_text }}</small></p>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <!-- <label for="inputAccount" class="sr-only">Username</label>
+      <input type="text" id="id_username" class="form-control" placeholder="Username" required autofocus>
+      <label for="inputPassword" class="sr-only">Password</label>
+      <input type="password" id="id_password" class="form-control" placeholder="Password" required> -->
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
+    </form>
+
+    <div class="affliated">
+      <a class="dropdown-item" href="{% url 'signup' %}">Sign up</a>
+      <!-- <a class="dropdown-item" href="#">Forgot password</a> -->
+    </div>
+    {% endblock %}
+  </div>
+  <!-- /container -->
+
+
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <script src="/static/assets/js/ie10-viewport-bug-workaround.js"></script>
+</body>
+
+</html>
