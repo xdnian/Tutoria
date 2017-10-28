@@ -1,0 +1,19 @@
+@media (min-width: 768px) {
+    .profile {
+        margin-left: 30px;
+    }
+}
+
+.navbar-brand {
+    line-height: 20px;
+}
+
+.navbar-brand img {
+    width: 85px;
+}
+
+.icon-link {
+    line-height: 1em;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
