@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from .forms import BookingForm, TutorForm, CancelingForm
 from .models import Session
+from offering.models import Timeslot
 
 @login_required
 def viewAll(request):
@@ -36,7 +37,7 @@ def session(request):
     allSessions = Session.objects.filter(student__id=request.user.id)
     return render(request, 'records.html', {'allSessions': allSessions})
 
-def canceling(request, PK):
+def canceling(request, pk):
     # if request.method == 'POST':
     #     form = CancelingForm(request.user, request.POST)
     #     if form.is_valid():
@@ -45,7 +46,7 @@ def canceling(request, PK):
     # else:
     #     form = CancelingForm(request.user)
     # return render(request, 'canceling.html', {'form': form})
-    sesssion = Session.objects.filter(pk=PK)
+    session = Session.objects.filter(pk=pk)[0]
     timeslot = Timeslot(tutor=session.tutor, start=session.start, end=session.end)
     timeslot.save()
     session.student.profile.wallet = session.student.profile.wallet + timeslot.tutor.profile.price
