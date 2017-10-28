@@ -8,6 +8,7 @@ class Session(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
     status = models.CharField(max_length=10, default='Booked')
+    topic = models.CharField(max_length=140, blank=True)
     def __str__(self):
         timezonelocal = pytz.timezone('Asia/Hong_Kong')
         startlocal = self.start.astimezone(timezonelocal)
