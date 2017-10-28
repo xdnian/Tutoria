@@ -17,9 +17,9 @@ def viewAll(request):
     #     form = TutorForm()
     # return render(request, 'viewAll.html', {'form': form})
     allTutors = User.objects.filter(profile__identity='T')
-    # print(allTutors)
-    # print("111111111111111111111111111111111111111111111111")
-    return render(request, 'catalogue.1.html', {'allTutors': allTutors})
+    for tutor in allTutors:
+        tutor.profile.subjects = tutor.profile.subjects.split(';')
+    return render(request, 'test.html', {'allTutors': allTutors})
 
 
 def booking(request, pk):
