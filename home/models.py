@@ -9,6 +9,8 @@ class Profile(models.Model):
     identity = models.CharField(max_length=2, choices=IDENTITY_CHOICES, default='S')
     school = models.CharField(max_length=30, blank=True)
     wallet = models.DecimalField(default=0.00, max_digits=10, decimal_places=2)
+    subjects = models.TextField(blank=True)
+    price = models.DecimalField(default=10.00, max_digits=10, decimal_places=2)
     def __str__(self):
         return self.user.username
 

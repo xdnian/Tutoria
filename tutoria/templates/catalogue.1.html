@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="./favicon.ico">
+
+  <title>Overview - Tutoria</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/static/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="/static/css/nav.css" rel="stylesheet">
+  <link href="/static/css/dashboard.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="index.html">
+      <img src="/static/assets/brand/tutoria-logo-white.png" alt="Tutoria">
+    </a>
+    <!-- <a class="navbar-brand" href="#">Tutoria</a> -->
+    <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
+      aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+      <form class="form-inline ml-auto mt-2 mt-md-0">
+        <input class="form-control mr-sm-2" type="text" placeholder="Search Courses" aria-label="Search">
+        <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+      </form>
+      <ul class="navbar-nav profile">
+        <li class="nav-item">
+          <a class="nav-link icon-link" href="#">
+            <span class="material-icons nav-icon">notifications</span>
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link icon-link dropdown-toggle" href="#" id="profileMenu" data-toggle="dropdown" data-toggle="dropdown" aria-expanded="false">
+            <span class="material-icons nav-icon">account_circle</span>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="profileMenu">
+            <p class="dropdown-item">{{ user.username }}</p>
+            <a class="dropdown-item" href="{% url 'logout' %}">logout</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+      <div class="row">
+        <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
+          <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="overview.html">Overview</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="my-tutorials.html">My Tutorials</a>
+            </li>
+  
+          </ul>
+  
+          <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">Catalogue
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+          </ul>
+  
+        </nav>
+  
+        <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+          <h1>Catalogue</h1> 
+
+          <!-- List all avaliable sessions -->
+          <div class="row" id="tutorial-list">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col" style="min-width:90px;">Tutor</th>
+                  <th scope="col" style="min-width:90px;">Price</th>
+                  <th scope="col">Subjects</th>
+                  <th scope="col">Reviews</th>
+                </tr>
+              </thead>
+              <tbody>
+                  {% for tutor in allTutors %}
+                  <tr class="tutor-info" tutor-id="{{ tutor.id }}">
+                      <th>{{ tutor.username }}</th>
+                      <td>HK$ {{ tutor.profile.price }}</td>
+                      <td>
+                        
+                        <span class="badge badge-secondary subject-tag">{{ tutor.profile.subjects }}</span>
+                        
+                      </td>
+                      <td>Insufficient reviews</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+            </table>
+          </div>
+  
+        </main>
+      </div>
+    </div>
+  
+    <!-- Bootstrap core JavaScript
+      ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"></script>
+    <script>
+      window.jQuery || document.write('<script src="./assets/js/vendor/jquery.min.js"><\/script>')
+    </script>
+    <script src="./assets/js/vendor/popper.min.js"></script>
+    <script src="./dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="./assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+  
+  </html>

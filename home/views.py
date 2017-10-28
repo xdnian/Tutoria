@@ -5,7 +5,7 @@ from .forms import UserForm
 
 @login_required
 def home(request):
-    return render(request, 'home.html')
+    return render(request, 'overview.html')
 
 
 def signup(request):

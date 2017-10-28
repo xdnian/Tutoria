@@ -1,20 +1,26 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
 from django.db.models import Q
 from .forms import BookingForm, TutorForm, CancelingForm
 from .models import Session
 
 @login_required
 def viewAll(request):
-    if request.method == 'POST':
-        form = TutorForm(request.POST)
-        if form.is_valid():
-            tutor = form.cleaned_data.get('allTutors')
-            return redirect('booking', pk=tutor.id)
-    else:
-        form = TutorForm()
-    return render(request, 'viewAll.html', {'form': form})
+    # if request.method == 'POST':
+    #     form = TutorForm(request.POST)
+    #     if form.is_valid():
+    #         tutor = form.cleaned_data.get('allTutors')
+    #         return redirect('booking', pk=tutor.id)
+    # else:
+    #     form = TutorForm()
+    # return render(request, 'viewAll.html', {'form': form})
+    allTutors = User.objects.filter(profile__identity='T')
+    # print(allTutors)
+    # print("111111111111111111111111111111111111111111111111")
+    return render(request, 'catalogue.1.html', {'allTutors': allTutors})
+
 
 def booking(request, pk):
     if request.method == 'POST':

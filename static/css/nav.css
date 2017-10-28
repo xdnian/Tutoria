@@ -17,3 +17,8 @@
     padding-top: 5px;
     padding-bottom: 5px;
 }
+
+.dropdown-menu {
+    right: 0;
+    left: auto;
+}

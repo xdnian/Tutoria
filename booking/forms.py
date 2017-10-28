@@ -19,9 +19,9 @@ class BookingForm(forms.Form):
         self.fields['slots'].queryset = Timeslot.objects.filter(tutor__id=TutorID)
     def save(self, Student):
         timeslot = self.cleaned_data['slots']
-        session = Session(student=Student, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end, price=timeslot.price)
+        session = Session(student=Student, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end)
         session.save()
-        Student.profile.wallet = Student.profile.wallet - timeslot.price
+        Student.profile.wallet = Student.profile.wallet - timeslot.tutor.profile.price
         Student.save()
         timeslot.delete()
 
@@ -33,8 +33,8 @@ class CancelingForm(forms.Form):
         self.fields['sessions'].queryset = Session.objects.filter(student__id=Student.id)
     def save(self):
         for session in self.cleaned_data['sessions']:
-            timeslot = Timeslot(tutor=session.tutor, start=session.start, end=session.end, price=session.price)
+            timeslot = Timeslot(tutor=session.tutor, start=session.start, end=session.end)
             timeslot.save()
-            session.student.profile.wallet = session.student.profile.wallet + timeslot.price
+            session.student.profile.wallet = session.student.profile.wallet + timeslot.tutor.profile.price
             session.student.save()
             session.delete()

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <link rel="icon" href="./favicon.ico">
+  <link rel="icon" href="/static/favicon.ico">
 
   <title>Log In - Tutoria</title>
 
@@ -20,7 +20,6 @@
 <body>
 
   <div class="container">
-    {% block content %}
     <form class="form-signin" method="post">
       <a class="brand" href="index.html">
         <img src="/static/assets/brand/tutoria-logo.png" alt="Tutoria">
@@ -53,7 +52,6 @@
       <a class="dropdown-item" href="{% url 'signup' %}">Sign up</a>
       <!-- <a class="dropdown-item" href="#">Forgot password</a> -->
     </div>
-    {% endblock %}
   </div>
   <!-- /container -->
 
