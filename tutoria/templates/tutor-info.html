@@ -1,3 +1,9 @@
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,7 +12,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <link rel="icon" href="./favicon.ico">
+  <link rel="icon" href="/static/favicon.ico">
 
   <title>Overview - Tutoria</title>
 
@@ -16,6 +22,7 @@
   <!-- Custom styles for this template -->
   <link href="/static/css/nav.css" rel="stylesheet">
   <link href="/static/css/dashboard.css" rel="stylesheet">
+  <link href="/static/css/catalogue.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
@@ -59,7 +66,7 @@
         <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
           <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-              <a class="nav-link" href="overview.html">Overview</a>
+              <a class="nav-link" href="{% url 'home' %}">Overview</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="my-tutorials.html">My Tutorials</a>
@@ -69,7 +76,7 @@
   
           <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-              <a class="nav-link active" href="#">Catalogue
+              <a class="nav-link active" href="{% url 'viewAll' %}">Catalogue
                 <span class="sr-only">(current)</span>
               </a>
             </li>
@@ -78,35 +85,21 @@
         </nav>
   
         <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
-          <h1>Catalogue</h1> 
+          <h1>Details</h1> 
 
           <!-- List all avaliable sessions -->
-          <div class="row" id="tutorial-list">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th scope="col" style="min-width:90px;">Tutor</th>
-                  <th scope="col" style="min-width:90px;">Price</th>
-                  <th scope="col">Subjects</th>
-                  <th scope="col">Reviews</th>
-                </tr>
-              </thead>
-              <tbody>
-                  {% for tutor in allTutors %}
-                  <tr class="tutor-info" tutor-id="{{ tutor.id }}">
-                      <th>{{ tutor.username }}</th>
-                      <td>HK$ {{ tutor.profile.price }}</td>
-                      <td>
-                        
-                        <span class="badge badge-secondary subject-tag">{{ tutor.profile.subjects }}</span>
-                        
-                      </td>
-                      <td>Insufficient reviews</td>
-                  </tr>
-                  {% endfor %}
-              </tbody>
-            </table>
-          </div>
+          <form method="post">
+            <ul class="list-group">
+              {% csrf_token %}
+              {% for field in form %}
+                {% for each in field%}
+                <li class="list-group-item">{{ each }}</li>
+                {% endfor %}
+              {% endfor %}
+            </ul>
+            <button type="submit" class="btn btn-success confirmbtn">Submit</button>
+            <a href="{% url 'viewAll' %}"><button type="button" class="btn btn-secondary confirmbtn">Back</button></a>
+          </form>
   
         </main>
       </div>
@@ -120,10 +113,11 @@
     <script>
       window.jQuery || document.write('<script src="./assets/js/vendor/jquery.min.js"><\/script>')
     </script>
-    <script src="./assets/js/vendor/popper.min.js"></script>
-    <script src="./dist/js/bootstrap.min.js"></script>
+    <script src="/static/assets/js/vendor/popper.min.js"></script>
+    <script src="/static/dist/js/bootstrap.min.js"></script>
+    <script src="/static/js/booking.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="./assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="/static/assets/js/ie10-viewport-bug-workaround.js"></script>
   </body>
   
   </html>

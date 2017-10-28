@@ -8,3 +8,7 @@
         column-count: 1;
     }
 }
+
+.session-cancel-btn {
+    margin-left: 15px;
+}

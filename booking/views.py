@@ -19,7 +19,7 @@ def viewAll(request):
     allTutors = User.objects.filter(profile__identity='T')
     for tutor in allTutors:
         tutor.profile.subjects = tutor.profile.subjects.split(';')
-    return render(request, 'test.html', {'allTutors': allTutors})
+    return render(request, 'catalogue.html', {'allTutors': allTutors})
 
 
 def booking(request, pk):
@@ -32,15 +32,26 @@ def booking(request, pk):
         form = BookingForm(pk)
     return render(request, 'booking.html', {'form': form})
 
-def canceling(request):
-    if request.method == 'POST':
-        form = CancelingForm(request.user, request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-    else:
-        form = CancelingForm(request.user)
-    return render(request, 'canceling.html', {'form': form})
+def session(request):
+    allSessions = Session.objects.filter(student__id=request.user.id)
+    return render(request, 'records.html', {'allSessions': allSessions})
+
+def canceling(request, PK):
+    # if request.method == 'POST':
+    #     form = CancelingForm(request.user, request.POST)
+    #     if form.is_valid():
+    #         form.save()
+    #         return redirect('home')
+    # else:
+    #     form = CancelingForm(request.user)
+    # return render(request, 'canceling.html', {'form': form})
+    sesssion = Session.objects.filter(pk=PK)
+    timeslot = Timeslot(tutor=session.tutor, start=session.start, end=session.end)
+    timeslot.save()
+    session.student.profile.wallet = session.student.profile.wallet + timeslot.tutor.profile.price
+    session.student.save()
+    session.delete()
+    return redirect('session')
 
 
 def schedule(request):

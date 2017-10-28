@@ -3,6 +3,15 @@
     font-weight: normal;
 }
 
-#tutorial-list{
+#tutorial-list {
     padding: 0 15px;
+}
+
+.tutor-info:hover {
+    cursor: pointer;
+}
+
+.confirmbtn {
+    float: right;
+    margin: 15px 0 15px 15px;
 }

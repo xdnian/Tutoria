@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^offerslot/$', offer_views.offerslot, name='offerslot'),
     url(r'^viewAll/$', book_views.viewAll, name='viewAll'),
     url(r'^booking/(?P<pk>\d+)/$', book_views.booking, name='booking'),
+    url(r'^session/$', book_views.session, name='session'),
     url(r'^canceling/$', book_views.canceling, name='canceling'),
     url(r'^schedule/$', book_views.schedule, name='schedule'),
     url(r'^admin/', admin.site.urls),
