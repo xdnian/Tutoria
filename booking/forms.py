@@ -16,7 +16,7 @@ class BookingForm(forms.Form):
     slots = forms.ModelChoiceField(queryset=Timeslot.objects.all(), widget=forms.RadioSelect, empty_label=None)
     def __init__(self, TutorID, *args, **kwargs):
         super(BookingForm, self).__init__(*args, **kwargs)
-        self.fields['slots'].queryset = Timeslot.objects.filter(tutor__id=TutorID)
+        self.fields['slots'].queryset = Timeslot.objects.filter(tutor__id=TutorID).order_by('-start')
     def save(self, Student):
         timeslot = self.cleaned_data['slots']
         session = Session(student=Student, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end)
