@@ -52,8 +52,8 @@
               <th>{{ tutor.username }}</th>
               <td>HK$ {{ tutor.profile.price }}</td>
               <td>
-                {% for each in tutor.profile.subjects %}
-                <span class="badge badge-secondary subject-tag">{{ each }}</span>
+                {% for tag in tutor.profile.subjects %}
+                <span class="badge badge-secondary subject-tag">{{ tag }}</span>
                 {% endfor %}
               </td>
               <td>Insufficient reviews</td>
@@ -62,4 +62,9 @@
       </tbody>
     </table>
   </div>
+{% endblock %}
+
+<!-- custom scripts -->
+{% block script %}
+  <script src="/static/js/booking.js"></script>
 {% endblock %}
