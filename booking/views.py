@@ -31,7 +31,7 @@ def booking(request, pk):
             return redirect('home')
     else:
         form = BookingForm(pk)
-    return render(request, 'booking.html', {'form': form})
+    return render(request, 'tutor-info.html', {'form': form})
 
 def session(request):
     allSessions = Session.objects.filter(student__id=request.user.id)

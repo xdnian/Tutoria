@@ -12,7 +12,20 @@
     width: 85px;
 }
 
-.icon-link {
+.bd-navbar {
+    background-color: #0457b7;
+}
+
+.bd-navbar .navbar-nav .nav-link {
+    color: #bfd3e4;
+}
+
+.bd-search .form-control:focus {
+    border-color: #0457b7;
+    box-shadow: 0 0 0 3px rgba(4,87,183,.25);
+}
+
+/* .icon-link {
     line-height: 1em;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -21,4 +34,4 @@
 .dropdown-menu {
     right: 0;
     left: auto;
-}
+} */
