@@ -1,33 +1,41 @@
 {% extends 'nav.html' %}
 
 <!-- title -->
-{% block title %}
-  Overview - Tutoria
-{% endblock %}
+{% block title %} Overview - Tutoria {% endblock %}
 
 <!-- menu -->
-{% block menu %}
-  <div class="bd-toc-item active">
-      <a class="bd-toc-link" href="#">
-          Overview
-      </a>
-  </div>
-  
-  <div class="bd-toc-item">
-      <a class="bd-toc-link" href="{% url 'session' %}">
-          My Tutorials
-      </a>
-  </div>
+{% block menu %} 
+    {% if user.is_authenticated %}
+        <div class="bd-toc-item active">
+            <a class="bd-toc-link" href="#">
+                Overview
+            </a>
+        </div>
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'session' %}">
+                My Tutorials
+            </a>
+        </div>
 
-  <div class="bd-toc-item">
-      <a class="bd-toc-link" href="{% url 'viewAll' %}">
-          Catalogue
-      </a>
-  </div>
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'viewAll' %}">
+                Search Tutor
+            </a>
+        </div>
+
+        {% if user.profile.identity != 'S' %}
+            <div class="bd-toc-item">
+                <a class="bd-toc-link" href="{% url 'offerslot' %}">
+                    Set Sessions
+                </a>
+            </div>
+        {% endif %} 
+        
+    {% endif %} 
 {% endblock %}
 
 <!-- main -->
 {% block content %}
-  <h1 class="bd-title">Overview</h1>
-  <p>Under Constuction.</p>
+<h1 class="bd-title">Overview</h1>
+<p>Under Constuction.</p>
 {% endblock %}

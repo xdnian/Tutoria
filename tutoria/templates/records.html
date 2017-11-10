@@ -12,23 +12,34 @@
 
 <!-- menu -->
 {% block menu %}
-  <div class="bd-toc-item">
+  {% if user.is_authenticated %}
+    <div class="bd-toc-item">
       <a class="bd-toc-link" href="{% url 'home' %}">
-          Overview
+        Overview
       </a>
-  </div>
-  
-  <div class="bd-toc-item active">
-      <a class="bd-toc-link" href="#">
-          My Tutorials
-      </a>
-  </div>
+    </div>
 
-  <div class="bd-toc-item">
-      <a class="bd-toc-link" href="{% url 'viewAll' %}">
-          Catalogue
-      </a>
-  </div>
+    <div class="bd-toc-item active">
+        <a class="bd-toc-link" href="#">
+            My Tutorials
+        </a>
+    </div>
+
+    <div class="bd-toc-item">
+        <a class="bd-toc-link" href="{% url 'viewAll' %}">
+            Catalogue
+        </a>
+    </div>
+
+    {% if user.profile.identity != 'S' %}
+      <div class="bd-toc-item">
+        <a class="bd-toc-link" href="{% url 'offerslot' %}">
+          Set Sessions
+        </a>
+      </div>
+    {% endif %}
+
+  {% endif %}
 {% endblock %}
 
 <!-- main -->

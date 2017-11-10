@@ -1,39 +1,48 @@
 {% extends 'nav.html' %}
 
 <!-- title -->
-{% block title %}
-  Search - Tutoria
-{% endblock %}
+{% block title %} Search - Tutoria {% endblock %}
 
 <!-- extra style sheet -->
 {% block stylesheet %}
-  <link href="/static/css/catalogue.css" rel="stylesheet">
+  <link href="/static/css/catalogue.css" rel="stylesheet"> 
 {% endblock %}
 
 <!-- menu -->
 {% block menu %}
-  <div class="bd-toc-item">
+  {% if user.is_authenticated %}
+    <div class="bd-toc-item">
       <a class="bd-toc-link" href="{% url 'home' %}">
-          Overview
+        Overview
       </a>
-  </div>
-  
-  <div class="bd-toc-item">
-      <a class="bd-toc-link" href="{% url 'session' %}">
-          My Tutorials
-      </a>
-  </div>
+    </div>
 
-  <div class="bd-toc-item active">
-      <a class="bd-toc-link" href="#">
-          Catalogue
+    <div class="bd-toc-item">
+      <a class="bd-toc-link" href="{% url 'session' %}">
+        My Tutorials
       </a>
-  </div>
+    </div>
+
+    <div class="bd-toc-item active">
+      <a class="bd-toc-link" href="#">
+        Search Tutor
+      </a>
+    </div>
+  
+    {% if user.profile.identity != 'S' %}
+      <div class="bd-toc-item">
+        <a class="bd-toc-link" href="{% url 'offerslot' %}">
+          Set Sessions
+        </a>
+      </div>
+    {% endif %}
+  
+  {% endif %}
 {% endblock %}
 
 <!-- main -->
 {% block content %}
-  <h1 class="bd-title">Catalogue</h1> 
+  <h1 class="bd-title">Search Tutor</h1>
 
   <!-- List all avaliable sessions -->
   <div class="row" id="tutorial-list">
@@ -47,18 +56,18 @@
         </tr>
       </thead>
       <tbody>
-          {% for tutor in allTutors %}
-          <tr class="tutor-info" tutor-id="{{ tutor.id }}">
-              <th>{{ tutor.username }}</th>
-              <td>HK$ {{ tutor.profile.price }}</td>
-              <td>
-                {% for tag in tutor.profile.subjects %}
-                <span class="badge badge-secondary subject-tag">{{ tag }}</span>
-                {% endfor %}
-              </td>
-              <td>Insufficient reviews</td>
-          </tr>
-          {% endfor %}
+        {% for tutor in allTutors %}
+        <tr class="tutor-info" tutor-id="{{ tutor.id }}">
+          <th>{{ tutor.username }}</th>
+          <td>HK$ {{ tutor.profile.price }}</td>
+          <td>
+            {% for tag in tutor.profile.subjects %}
+            <span class="badge badge-secondary subject-tag">{{ tag }}</span>
+            {% endfor %}
+          </td>
+          <td>Insufficient reviews</td>
+        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>

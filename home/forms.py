@@ -17,7 +17,11 @@ class UserForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
+
+        for f in self.fields: self.fields[f].widget.attrs['class'] = 'form-control'
+        self.fields['identity'].widget.attrs['class'] = 'form-control custom-select'
+
         self.fields['username'].help_text = 'enter a username'
-        self.fields['school'].help_text = 'your school'
+        self.fields['school'].help_text = 'enter your school name'
         self.fields['password1'].help_text = 'enter a password'
-        self.fields['password2'].help_text = 'confirm your password'
+        self.fields['password2'].help_text = 're-enter your password'

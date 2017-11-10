@@ -25,6 +25,10 @@
     box-shadow: 0 0 0 3px rgba(4,87,183,.25);
 }
 
+.bd-title {
+    margin-bottom: 1rem;
+}
+
 /* .icon-link {
     line-height: 1em;
     padding-top: 5px;
