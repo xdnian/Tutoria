@@ -1,7 +1,11 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.views.decorators.cache import cache_control
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
-from .forms import UserForm
+from .forms import UserForm, PasswordResetRequestForm, PasswordResetForm
+from .models import Reset_token
+from uuid import uuid4
 
 @login_required
 def home(request):
@@ -24,3 +28,48 @@ def signup(request):
     else:
         form = UserForm()
     return render(request, 'signup.html', {'form': form})
+
+def passwordResetRequest(request):
+    if request.method == 'POST':
+        form = PasswordResetRequestForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            this_user = User.objects.filter(email=email)
+            if len(this_user) != 0:
+                rand_token = uuid4()
+                reset_token = Reset_token(user=this_user[0], token=str(rand_token))
+                reset_token.save()
+                print('Use this token to reset your password: ' + str(rand_token))
+                return redirect('passwordReset')
+            else:
+                form = PasswordResetRequestForm()
+                return render(request, 'passwordResetRequest.html', {'form': form, 'message': 'wrong email'})
+    else:
+        form = PasswordResetRequestForm()
+    return render(request, 'passwordResetRequest.html', {'form': form})
+
+def passwordReset(request):
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            token = form.cleaned_data.get('token')
+            newpassword = form.cleaned_data.get('newpassword')
+            this_user = User.objects.filter(email=email)
+            if len(this_user) != 0:
+                related_token = Reset_token.objects.filter(user=this_user[0])
+                if len(related_token) != 0 and related_token[0].token == token:
+                    u = User.objects.get(username=this_user[0].username)
+                    u.set_password(newpassword)
+                    u.save()
+                    related_token.delete()
+                    return render(request, 'passwordResetConfrim.html')
+                else:
+                    form = PasswordResetForm()
+                    return render(request, 'passwordReset.html', {'form': form, 'message': 'wrong token'})
+            else:
+                form = PasswordResetForm()
+                return render(request, 'passwordReset.html', {'form': form, 'message': 'wrong email'})
+    else:
+        form = PasswordResetForm()
+    return render(request, 'passwordReset.html', {'form': form})

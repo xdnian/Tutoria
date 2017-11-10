@@ -7,6 +7,7 @@ class Timeslot(models.Model):
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     start = models.DateTimeField()
     end = models.DateTimeField()
+    status = models.CharField(max_length=20, default='Available')
     def __str__(self):
         timezonelocal = pytz.timezone('Asia/Hong_Kong')
         startlocal = self.start.astimezone(timezonelocal)

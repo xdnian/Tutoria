@@ -21,3 +21,11 @@ class UserForm(UserCreationForm):
         self.fields['school'].help_text = 'your school'
         self.fields['password1'].help_text = 'enter a password'
         self.fields['password2'].help_text = 'confirm your password'
+
+class PasswordResetRequestForm(forms.Form):
+    email = forms.CharField(label=("Email"), max_length=254)
+
+class PasswordResetForm(forms.Form):
+    email = forms.CharField(label=("Email"), max_length=254)
+    token = forms.CharField(label=("token"), max_length=254)
+    newpassword = forms.CharField(label=("newpassword"), max_length=254)
