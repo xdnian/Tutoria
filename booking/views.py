@@ -6,6 +6,7 @@ from django.db.models import Q
 from .forms import BookingForm, TutorForm, CancelingForm
 from .models import Session
 from offering.models import Timeslot
+import decimal
 
 @login_required
 def viewAll(request):
@@ -20,7 +21,7 @@ def viewAll(request):
     allTutors = User.objects.filter(profile__identity='T')
     for tutor in allTutors:
         tutor.profile.subjects = tutor.profile.subjects.split(';')
-    return render(request, 'test.html', {'allTutors': allTutors})
+    return render(request, 'catalogue.html', {'allTutors': allTutors})
 
 
 def booking(request, pk):
@@ -31,11 +32,11 @@ def booking(request, pk):
             return redirect('home')
     else:
         form = BookingForm(pk)
-    return render(request, 'booking.html', {'form': form})
+    return render(request, 'tutor-info.html', {'form': form})
 
 def session(request):
     allSessions = Session.objects.filter(student__id=request.user.id)
-    return render(request, 'test.html', {'allSessions': allSessions})
+    return render(request, 'records.html', {'allSessions': allSessions})
 
 def canceling(request, pk):
     # if request.method == 'POST':
@@ -50,7 +51,7 @@ def canceling(request, pk):
     timeslot = Timeslot.objects.filter(tutor=session.tutor, start=session.start, end=session.end, status='Booked')[0]
     timeslot.status = 'Available'
     timeslot.save()
-    session.student.profile.wallet = session.student.profile.wallet + timeslot.tutor.profile.price*1.05
+    session.student.profile.wallet = session.student.profile.wallet + timeslot.tutor.profile.price*decimal.Decimal(1.05)
     session.student.save()
     session.delete()
     return redirect('session')

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Session
 from offering.models import Timeslot
+import decimal
 
 
 class TutorForm(forms.Form):
@@ -21,7 +22,7 @@ class BookingForm(forms.Form):
         timeslot = self.cleaned_data['slots']
         session = Session(student=Student, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end)
         session.save()
-        Student.profile.wallet = Student.profile.wallet - timeslot.tutor.profile.price*1.05
+        Student.profile.wallet = Student.profile.wallet - timeslot.tutor.profile.price*decimal.Decimal(1.05)
         Student.save()
         timeslot.status = 'Booked'
         timeslot.save()

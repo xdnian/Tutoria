@@ -27,7 +27,7 @@
 
     <div class="bd-toc-item">
         <a class="bd-toc-link" href="{% url 'viewAll' %}">
-            Catalogue
+            Search Tutor
         </a>
     </div>
 
@@ -38,6 +38,18 @@
         </a>
       </div>
     {% endif %}
+
+    <div class="bd-toc-item">
+        <a class="bd-toc-link" href="{% url 'wallet' %}">
+            My Wallet
+        </a>
+    </div>
+
+    <div class="bd-toc-item">
+        <a class="bd-toc-link" href="{% url 'profile' %}">
+            My Profile
+        </a>
+    </div>
 
   {% endif %}
 {% endblock %}

@@ -35,5 +35,7 @@ urlpatterns = [
     url(r'^session/$', book_views.session, name='session'),
     url(r'^canceling/(?P<pk>\d+)/$', book_views.canceling, name='canceling'),
     url(r'^schedule/$', book_views.schedule, name='schedule'),
+    url(r'^wallet/', book_views.session, name='wallet'),
+    url(r'^profile/', book_views.session, name='profile'),
     url(r'^admin/', admin.site.urls),
 ]
