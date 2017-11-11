@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'offering.apps.OfferingConfig',
     'booking.apps.BookingConfig',
+    'cron.apps.CronConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
