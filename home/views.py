@@ -43,7 +43,7 @@ def passwordResetRequest(request):
                 return redirect('passwordReset')
             else:
                 form = PasswordResetRequestForm()
-                return render(request, 'passwordResetRequest.html', {'form': form, 'message': 'wrong email'})
+                return render(request, 'passwordResetRequest.html', {'form': form, 'message': 'This email does not exist.'})
     else:
         form = PasswordResetRequestForm()
     return render(request, 'passwordResetRequest.html', {'form': form})
@@ -66,10 +66,10 @@ def passwordReset(request):
                     return render(request, 'passwordResetConfrim.html')
                 else:
                     form = PasswordResetForm()
-                    return render(request, 'passwordReset.html', {'form': form, 'message': 'wrong token'})
+                    return render(request, 'passwordReset.html', {'form': form, 'message': 'Wrong token'})
             else:
                 form = PasswordResetForm()
-                return render(request, 'passwordReset.html', {'form': form, 'message': 'wrong email'})
+                return render(request, 'passwordReset.html', {'form': form, 'message': 'Wrong email'})
     else:
         form = PasswordResetForm()
     return render(request, 'passwordReset.html', {'form': form})
