@@ -28,10 +28,10 @@ class UserForm(UserCreationForm):
         self.fields['password2'].help_text = 're-enter your password'
 
 class PasswordResetRequestForm(forms.Form):
-    email = forms.CharField(label=("Email"), max_length=254)
+    email = forms.CharField(label=("Email"), max_length=254, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
 
 class PasswordResetForm(forms.Form):
-    email = forms.CharField(label=("Email"), max_length=254)
-    token = forms.CharField(label=("Token"), max_length=254)
-    newpassword = forms.CharField(label=("New Password"), max_length=254, widget=forms.PasswordInput)
+    email = forms.CharField(label=("Email"), max_length=254, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    token = forms.CharField(label=("Token"), max_length=254, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    newpassword = forms.CharField(label=("New Password"), max_length=254, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
