@@ -48,6 +48,24 @@ def passwordResetRequest(request):
         form = PasswordResetRequestForm()
     return render(request, 'passwordResetRequest.html', {'form': form})
 
+def validate_password_strength(value):
+    """a password is as least 8 characters long and contains both numbers and letters.
+    """
+    min_length = 8
+
+    if len(value) < min_length:
+        return False
+
+    # check for letters
+    if sum(c.isdigit() for c in value) == len(value):
+        return False
+
+    # check for digits
+    if sum(not c.isdigit() for c in value) == len(value):
+        return False
+
+    return True
+
 def passwordReset(request):
     if request.method == 'POST':
         form = PasswordResetForm(request.POST)
@@ -55,15 +73,20 @@ def passwordReset(request):
             email = form.cleaned_data.get('email')
             token = form.cleaned_data.get('token')
             newpassword = form.cleaned_data.get('newpassword')
+            validation = validate_password_strength(newpassword)
             this_user = User.objects.filter(email=email)
             if len(this_user) != 0:
                 related_token = Reset_token.objects.filter(user=this_user[0])
                 if len(related_token) != 0 and related_token[0].token == token:
                     u = User.objects.get(username=this_user[0].username)
-                    u.set_password(newpassword)
-                    u.save()
-                    related_token.delete()
-                    return render(request, 'passwordResetConfrim.html')
+                    if validation == True:
+                        u.set_password(newpassword)
+                        u.save()
+                        related_token.delete()
+                        return render(request, 'passwordResetConfrim.html')
+                    else:
+                        form = PasswordResetForm()
+                        return render(request, 'passwordReset.html', {'form': form, 'message': 'a password is as least 8 characters long and contains both numbers and letters'})
                 else:
                     form = PasswordResetForm()
                     return render(request, 'passwordReset.html', {'form': form, 'message': 'wrong token'})
