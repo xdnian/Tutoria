@@ -6,7 +6,7 @@ from .models import Timeslot
 
 
 class TimeForm(forms.Form):
-    slots = forms.ModelMultipleChoiceField(queryset=Timeslot.objects.none(), widget=forms.CheckboxSelectMultiple)
+    slots = forms.ModelMultipleChoiceField(queryset=Timeslot.objects.none(), widget=forms.CheckboxSelectMultiple, to_field_name="time")
     def __init__(self, Tutor, *args, **kwargs):
         super(TimeForm, self).__init__(*args, **kwargs)
         self.fields['slots'].queryset = Timeslot.objects.filter(tutor__id=Tutor.id, status='Available').order_by('start')

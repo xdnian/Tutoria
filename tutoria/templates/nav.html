@@ -9,7 +9,7 @@
 
     <!-- Favicons -->
     <link rel="icon" href="/static/favicon.ico">
-    <meta name="theme-color" content="#563d7c">
+    <meta name="theme-color" content="#0457b7">
 
     <!-- Bootstrap core CSS -->
     <link href="/static/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -24,28 +24,46 @@
     <meta name="description" content="Tutoria - a tutor brokering platform.">
     <meta name="author" content="Panacea - Nian Xiaodong, Tang Chi Ian, Wang Junjie, Wang Michelle Yih-chyan">
 
-
     <header class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar">
+        <!-- Logo -->
         <a class="navbar-brand mr-0 mr-md-2" href="/" aria-label="Tutoria">
             <img src="/static/assets/brand/tutoria-logo-white.png" alt="brand">
         </a>
 
+        <!-- Navbar menu -->
         <ul class="navbar-nav bd-navbar-nav flex-row ml-md-auto d-md-flex">
             <li class="nav-item">
-                <a class="nav-link " href="/index">Home</a>
+                <a class="nav-link" href="#">Home</a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link " href="/about">About</a>
+                <a class="nav-link" href="#">About</a>
             </li>
-
-            <li class="nav-item">
-                {% if user.is_authenticated %}
-                    <a class="nav-link p-2" href="{% url 'logout' %}">Log Out</a>
-                {% else %}
+            {% if user.is_authenticated %}
+                <!-- Dropdown for personal info, displayed as users name -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <!-- name -->
+                        <span>{{ user.first_name }} {{ user.last_name }}</span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <span>
+                            <a class="dropdown-item" href="#" style="display:inline">Notification</a>
+                            <!-- Notificaiton icon -->
+                            <span class="badge badge-pill badge-danger">2</span>
+                        </span>
+                        <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <!-- Log out -->
+                        <a class="dropdown-item" style="color:crimson" href="{% url 'logout' %}">Log Out</a>
+                    </div>
+                </li>
+            {% else %}
+                <!-- if not logged in -->
+                <li class="nav-item">
                     <a class="nav-link p-2" href="{% url 'login' %}">Log In</a>
-                {% endif %}
-            </li>
+                </li>
+            {% endif %}
         </ul>
     </header>
 
@@ -54,10 +72,12 @@
             <div class="col-12 col-md-3 col-xl-2 bd-sidebar">
                 <form class="bd-search d-flex align-items-center">
                     <span class="algolia-autocomplete" style="position: relative; display: inline-block; direction: ltr;">
+                        <!-- quick search -->
                         <input type="search" class="form-control ds-input" id="search-input" placeholder="Quick search..." aria-label="Quick search..."
                             autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false"
                             aria-labelledby="search-input" aria-owns="algolia-autocomplete-listbox-0" dir="auto" style="position: relative; vertical-align: top;">
                         <pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; word-spacing: 0px; letter-spacing: normal; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre>
+                        <!-- menu button (shown in mobile screen) -->
                         <span class="ds-dropdown-menu" role="listbox" id="algolia-autocomplete-listbox-0" style="position: absolute; top: 100%; z-index: 100; display: none; left: 0px; right: auto;">
                             <div class="ds-dataset-1"></div>
                         </span>

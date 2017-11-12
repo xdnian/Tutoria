@@ -34,7 +34,7 @@
     {% if user.profile.identity != 'S' %}
       <div class="bd-toc-item">
         <a class="bd-toc-link" href="{% url 'offerslot' %}">
-          Set Sessions
+          Set Timeslots
         </a>
       </div>
     {% endif %}
@@ -42,12 +42,6 @@
     <div class="bd-toc-item">
         <a class="bd-toc-link" href="{% url 'wallet' %}">
             My Wallet
-        </a>
-    </div>
-
-    <div class="bd-toc-item">
-        <a class="bd-toc-link" href="{% url 'profile' %}">
-            My Profile
         </a>
     </div>
 

@@ -1,17 +1,78 @@
-{% extends 'base.html' %}
+{% extends 'nav.html' %}
 
+<!-- title -->
+{% block title %} Change Offering Slots - Tutoria {% endblock %}
+
+<!-- menu -->
+{% block menu %} 
+    {% if user.is_authenticated %}
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'home' %}">
+                Overview
+            </a>
+        </div>
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'session' %}">
+                My Tutorials
+            </a>
+        </div>
+
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'search' %}">
+                Search Tutor
+            </a>
+        </div>
+
+        {% if user.profile.identity != 'S' %}
+            <div class="bd-toc-item active">
+                <a class="bd-toc-link" href="{% url 'offerslot' %}">
+                    Set Timeslots
+                </a>
+            </div>
+        {% endif %} 
+
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'wallet' %}">
+                My Wallet
+            </a>
+        </div>
+        
+    {% endif %} 
+{% endblock %}
+
+<!-- main -->
 {% block content %}
-  <h2>Welcome to offering, {{ user.username }}!</h2>
+  <h1 class="bd-title">Change Offering Slots</h1>
+
   <form method="post">
     {% csrf_token %}
-    {% for field in form %}
-      <p>
-        {{ field.label_tag }}<br>
-        {% for each in field%}
-            {{ each }}<br>
-        {% endfor %}
-      </p>
+    <table>
+      <!-- <tr>
+        <th>7</th>
+        <th>8</th>
+        <th>9</th>
+        <th>10</th>
+        <th>11</th>
+        <th>12</th>
+        <th>13</th>
+        <th>14</th>
+        <th>15</th>
+        <th>16</th>
+        <th>17</th>
+        <th>18</th>
+        <th>19</th>
+        <th>20</th>
+        <th>21</th>
+      </tr> -->
+
+    {% for each in form.slots %}
+      <tr>
+          <td>{{ each }}</td>
+      </tr>
     {% endfor %}
+    </table>
+
     <button type="submit">submit</button>
   </form>
+
 {% endblock %}

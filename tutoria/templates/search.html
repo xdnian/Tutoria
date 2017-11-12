@@ -24,7 +24,7 @@
     </div>
 
     <div class="bd-toc-item active">
-      <a class="bd-toc-link" href="#">
+      <a class="bd-toc-link" href="{% url 'search' %}">
         Search Tutor
       </a>
     </div>
@@ -32,7 +32,7 @@
     {% if user.profile.identity != 'S' %}
       <div class="bd-toc-item">
         <a class="bd-toc-link" href="{% url 'offerslot' %}">
-          Set Sessions
+          Set Timeslots
         </a>
       </div>
     {% endif %}
@@ -43,12 +43,6 @@
         </a>
     </div>
 
-    <div class="bd-toc-item">
-        <a class="bd-toc-link" href="{% url 'profile' %}">
-            My Profile
-        </a>
-    </div>
-  
   {% endif %}
 {% endblock %}
 
@@ -104,13 +98,13 @@
   <br>
 
   <!-- List all avaliable sessions -->
+  {% if allTutors %}
   <div class="row" id="tutorial-list">
-    {% if allTutors %}
       <table class="table table-hover table-responsive">
         <thead>
           <tr>
             <th scope="col" style="min-width:90px;">Tutor</th>
-            <th scope="col" style="min-width:90px;">Price</th>
+            <th scope="col" style="min-width:90px;">Price <span style="color:gray;font-size:0.75rem">(HKD)</span></th>
             <th scope="col">Subjects</th>
             <th scope="col">Reviews</th>
           </tr>
@@ -119,7 +113,7 @@
           {% for tutor in allTutors %}
           <tr class="tutor-info" tutor-id="{{ tutor.id }}">
             <th>{{ tutor.username }}</th>
-            <td>HK$ {{ tutor.profile.price }}</td>
+            <td>{{ tutor.profile.price }}</td>
             <td>
               {% for tag in tutor.profile.subjects %}
               <span class="badge badge-secondary subject-tag">{{ tag }}</span>
@@ -130,8 +124,16 @@
           {% endfor %}
         </tbody>
       </table>
-    {% endif %}
   </div>
+
+  {% else %}
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+        <span class="text">There are no tutors to meet the conditions.</span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+  {% endif %}
 {% endblock %}
 
 <!-- custom scripts -->

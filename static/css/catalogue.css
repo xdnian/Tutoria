@@ -39,12 +39,26 @@ select.form-control:not([size]):not([multiple]) {
     font-weight: normal;
 }
 
-@media (min-width: 768px) {
+/* @media (min-width: 768px) {
     .tutor-search th {
-        /* max-width: 50px; */
+        max-width: 50px;
     }
-}
+} */
 
 .custom-control-input:focus~.custom-control-indicator {
     box-shadow: 0 0 0 1px #fff, 0 0 0 3px rgba(0,123,255,.25);
+}
+
+.alert {
+    position: relative;
+}
+
+.alert-dismissible .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.alert-dismissible .text {
+    padding-right: 30px;
 }
