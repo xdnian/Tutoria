@@ -10,11 +10,15 @@ from .models import Profile
 
 
 class UserForm(UserCreationForm):
+    first_name = forms.CharField()
+    last_name = forms.CharField()
+    email = forms.CharField()
+    phone = forms.CharField()
     identity = forms.ChoiceField(choices=Profile.IDENTITY_CHOICES)
-    school = forms.CharField()
+    school = forms.ChoiceField(choices=Profile.SCHOOL_CHOICES)
     class Meta:
         model = User
-        fields = ('username','first_name', 'last_name', 'email', 'identity', 'school', 'password1', 'password2')
+        fields = ('username','first_name', 'last_name', 'email', 'phone', 'identity', 'school', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
@@ -23,7 +27,8 @@ class UserForm(UserCreationForm):
         self.fields['identity'].widget.attrs['class'] = 'form-control custom-select'
 
         self.fields['username'].help_text = 'enter a username'
-        self.fields['school'].help_text = 'enter your school name'
+        self.fields['identity'].help_text = 'register as student/tutor'
+        self.fields['school'].help_text = 'choose your school'
         self.fields['password1'].help_text = 'enter a password'
         self.fields['password2'].help_text = 're-enter your password'
 

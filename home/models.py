@@ -7,8 +7,11 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     IDENTITY_CHOICES = (('S', 'Student'),('T', 'Private Tutor'),('C', 'Contracted Tutor'))
     identity = models.CharField(max_length=2, choices=IDENTITY_CHOICES, default='S')
-    school = models.CharField(max_length=30, blank=True)
-    phone = models.CharField(max_length=30, blank=True)
+    SCHOOL_CHOICES = (('1', 'University of Hong Kong'),('2', 'Hong Kong University of Science and Technology'),
+        ('3', 'Chinese University of Hong Kong'), ('4', 'City University of Hong Kong'), 
+        ('5', 'The Hong Kong Polytechnic University'), ('6', 'Hong Kong Baptist University'))
+    school = models.CharField(max_length=2, choices=SCHOOL_CHOICES, default='1')
+    phone = models.CharField(max_length=30)
     courses = models.TextField(blank=True)
     biography = models.TextField(blank=True)
     wallet = models.DecimalField(default=0.00, max_digits=10, decimal_places=2)
