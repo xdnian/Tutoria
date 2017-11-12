@@ -9,7 +9,7 @@ from offering.models import Timeslot
 import decimal
 
 @login_required
-def viewAll(request):
+def search(request):
     # if request.method == 'POST':
     #     form = TutorForm(request.POST)
     #     if form.is_valid():
