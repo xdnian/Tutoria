@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'offering.apps.OfferingConfig',
     'booking.apps.BookingConfig',
     'cron.apps.CronConfig',
+    'transaction.apps.TransactionConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

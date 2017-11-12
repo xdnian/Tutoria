@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Welcome to {{ action }} balance, {{ user.username }}!</h2>
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <p>
+        {{ field.label_tag }}<br>
+        {% for each in field%}
+            {{ each }}<br>
+        {% endfor %}
+      </p>
+    {% endfor %}
+    <button type="submit">submit</button>
+  </form>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'nav.html' %}
+
+<!-- title -->
+{% block title %} Overview - Tutoria {% endblock %}
+
+<!-- menu -->
+{% block menu %} 
+    {% if user.is_authenticated %}
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="#">
+                Overview
+            </a>
+        </div>
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'session' %}">
+                My Tutorials
+            </a>
+        </div>
+
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'viewAll' %}">
+                Search Tutor
+            </a>
+        </div>
+
+        {% if user.profile.identity != 'S' %}
+            <div class="bd-toc-item">
+                <a class="bd-toc-link" href="{% url 'offerslot' %}">
+                    Set Sessions
+                </a>
+            </div>
+        {% endif %} 
+
+        <div class="bd-toc-item active">
+            <a class="bd-toc-link" href="{% url 'wallet' %}">
+                My Wallet
+            </a>
+        </div>
+
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'profile' %}">
+                My Profile
+            </a>
+        </div>
+        
+    {% endif %} 
+{% endblock %}
+
+<!-- main -->
+{% block content %}
+<h1 class="bd-title">Wallet</h1>
+<p>Balance: {{ balance }}</p>
+<p>Bank Account: {{ bank_account }} </p>
+<a href="{% url 'transactionHistory' %}" class="btn btn-lg btn-primary btn-block">View History</a>
+<a href="{% url 'addBalance' %}" class="btn btn-lg btn-primary btn-block">Add Balance</a>
+<a href="{% url 'withdrawBalance' %}" class="btn btn-lg btn-primary btn-block">Withraw Balance</a>
+
+{% endblock %}
