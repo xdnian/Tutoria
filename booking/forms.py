@@ -7,11 +7,18 @@ import decimal
 
 
 class TutorForm(forms.Form):
-    allTutors = forms.ModelChoiceField(queryset=User.objects.none(), widget=forms.RadioSelect, empty_label=None)
-    def __init__(self, *args, **kwargs):
-        super(TutorForm, self).__init__(*args, **kwargs)
-        self.fields['allTutors'].queryset = User.objects.filter(profile__identity='T')
-
+    SCHOOL_CHOICES = (('0', 'All Universities'), ('1', 'University of Hong Kong'),('2', 'Hong Kong University of Science and Technology'),
+        ('3', 'Chinese University of Hong Kong'), ('4', 'City University of Hong Kong'), 
+        ('5', 'The Hong Kong Polytechnic University'), ('6', 'Hong Kong Baptist University'))
+    univserity = forms.ChoiceField(label=("univserity"), required=False, choices=SCHOOL_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+    course = forms.CharField(label=("course"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    name = forms.CharField(label=("name"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    subject = forms.CharField(label=("subject"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    IDENTITY_CHOICES = (('A', 'All'),('T', 'Private Tutor'),('C', 'Contracted Tutor'))
+    identity = forms.ChoiceField(label=("identity"), required=False, choices=IDENTITY_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+    price_min = forms.DecimalField(label=("price_min"), required=False, max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    price_max = forms.DecimalField(label=("price_max"), required=False, max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    available_only = forms.BooleanField(label=("available_only"), required=False, widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
 
 class BookingForm(forms.Form):
     slots = forms.ModelChoiceField(queryset=Timeslot.objects.all(), widget=forms.RadioSelect, empty_label=None)
