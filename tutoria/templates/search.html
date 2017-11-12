@@ -56,9 +56,73 @@
 {% block content %}
   <h1 class="bd-title">Search Tutor</h1>
 
+  <form class="tutor-search" action="{% url 'search' %}" method="POST">
+    <table class="table table-sm">
+      <tbody>
+        <tr>
+          <th>
+            <label for="university">University:</label>
+          </th>
+          <td>
+            <input type="text" class="form-control" name="university" placeholder="University name...">
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <label for="coursecode">Course:</label>
+          </th>
+          <td>
+            <input type="text" class="form-control" name="coursecode" placeholder="Course code...">
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <label for="tutorname">Name:</label>
+          </th>
+          <td>
+            <input type="text" class="form-control" name="tutorname" placeholder="Tutor's name...">
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <label for="subjecttag">Subject tags:</label>
+          </th>
+          <td>
+            <input type="text" class="form-control" name="subjecttag" placeholder="Separate using ';'">
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <label for="subjecttag">Price range:</label>
+          </th>
+          <td>
+            <div class="row">
+              <div class="col">
+                <input type="text" class="form-control" style="display:inline" name="price_min" placeholder="minimum price">
+              </div>
+              <span>-</span>
+              <div class="col">
+                <input type="text" class="form-control" style="display:inline" name="price_max" placeholder="minimum price">
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <label class="custom-control custom-checkbox" style="display:block">
+      <input type="checkbox" class="custom-control-input" name="avaliableOnly">
+      <span class="custom-control-indicator"></span>
+      <span class="custom-control-description">Only show avaliable tutors</span>
+    </label>
+  
+    <button class="btn btn-info" type="submit" value="Search">Search</button>
+  </form>
+  <br>
+
   <!-- List all avaliable sessions -->
   <div class="row" id="tutorial-list">
-    <table class="table table-hover">
+    <table class="table table-hover table-responsive">
       <thead>
         <tr>
           <th scope="col" style="min-width:90px;">Tutor</th>
