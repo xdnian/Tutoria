@@ -26,6 +26,10 @@
     box-shadow: 0 0 0 3px rgba(4, 87, 183, .25);
 }
 
+select.form-control:not([size]):not([multiple]) {
+    height: inherit;
+}
+
 .tutor-search table {
     margin-bottom: 0;
 }

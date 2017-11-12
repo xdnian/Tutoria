@@ -59,38 +59,20 @@
   <form class="tutor-search" action="{% url 'search' %}" method="POST">
     <table class="table table-sm">
       <tbody>
-        <tr>
-          <th>
-            <label for="university">University:</label>
-          </th>
-          <td>
-            <input type="text" class="form-control" name="university" placeholder="University name...">
-          </td>
-        </tr>
-        <tr>
-          <th>
-            <label for="coursecode">Course:</label>
-          </th>
-          <td>
-            <input type="text" class="form-control" name="coursecode" placeholder="Course code...">
-          </td>
-        </tr>
-        <tr>
-          <th>
-            <label for="tutorname">Name:</label>
-          </th>
-          <td>
-            <input type="text" class="form-control" name="tutorname" placeholder="Tutor's name...">
-          </td>
-        </tr>
-        <tr>
-          <th>
-            <label for="subjecttag">Subject tags:</label>
-          </th>
-          <td>
-            <input type="text" class="form-control" name="subjecttag" placeholder="Separate using ';'">
-          </td>
-        </tr>
+        {% csrf_token %}
+        {% for field in form %}
+          {% if field.name != "price_min" and field.name != "price_max" and field.name != "available_only" %}
+            <tr>
+              <th>
+                {{ field.label_tag }}
+              </th>
+              <td>
+                {{ field }}
+              </td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+
         <tr>
           <th>
             <label for="subjecttag">Price range:</label>
@@ -98,11 +80,11 @@
           <td>
             <div class="row">
               <div class="col">
-                <input type="text" class="form-control" style="display:inline" name="price_min" placeholder="minimum price">
+                {{form.price_min}}
               </div>
               <span>-</span>
               <div class="col">
-                <input type="text" class="form-control" style="display:inline" name="price_max" placeholder="minimum price">
+                {{form.price_max}}
               </div>
             </div>
           </td>
@@ -111,7 +93,8 @@
     </table>
 
     <label class="custom-control custom-checkbox" style="display:block">
-      <input type="checkbox" class="custom-control-input" name="avaliableOnly">
+      {{form.available_only}}
+      <!-- <input type="checkbox" class="custom-control-input" name="available_only" id="id_available_only"> -->
       <span class="custom-control-indicator"></span>
       <span class="custom-control-description">Only show avaliable tutors</span>
     </label>
@@ -122,30 +105,32 @@
 
   <!-- List all avaliable sessions -->
   <div class="row" id="tutorial-list">
-    <table class="table table-hover table-responsive">
-      <thead>
-        <tr>
-          <th scope="col" style="min-width:90px;">Tutor</th>
-          <th scope="col" style="min-width:90px;">Price</th>
-          <th scope="col">Subjects</th>
-          <th scope="col">Reviews</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for tutor in allTutors %}
-        <tr class="tutor-info" tutor-id="{{ tutor.id }}">
-          <th>{{ tutor.username }}</th>
-          <td>HK$ {{ tutor.profile.price }}</td>
-          <td>
-            {% for tag in tutor.profile.subjects %}
-            <span class="badge badge-secondary subject-tag">{{ tag }}</span>
-            {% endfor %}
-          </td>
-          <td>Insufficient reviews</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    {% if allTutors %}
+      <table class="table table-hover table-responsive">
+        <thead>
+          <tr>
+            <th scope="col" style="min-width:90px;">Tutor</th>
+            <th scope="col" style="min-width:90px;">Price</th>
+            <th scope="col">Subjects</th>
+            <th scope="col">Reviews</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tutor in allTutors %}
+          <tr class="tutor-info" tutor-id="{{ tutor.id }}">
+            <th>{{ tutor.username }}</th>
+            <td>HK$ {{ tutor.profile.price }}</td>
+            <td>
+              {% for tag in tutor.profile.subjects %}
+              <span class="badge badge-secondary subject-tag">{{ tag }}</span>
+              {% endfor %}
+            </td>
+            <td>Insufficient reviews</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
   </div>
 {% endblock %}
 

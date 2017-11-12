@@ -18,7 +18,7 @@ class TutorForm(forms.Form):
     identity = forms.ChoiceField(label=("identity"), required=False, choices=IDENTITY_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
     price_min = forms.DecimalField(label=("price_min"), required=False, max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
     price_max = forms.DecimalField(label=("price_max"), required=False, max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    available_only = forms.BooleanField(label=("available_only"), required=False, widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
+    available_only = forms.BooleanField(label=("available_only"), required=False, widget=forms.CheckboxInput(attrs={'class': 'custom-control-input'}))
 
 class BookingForm(forms.Form):
     slots = forms.ModelChoiceField(queryset=Timeslot.objects.all(), widget=forms.RadioSelect, empty_label=None)
