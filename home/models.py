@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from transaction.models import Wallet
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -14,7 +15,7 @@ class Profile(models.Model):
     phone = models.CharField(max_length=30)
     courses = models.TextField(blank=True)
     biography = models.TextField(blank=True)
-    wallet = models.DecimalField(default=0.00, max_digits=10, decimal_places=2)
+    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, null=True, related_name='tutor')
     subjects = models.TextField(blank=True)
     price = models.DecimalField(default=0.00, max_digits=10, decimal_places=2)
     def __str__(self):

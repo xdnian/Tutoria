@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Session
 from offering.models import Timeslot
-import decimal
+import decimal, pytz, datetime
 
 
 class TutorForm(forms.Form):
@@ -24,15 +24,18 @@ class BookingForm(forms.Form):
     slots = forms.ModelChoiceField(queryset=Timeslot.objects.all(), widget=forms.RadioSelect, empty_label=None)
     def __init__(self, TutorID, *args, **kwargs):
         super(BookingForm, self).__init__(*args, **kwargs)
-        self.fields['slots'].queryset = Timeslot.objects.filter(tutor__id=TutorID, status='Available')
+        start_date = datetime.date.today()
+        end_date = start_date + datetime.timedelta(days=7)
+        maxtime = datetime.datetime(end_date.year, end_date.month, end_date.day, 22, 0, 0, 0)
+        self.fields['slots'].queryset = Timeslot.objects.filter(tutor__id=TutorID, status='Available', start__lte=maxtime)
     def save(self, Student):
         timeslot = self.cleaned_data['slots']
-        session = Session(student=Student, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end)
-        session.save()
-        Student.profile.wallet = Student.profile.wallet - timeslot.tutor.profile.price*decimal.Decimal(1.05)
-        Student.save()
         timeslot.status = 'Booked'
         timeslot.save()
+        session = Session(student=Student, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end, status='Pending')
+        session.save()
+        return session.id
+        
 
 
 class CancelingForm(forms.Form):

@@ -6,14 +6,13 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from .forms import ChangeBalanceForm
 from .models import Wallet, Transaction
-import decimal
-import pytz
-import datetime
+import decimal, pytz, datetime
+
 
 @login_required
 def wallet(request):
     userWallet = Wallet.objects.get(user = request.user)
-    return render(request, 'wallet.html', {'balance': userWallet.checkBalance(), 'bank_account': userWallet.bank_account})
+    return render(request, 'wallet.html', {'balance': userWallet.balance, 'bank_account': userWallet.bank_account})
 
 def transactionHistory(request):
     userWallet = Wallet.objects.get(user = request.user)
