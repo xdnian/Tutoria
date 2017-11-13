@@ -23,7 +23,8 @@ def signup(request):
             user.profile.identity = form.cleaned_data.get('identity')
             user.profile.school = form.cleaned_data.get('school')
             user.save()
-            # TO BE SOLVED
+            
+            # create wallet and assosiate it to the user
             newWallet = Wallet(user = user, balance = 0)
             newWallet.save()
             user.profile.wallet = newWallet
