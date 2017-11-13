@@ -1,17 +1,67 @@
-{% extends 'base.html' %}
+{% extends 'nav.html' %}
 
+<!-- title -->
+{% block title %} Wallet - Tutoria {% endblock %}
+
+<!-- extra style sheet -->
+{% block stylesheet %}
+    <link href="/static/css/wallet.css" rel="stylesheet">
+{% endblock %}
+
+
+<!-- menu -->
+{% block menu %} 
+    {% if user.is_authenticated %}
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'home' %}">
+                Overview
+            </a>
+        </div>
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'session' %}">
+                My Tutorials
+            </a>
+        </div>
+
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'search' %}">
+                Search Tutor
+            </a>
+        </div>
+
+        {% if user.profile.identity != 'S' %}
+            <div class="bd-toc-item">
+                <a class="bd-toc-link" href="{% url 'offerslot' %}">
+                    Set Timeslots
+                </a>
+            </div>
+        {% endif %} 
+
+        <div class="bd-toc-item active">
+            <a class="bd-toc-link" href="{% url 'wallet' %}">
+                My Wallet
+            </a>
+        </div>
+        
+    {% endif %} 
+{% endblock %}
+
+<!-- main -->
 {% block content %}
-  <h2>Welcome to {{ action }} balance, {{ user.username }}!</h2>
+  <h1 class="bd-title">Wallet</h1>
+  <p class="bd-lead">{{action | capfirst}} money</p>
   <form method="post">
     {% csrf_token %}
     {% for field in form %}
-      <p>
-        {{ field.label_tag }}<br>
-        {% for each in field%}
-            {{ each }}<br>
-        {% endfor %}
-      </p>
+      {{ field.label_tag }}
+      {% for each in field%}
+        <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+          <div class="input-group-addon">HK$</div>
+          {{ each }}
+        </div>
+      {% endfor %}
     {% endfor %}
-    <button type="submit">submit</button>
+    <br>
+    <button class="btn btn-info" type="submit" value="Search">Confirm</button>
   </form>
 {% endblock %}

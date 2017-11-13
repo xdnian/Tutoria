@@ -15,7 +15,7 @@ class Profile(models.Model):
     phone = models.CharField(max_length=30)
     courses = models.TextField(blank=True)
     biography = models.TextField(blank=True)
-    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, null=True, related_name='tutor')
+    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, null=True)
     subjects = models.TextField(blank=True)
     price = models.DecimalField(default=0.00, max_digits=10, decimal_places=2)
     def __str__(self):

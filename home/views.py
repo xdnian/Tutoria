@@ -5,6 +5,7 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from .forms import UserForm, PasswordResetRequestForm, PasswordResetForm
 from .models import Reset_token
+from transaction.models import Wallet
 from uuid import uuid4
 
 @login_required
@@ -22,6 +23,12 @@ def signup(request):
             user.profile.identity = form.cleaned_data.get('identity')
             user.profile.school = form.cleaned_data.get('school')
             user.save()
+            # TO BE SOLVED
+            newWallet = Wallet(user = user, balance = 0)
+            newWallet.save()
+            user.profile.wallet = newWallet
+            user.save()
+            
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
             login(request, user)
