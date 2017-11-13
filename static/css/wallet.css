@@ -1,0 +1,25 @@
+#balance-card {
+    margin-bottom: 1rem;
+}
+
+#balance-card .card-subtitle {
+    margin-top: 1.5rem;
+    margin-bottom: 0.6rem;
+}
+
+.card .money {
+    font-family: Roboto;
+    font-size: 3rem;
+    margin-bottom: 2rem;
+}
+
+.card .money span:last-child {
+    font-size: 1.5rem;
+    vertical-align: text-top;
+}
+
+.card .money::before { 
+    content: "HK$ ";
+    font-weight: lighter;
+    margin-left:-3.5rem;
+}

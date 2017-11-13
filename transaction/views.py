@@ -12,7 +12,7 @@ import decimal, pytz, datetime
 @login_required
 def wallet(request):
     userWallet = Wallet.objects.get(user = request.user)
-    return render(request, 'wallet.html', {'balance': userWallet.balance, 'bank_account': userWallet.bank_account})
+    return render(request, 'wallet.html', {'balance': str(userWallet.balance).split('.'), 'bank_account': userWallet.bank_account})
 
 def transactionHistory(request):
     userWallet = Wallet.objects.get(user = request.user)

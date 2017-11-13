@@ -1,7 +1,13 @@
 {% extends 'nav.html' %}
 
 <!-- title -->
-{% block title %} Overview - Tutoria {% endblock %}
+{% block title %} Wallet - Tutoria {% endblock %}
+
+<!-- extra style sheet -->
+{% block stylesheet %}
+    <link href="/static/css/wallet.css" rel="stylesheet">
+{% endblock %}
+
 
 <!-- menu -->
 {% block menu %} 
@@ -42,11 +48,30 @@
 
 <!-- main -->
 {% block content %}
-<h1 class="bd-title">Wallet</h1>
-<p>Balance: {{ balance }}</p>
-<p>Bank Account: {{ bank_account }} </p>
-<a href="{% url 'transactionHistory' %}" class="btn btn-lg btn-primary btn-block">View History</a>
-<a href="{% url 'addBalance' %}" class="btn btn-lg btn-primary btn-block">Add Balance</a>
-<a href="{% url 'withdrawBalance' %}" class="btn btn-lg btn-primary btn-block">Withraw Balance</a>
+    <h1 class="bd-title">Wallet</h1>
+
+    <div class="row">
+        <div class="col-lg-7" id="balance-card">
+            <div class="card text-center bg-light">
+            <div class="card-body">
+                <h6 class="card-subtitle text-muted">Wallet Balance</h6>
+                <div class="money">
+                    {% for each in balance%}
+                        <span>{{ each }}</span>
+                    {% endfor %}
+                </div>
+                <hr>
+                <p style="text-align:left">Bank Account: {{ bank_account }} </p>
+            </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="list-group">
+                <a href="{% url 'transactionHistory' %}" class="list-group-item list-group-item-action">View History</a>
+                <a href="{% url 'addBalance' %}" class="list-group-item list-group-item-action">Add Balance</a>
+                <a href="{% url 'withdrawBalance' %}" class="list-group-item list-group-item-action">Withraw Balance</a>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
