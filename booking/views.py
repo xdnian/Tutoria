@@ -7,7 +7,7 @@ from .forms import BookingForm, TutorForm
 from .models import Session
 from home.models import Notification
 from offering.models import Timeslot
-import decimal, pytz
+import decimal, pytz, datetime
 from django.utils import timezone
 from transaction.models import Transaction
 
@@ -25,7 +25,7 @@ def search(request):
             price_min = form.cleaned_data.get('price_min')
             price_max = form.cleaned_data.get('price_max')
             '''start query'''
-            allTutors = User.objects.filter(Q(profile__identity='T') | Q(profile__identity='C'))
+            allTutors = User.objects.filter(~Q(id=request.user.id) & (Q(profile__identity='T') | Q(profile__identity='C')))
 
             if identity == 'T':
                 allTutors = allTutors.filter(profile__identity='T')
@@ -89,29 +89,42 @@ def booking(request, pk):
 def confirmBooking(request, pk):
     session = Session.objects.get(pk=pk)
     price = round(session.tutor.profile.price*decimal.Decimal(1.05), 2)
-    check = session.student.profile.wallet.checkBalance(price)
+    session_day_start = datetime.datetime(session.start.year, session.start.month, session.start.day, 0, 0, 0, 0)
+    session_day_end = datetime.datetime(session.start.year, session.start.month, session.start.day, 23, 0, 0, 0)
+    history = Session.objects.filter(start__gte=session_day_start, start__lte=session_day_end, status='Booked')
+    check1 = False
+    if len(history) == 0:
+        check1 = True
+    check2 = session.student.profile.wallet.checkBalance(price)
     status = 'successful'
-    if check == True:
-        session.student.profile.wallet.withdraw(price)
-        medium = User.objects.get(username='admin')
-        medium.profile.wallet.addBalance(price)
-        utcCurrentTime = timezone.now()
-        timezonelocal = pytz.timezone('Asia/Hong_Kong')
-        currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
-        new_transaction = Transaction(from_wallet = session.student.profile.wallet, to_wallet = medium.profile.wallet, 
-            time = currentTime, amount = price, description = 'Tutorial payment')
-        new_transaction.save()
-        session.status = 'Booked'
-        session.save()
-        Notification(session.student, 'Your session booking is successful, your have paid HK$' + str(price) + '.')
+    if check1 == True:
+        if check2 == True:
+            session.student.profile.wallet.withdraw(price)
+            medium = User.objects.get(username='admin')
+            medium.profile.wallet.addBalance(price)
+            utcCurrentTime = timezone.now()
+            timezonelocal = pytz.timezone('Asia/Hong_Kong')
+            currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
+            new_transaction = Transaction(from_wallet = session.student.profile.wallet, to_wallet = medium.profile.wallet, 
+                time = currentTime, amount = price, description = 'Tutorial payment')
+            new_transaction.save()
+            session.status = 'Booked'
+            session.save()
+            Notification(session.student, 'Your session booking is successful, your have paid HK$' + str(price) + '.')
+        else:
+            timeslot = Timeslot.objects.filter(tutor=session.tutor, start=session.start, end=session.end, status='Booked')[0]
+            timeslot.status = 'Available'
+            timeslot.save()
+            Notification(session.student, 'Your session booking is unsuccessful due to insufficient balance.')
+            session.delete()
+            status = 'unsuccessful'
+        return render(request, 'confirmConfirmBooking.html', {'status': status})
     else:
         timeslot = Timeslot.objects.filter(tutor=session.tutor, start=session.start, end=session.end, status='Booked')[0]
         timeslot.status = 'Available'
         timeslot.save()
-        Notification(session.student, 'Your session booking is unsuccessful due to insufficient balance.')
         session.delete()
-        status = 'unsuccessful'
-    return render(request, 'confirmConfirmBooking.html', {'status': status})
+        return render(request, 'samedayBooking.html', {'tutor_id': session.tutor.id})
 
 def cancelConfirmBooking(request, pk):
     session = Session.objects.get(pk=pk)
@@ -127,6 +140,8 @@ def canceling(request, pk):
 
 def confirmCanceling(request, pk):
     session = Session.objects.filter(pk=pk)[0]
+    session.status = 'Canceled'
+    session.save()
     timeslot = Timeslot.objects.filter(tutor=session.tutor, start=session.start, end=session.end, status='Booked')[0]
     timeslot.status = 'Available'
     timeslot.save()
@@ -141,7 +156,6 @@ def confirmCanceling(request, pk):
         time = currentTime, amount = price, description = 'Tutorial payment')
     new_transaction.save()
     Notification(session.student, 'Your session has been canceled, a refund of HK$' + str(price) + ' has been added to your wallet.')
-    session.delete()
     return redirect('session')
 
 def cancelConfirmCanceling(request):
