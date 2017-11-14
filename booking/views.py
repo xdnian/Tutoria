@@ -3,8 +3,9 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.db.models import Q
-from .forms import BookingForm, TutorForm, CancelingForm
+from .forms import BookingForm, TutorForm
 from .models import Session
+from home.models import Notification
 from offering.models import Timeslot
 import decimal, pytz
 from django.utils import timezone
@@ -102,36 +103,26 @@ def confirmBooking(request, pk):
         new_transaction.save()
         session.status = 'Booked'
         session.save()
+        Notification(session.student, 'Your session booking is successful, your have paid HK$' + str(price) + '.')
     else:
         timeslot = Timeslot.objects.filter(tutor=session.tutor, start=session.start, end=session.end, status='Booked')[0]
         timeslot.status = 'Available'
         timeslot.save()
+        Notification(session.student, 'Your session booking is unsuccessful due to insufficient balance.')
         session.delete()
         status = 'unsuccessful'
     return render(request, 'confirmConfirmBooking.html', {'status': status})
 
 def cancelConfirmBooking(request, pk):
     session = Session.objects.get(pk=pk)
-    form = BookingForm(session.tutor.id)
+    tutor_id = session.tutor.id
     timeslot = Timeslot.objects.filter(tutor=session.tutor, start=session.start, end=session.end, status='Booked')[0]
     timeslot.status = 'Available'
     timeslot.save()
     session.delete()
-    return render(request, 'tutor-info.html', {'form': form})
-
-def session(request):
-    allSessions = Session.objects.filter(student__id=request.user.id)
-    return render(request, 'records.html', {'allSessions': allSessions})
+    return redirect('booking', pk=tutor_id)
 
 def canceling(request, pk):
-    # if request.method == 'POST':
-    #     form = CancelingForm(request.user, request.POST)
-    #     if form.is_valid():
-    #         form.save()
-    #         return redirect('home')
-    # else:
-    #     form = CancelingForm(request.user)
-    # return render(request, 'canceling.html', {'form': form})
     return render(request, 'confirmCanceling.html', {'sessionID':pk})
 
 def confirmCanceling(request, pk):
@@ -149,8 +140,17 @@ def confirmCanceling(request, pk):
     new_transaction = Transaction(from_wallet = medium.profile.wallet, to_wallet = session.student.profile.wallet, 
         time = currentTime, amount = price, description = 'Tutorial payment')
     new_transaction.save()
+    Notification(session.student, 'Your session has been canceled, a refund of HK$' + str(price) + ' has been added to your wallet.')
     session.delete()
     return redirect('session')
 
 def cancelConfirmCanceling(request):
     return redirect('session')
+
+def session(request):
+    allSessions = Session.objects.filter(student=request.user, status='Booked')
+    return render(request, 'records.html', {'allSessions': allSessions, 'active':0})
+
+def sessionHistory(request):
+    allSessions = Session.objects.filter(Q(student=request.user) & ~Q(status='Booked'))
+    return render(request, 'records.html', {'allSessions': allSessions, 'active':1})

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Session
 from offering.models import Timeslot
+from django.utils import timezone
 import decimal, pytz, datetime
 
 
@@ -24,10 +25,18 @@ class BookingForm(forms.Form):
     slots = forms.ModelChoiceField(queryset=Timeslot.objects.all(), widget=forms.RadioSelect, empty_label=None)
     def __init__(self, TutorID, *args, **kwargs):
         super(BookingForm, self).__init__(*args, **kwargs)
-        start_date = datetime.date.today()
-        end_date = start_date + datetime.timedelta(days=7)
-        maxtime = datetime.datetime(end_date.year, end_date.month, end_date.day, 22, 0, 0, 0)
-        self.fields['slots'].queryset = Timeslot.objects.filter(tutor__id=TutorID, status='Available', start__lte=maxtime)
+        utcCurrentTime = timezone.now()
+        timezonelocal = pytz.timezone('Asia/Hong_Kong')
+        currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
+
+        endTime = currentTime + datetime.timedelta(days=7)
+        if currentTime.minute < 30:
+            mintime = datetime.datetime(currentTime.year, currentTime.month, currentTime.day+1, currentTime.hour, 30, 0, 0)
+            maxtime = datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour+1, 30, 0, 0)
+        else:
+            mintime = datetime.datetime(currentTime.year, currentTime.month, currentTime.day+1, currentTime.hour+1, 0, 0, 0)
+            maxtime = datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour+1, 0, 0, 0)
+        self.fields['slots'].queryset = Timeslot.objects.filter(tutor__id=TutorID, status='Available', start__lte=maxtime, start__gte=mintime)
     def save(self, Student):
         timeslot = self.cleaned_data['slots']
         timeslot.status = 'Booked'
@@ -36,17 +45,3 @@ class BookingForm(forms.Form):
         session.save()
         return session.id
         
-
-
-class CancelingForm(forms.Form):
-    sessions = forms.ModelMultipleChoiceField(queryset=Session.objects.none(), widget=forms.CheckboxSelectMultiple)
-    def __init__(self, Student, *args, **kwargs):
-        super(CancelingForm, self).__init__(*args, **kwargs)
-        self.fields['sessions'].queryset = Session.objects.filter(student__id=Student.id)
-    def save(self):
-        for session in self.cleaned_data['sessions']:
-            timeslot = Timeslot(tutor=session.tutor, start=session.start, end=session.end)
-            timeslot.save()
-            session.student.profile.wallet = session.student.profile.wallet + timeslot.tutor.profile.price
-            session.student.save()
-            session.delete()

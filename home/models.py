@@ -35,3 +35,9 @@ class Reset_token(models.Model):
     token = models.CharField(max_length=30, blank=True)
     def __str__(self):
         return self.user.username
+
+def Notification(user, message):
+    print ('****************************')
+    print ("Email to username: " + user.username + " at " + user.email)
+    print (message)
+    print ('****************************')

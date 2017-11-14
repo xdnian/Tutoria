@@ -1,9 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.utils import timezone
 from booking.models import Session
 from offering.models import Timeslot
-import datetime
+from home.models import Notification
+import datetime, decimal
 import pytz
 
 class Command(BaseCommand):
@@ -30,8 +32,6 @@ class Command(BaseCommand):
         for timeslot in allBookedTimeslots:
             timeslot.status = 'Committed'
             timeslot.save()
-            #timeslot.delete()
-            #timeslot.save()
 
         allBookedSessions = Session.objects.filter( Q(start__lte=tomorrowTime, status = 'Booked')).order_by('start')
         for session in allBookedSessions:
@@ -47,6 +47,14 @@ class Command(BaseCommand):
         allFinishedSessions = Session.objects.filter (Q(end__lte=currentTime, status = 'Started')).order_by('end')
         for session in allFinishedSessions:
             session.status = 'Ended'
-            session.tutor.profile.wallet = session.tutor.profile.wallet + session.tutor.profile.price
-            session.tutor.save()
+            price = session.tutor.profile.price
+            commission = round(session.tutor.profile.price*decimal.Decimal(0.05), 2)
+            total = price + commission
+            session.tutor.profile.wallet.addBalance(price)
+            MyTutors = User.objects.get(username='MyTutors')
+            MyTutors.profile.wallet.addBalance(commission)
+            medium = User.objects.get(username='admin')
+            medium.profile.wallet.withdraw(total)
+            Notification(session.tutor, 'A tutorial session fee of HK$' + str(price) + ' had been added to your wallet.')
+            Notification(session.student, 'You are invited to write a review for this tutorial session.')
             session.save()
