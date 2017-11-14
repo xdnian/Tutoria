@@ -77,7 +77,7 @@ def search(request):
     return render(request, 'search.html', {'form': form})
 
 
-def booking(request, pk):
+def viewTutor(request, pk):
     if request.method == 'POST':
         form = BookingForm(pk, request.POST)
         if form.is_valid():
@@ -151,7 +151,7 @@ def cancelConfirmBooking(request, pk):
     timeslot.status = 'Available'
     timeslot.save()
     session.delete()
-    return redirect('booking', pk=tutor_id)
+    return redirect('viewTutor', pk=tutor_id)
 
 def canceling(request, pk):
     return render(request, 'confirmCanceling.html', {'sessionID':pk})
