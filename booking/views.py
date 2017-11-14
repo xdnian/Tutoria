@@ -149,8 +149,8 @@ def cancelConfirmCanceling(request):
 
 def session(request):
     allSessions = Session.objects.filter(student=request.user, status='Booked')
-    return render(request, 'records.html', {'allSessions': allSessions})
+    return render(request, 'records.html', {'allSessions': allSessions, 'active':0})
 
 def sessionHistory(request):
     allSessions = Session.objects.filter(Q(student=request.user) & ~Q(status='Booked'))
-    return render(request, 'records.html', {'allSessions': allSessions})
+    return render(request, 'records.html', {'allSessions': allSessions, 'active':1})
