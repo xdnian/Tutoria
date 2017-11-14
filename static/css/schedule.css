@@ -1,0 +1,15 @@
+.available {
+    background-color: #eaffef;
+}
+
+.blocked {
+    background-color: #363636;
+}
+
+.unavailable {
+    background-color: #adadad;
+}
+
+.table#offerslots td {
+    text-align: center;
+}

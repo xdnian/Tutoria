@@ -28,10 +28,14 @@ select.form-control:not([size]):not([multiple]) {
     padding-right: 2rem;
 }
 
-.confirmbtn {
-    float: right;
+.confirm-btn {
     margin: 15px 0 15px 15px;
 }
+
+.confirm-btn-set {
+    float: right;
+}
+
 
 /* @media (min-width: 768px) {
     .search-box th {
@@ -72,3 +76,4 @@ select.form-control:not([size]):not([multiple]) {
 .alert-dismissible .text {
     padding-right: 30px;
 }
+
