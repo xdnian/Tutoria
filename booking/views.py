@@ -74,7 +74,7 @@ def search(request):
         form = TutorForm()
     return render(request, 'search.html', {'form': form})
 
-def booking(request, pk):
+def viewTutor(request, pk):
     if request.method == 'POST':
         form = BookingForm(pk, request.POST)
         if form.is_valid():
@@ -94,10 +94,11 @@ def booking(request, pk):
             commission = round(tutor_price *decimal.Decimal(0.05), 2)
             school = session.tutor.profile.getSchoolName()
             total_price = tutor_price + commission
-            session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'commission': commission}
+            session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'total_price': total_price, 'commission': commission}
             return render(request, 'confirmBooking.html', {'session_info': session_info, 'sessionID':sessionID})
     else:
         form = BookingForm(pk)
+    # form = BookingForm(pk)
     return render(request, 'tutor-info.html', {'form': form})
 
 def confirmBooking(request, pk):
@@ -147,7 +148,7 @@ def cancelConfirmBooking(request, pk):
     timeslot.status = 'Available'
     timeslot.save()
     session.delete()
-    return redirect('booking', pk=tutor_id)
+    return redirect('viewTutor', pk=tutor_id)
 
 def canceling(request, pk):
     return render(request, 'confirmCanceling.html', {'sessionID':pk})

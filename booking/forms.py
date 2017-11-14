@@ -33,6 +33,7 @@ class BookingForm(forms.Form):
         if currentTime.minute < 30:
             mintime = datetime.datetime(currentTime.year, currentTime.month, currentTime.day+1, currentTime.hour, 30, 0, 0)
         else:
+            #TODO
             mintime = datetime.datetime(currentTime.year, currentTime.month, currentTime.day+1, currentTime.hour+1, 0, 0, 0)
         maxtime = datetime.datetime(endTime.year, endTime.month, endTime.day, 22, 0, 0, 0)
         self.fields['slots'].queryset = Timeslot.objects.filter(tutor__id=TutorID, status='Available', start__lte=maxtime, start__gte=mintime)
