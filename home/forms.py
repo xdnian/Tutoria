@@ -25,6 +25,7 @@ class UserForm(UserCreationForm):
 
         for f in self.fields: self.fields[f].widget.attrs['class'] = 'form-control'
         self.fields['identity'].widget.attrs['class'] = 'form-control custom-select'
+        self.fields['school'].widget.attrs['class'] = 'form-control custom-select'
 
         self.fields['username'].help_text = 'enter a username'
         self.fields['identity'].help_text = 'register as student/tutor'

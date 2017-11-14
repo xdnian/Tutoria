@@ -1,8 +1,4 @@
 /* search box style */
-.confirmbtn {
-    float: right;
-    margin: 15px 0 15px 15px;
-}
 
 .search-box .form-control {
     padding: .4rem .5rem;
@@ -25,6 +21,16 @@ select.form-control:not([size]):not([multiple]) {
 .search-box th {
     padding-left: 0;
     font-weight: normal;
+}
+
+#tutor-search-btn {
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.confirmbtn {
+    float: right;
+    margin: 15px 0 15px 15px;
 }
 
 /* @media (min-width: 768px) {

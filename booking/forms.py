@@ -11,15 +11,15 @@ class TutorForm(forms.Form):
     SCHOOL_CHOICES = (('0', 'All Universities'), ('1', 'University of Hong Kong'),('2', 'Hong Kong University of Science and Technology'),
         ('3', 'Chinese University of Hong Kong'), ('4', 'City University of Hong Kong'), 
         ('5', 'The Hong Kong Polytechnic University'), ('6', 'Hong Kong Baptist University'))
-    univserity = forms.ChoiceField(label=("univserity"), required=False, choices=SCHOOL_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
-    course = forms.CharField(label=("course"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    name = forms.CharField(label=("name"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    subject = forms.CharField(label=("subject"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    univserity = forms.ChoiceField(label=("Univserity"), required=False, choices=SCHOOL_CHOICES, widget=forms.Select(attrs={'class': 'form-control custom-select'}))
+    course = forms.CharField(label=("Course"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Course code..'}))
+    name = forms.CharField(label=("Name"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Tutor name..'}))
+    subject = forms.CharField(label=("Subject"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Subject tags, separate by ";"..'}))
     IDENTITY_CHOICES = (('A', 'All'),('T', 'Private Tutor'),('C', 'Contracted Tutor'))
-    identity = forms.ChoiceField(label=("identity"), required=False, choices=IDENTITY_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
-    price_min = forms.DecimalField(label=("price_min"), required=False, max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    price_max = forms.DecimalField(label=("price_max"), required=False, max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    available_only = forms.BooleanField(label=("available_only"), required=False, widget=forms.CheckboxInput(attrs={'class': 'custom-control-input'}))
+    identity = forms.ChoiceField(label=("Identity"), required=False, choices=IDENTITY_CHOICES, widget=forms.Select(attrs={'class': 'form-control custom-select'}))
+    price_min = forms.DecimalField(label=("Price_min"), required=False, max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Minimum rate'}))
+    price_max = forms.DecimalField(label=("Price_max"), required=False, max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Maximum rate'}))
+    available_only = forms.BooleanField(label=("Available_only"), required=False, widget=forms.CheckboxInput(attrs={'class': 'custom-control-input'}))
 
 class BookingForm(forms.Form):
     slots = forms.ModelChoiceField(queryset=Timeslot.objects.all(), widget=forms.RadioSelect, empty_label=None)
