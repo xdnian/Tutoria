@@ -1,0 +1,113 @@
+{% extends 'nav.html' %}
+
+<!-- title -->
+{% block title %}
+  Details - Tutoria
+{% endblock %}
+
+<!-- extra style sheet -->
+{% block stylesheet %}
+  <link href="/static/css/catalogue.css" rel="stylesheet">
+{% endblock %}
+
+<!-- menu -->
+{% block menu %}
+  {% if user.is_authenticated %}
+    <div class="bd-toc-item">
+      <a class="bd-toc-link" href="{% url 'home' %}">
+        Overview
+      </a>
+    </div>
+
+    <div class="bd-toc-item">
+      <a class="bd-toc-link" href="{% url 'session' %}">
+        My Tutorials
+      </a>
+    </div>
+
+    <div class="bd-toc-item active">
+      <a class="bd-toc-link" href="{% url 'search' %}">
+        Search Tutor
+      </a>
+    </div>
+
+    {% if user.profile.identity != 'S' %}
+      <div class="bd-toc-item">
+        <a class="bd-toc-link" href="{% url 'offerslot' %}">
+          Set Timeslots
+        </a>
+      </div>
+    {% endif %}
+
+    <div class="bd-toc-item">
+        <a class="bd-toc-link" href="{% url 'wallet' %}">
+            My Wallet
+        </a>
+    </div>
+
+  {% endif %}
+{% endblock %}
+
+<!-- main -->
+{% block content %}
+
+  <!-- List all information of the session -->
+  <form method="post">
+    <ul class="list-group">
+      {% csrf_token %}
+
+      <!--<li class="list-group-item">
+        {{ session.id }}\n
+        {{ session.tutor }}
+      </li>-->
+
+      <h1 class="bd-title">Tutorial Booking Detail</h1>
+    <div class="container">
+      <div class="row">
+        <table class="table">
+          <tbody>
+            <tr>
+              <th>Tutor</th>
+              <td><p class="card-text">{{ session.tutor.first_name }} {{ session.tutor.last_name }}</p></td>
+            </tr>
+
+            <tr>
+              <th>University</th>
+              <td><p class="card-text">{{ session.tutor.profile.school }}</p></td>
+            </tr>
+
+            <tr>
+              <th>Topic</th>
+              <td><p class="card-text">{{ session.topic }}</p></td>
+            </tr>
+
+            <tr>
+              <th>Time</th>
+              <td><p class="card-text">{{ session.start }} - {{ session.end }}</p></td>
+            </tr>
+
+            <tr>
+              <th>Rate</th>
+              <td><p class="card-text">{{ session.tutor.price }}</p></td>
+            </tr>
+
+            <tr>
+              <th>Total Pay</th>
+              <td>HK$ {{ session_info.total_price }} (including HK$ {{ session_info.commission }} as commission)</td>
+            </tr>
+
+          </tbody>
+          </thead>
+        </table>
+      </div>
+
+
+
+    <a href="javascript:history.go(-1)"><button type="button" class="btn btn-secondary confirmbtn">Back</button></a>
+  </form>
+{% endblock %}
+
+<!-- custom scripts -->
+{% block script %}
+  <script src="/static/js/booking.js"></script>
+{% endblock %}

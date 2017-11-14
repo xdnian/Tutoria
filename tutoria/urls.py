@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^confirmCanceling/(?P<pk>\d+)/$', book_views.confirmCanceling, name='confirmCanceling'),
     url(r'^cancelConfirmCanceling/$', book_views.cancelConfirmCanceling, name='cancelConfirmCanceling'),
     url(r'^session/$', book_views.session, name='session'),
+    url(r'^viewSession/(?P<pk>\d+)/$', book_views.viewSession, name='viewSession'),
     url(r'^sessionHistory/$', book_views.sessionHistory, name='sessionHistory'),
     url(r'^canceling/(?P<pk>\d+)/$', book_views.canceling, name='canceling'),
     url(r'^wallet/$', transaction_views.wallet, name='wallet'),

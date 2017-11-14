@@ -69,7 +69,7 @@
         <h4 class="card-title" status="{{ session.status }}">{{ session.topic }}</h4>
         <p class="card-text">Tutor: {{ session.tutor }}
           <br>Time: {{ session.start }}-{{ session.end }}</p>
-        <button class="btn btn-primary session-detail-btn">Details</buttona>
+        <a href="/viewSession/{{session.id}}" class="btn btn-primary session-detail-btn">Details</a>
         <button class="btn btn-danger session-cancel-btn">Cancel</button>
       </div>
     </div>

@@ -9,7 +9,9 @@ from home.models import Notification
 from offering.models import Timeslot
 import decimal, pytz, datetime
 from django.utils import timezone
+from django.shortcuts import get_object_or_404, render
 from transaction.models import Transaction
+
 
 @login_required
 def search(request):
@@ -74,6 +76,7 @@ def search(request):
         form = TutorForm()
     return render(request, 'search.html', {'form': form})
 
+
 def booking(request, pk):
     if request.method == 'POST':
         form = BookingForm(pk, request.POST)
@@ -99,6 +102,7 @@ def booking(request, pk):
     else:
         form = BookingForm(pk)
     return render(request, 'tutor-info.html', {'form': form})
+
 
 def confirmBooking(request, pk):
     session = Session.objects.get(pk=pk)
@@ -182,3 +186,7 @@ def session(request):
 def sessionHistory(request):
     allSessions = Session.objects.filter(Q(student=request.user) & ~Q(status='Booked'))
     return render(request, 'records.html', {'allSessions': allSessions, 'active':1})
+
+def viewSession(request, pk):
+    session_info = Session.objects.get(pk=pk)
+    return render(request, 'viewSession.html', {'session':session_info, 'sessionID':pk})
