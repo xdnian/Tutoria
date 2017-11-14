@@ -54,27 +54,27 @@
           <tbody>
             <tr>
               <th>Tutor</th>
-              <td>Yat Kin Lam</td>
+              <td>{{ session_info.name }}</td>
             </tr>
             <tr>
               <th>University</th>
-              <td>University of Hong Kong</td>
+              <td>{{ session_info.school }}</td>
             </tr>
             <tr>
               <th>Date</th>
-              <td>Nov 16 2017</td>
+              <td>{{ session_info.date }}</td>
             </tr>
             <tr>
               <th>Time</th>
-              <td>16:00~16:30</td>
+              <td>{{ session_info.time }}</td>
             </tr>
             <tr>
               <th>Rate</th>
-              <td>HK$ 10 / hr</td>
+              <td>HK$ {{ session_info.tutor_price }} / hr</td>
             </tr>
             <tr>
               <th>Total Pay</th>
-              <td>HK$ {{ price }} (including HK$ 0.5 as commission)</td>
+              <td>HK$ {{ session_info.total_price }} (including HK$ {{ session_info.commission }} as commission)</td>
             </tr>
           </tbody>
           </thead>
