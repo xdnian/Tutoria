@@ -54,10 +54,10 @@
 
   <ul class="nav nav-tabs">
     <li class="nav-item">
-      <a class="nav-link active" href="#">Upcoming</a>
+      <a class="nav-link {% if active==0 %} active {% endif %}" href="{% url 'session' %}">Upcoming</a>
     </li>
     <li class="nav-item disabled">
-      <a class="nav-link" href="#">History</a>
+      <a class="nav-link {% if active==1 %} active {% endif %}" href="{% url 'sessionHistory' %}">History</a>
     </li>
   </ul>
 
