@@ -2,15 +2,45 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Timeslot
+import pytz
+
+TIMEZONELOCAL = pytz.timezone('Asia/Hong_Kong')
 
 
+
+# class TimeForm(forms.Form):
+#     slots = forms.ModelMultipleChoiceField(queryset=Timeslot.objects.none(), widget=forms.CheckboxSelectMultiple, to_field_name="time")
+#     def __init__(self, Tutor, *args, **kwargs):
+#         super(TimeForm, self).__init__(*args, **kwargs)
+#         self.fields['slots'].queryset = Timeslot.objects.filter(tutor__id=Tutor.id).order_by('start')
+#     def save(self):
+#         for timeslot in self.cleaned_data['slots']:
+#             timeslot.status = 'Blocked'
+#             timeslot.save()
 
 class TimeForm(forms.Form):
-    slots = forms.ModelMultipleChoiceField(queryset=Timeslot.objects.none(), widget=forms.CheckboxSelectMultiple, to_field_name="time")
+    fields = {}
     def __init__(self, Tutor, *args, **kwargs):
         super(TimeForm, self).__init__(*args, **kwargs)
-        self.fields['slots'].queryset = Timeslot.objects.filter(tutor__id=Tutor.id, status='Available').order_by('start')
+        self.allSlots = Timeslot.objects.filter(tutor__id=Tutor.id).order_by('start')
+        for i in range(len(self.allSlots)):
+            startlocal = self.allSlots[i].start.astimezone(TIMEZONELOCAL)
+            endlocal = self.allSlots[i].end.astimezone(TIMEZONELOCAL)
+            date = startlocal.strftime('%Y-%m-%d')
+            startTime = startlocal.strftime('%H:%M')
+            endTime = endlocal.strftime('%H:%M')
+            status = self.allSlots[i].status
+            if status == 'Available':
+                self.fields["slot{0}".format(i)] = forms.BooleanField(required=False, 
+                    widget=forms.CheckboxInput(attrs={'status': status, 'date':date, 'startTime':startTime, 'endTime':endTime}))
+            elif status == 'Blocked':
+                self.fields["slot{0}".format(i)] = forms.BooleanField(required=False, 
+                    widget=forms.CheckboxInput(attrs={'checked': '' ,'status': status, 'date':date, 'startTime':startTime, 'endTime':endTime}))
+            else:
+                self.fields["slot{0}".format(i)] = forms.BooleanField(required=False, 
+                    widget=forms.CheckboxInput(attrs={'disabled': '' ,'status': status, 'date':date, 'startTime':startTime, 'endTime':endTime}))
     def save(self):
-        for timeslot in self.cleaned_data['slots']:
-            timeslot.status = 'Blocked'
-            timeslot.save()
+        for i in range(len(self.allSlots)):
+            if self.cleaned_data["slot{0}".format(i)] == True:
+                self.allSlots[i].status = 'Blocked'
+                self.allSlots[i].save()
