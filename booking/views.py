@@ -80,8 +80,22 @@ def booking(request, pk):
         if form.is_valid():
             sessionID = form.save(request.user)
             session = Session.objects.get(pk=sessionID)
-            price = round(session.tutor.profile.price*decimal.Decimal(1.05), 2)
-            return render(request, 'confirmBooking.html', {'price': price, 'sessionID':sessionID})
+
+            name = session.tutor.get_full_name()
+
+            timezonelocal = pytz.timezone('Asia/Hong_Kong')
+            startTime = timezone.localtime(session.start, timezonelocal)
+            endTime = timezone.localtime(session.end, timezonelocal)
+
+            dateStr = startTime.strftime('%Y-%m-%d')
+            timeStr = startTime.strftime('%H:%M')  + ' ~ ' + endTime.strftime('%H:%M')
+
+            tutor_price = session.tutor.profile.price
+            commission = round(tutor_price *decimal.Decimal(0.05), 2)
+            school = session.tutor.profile.getSchoolName()
+            total_price = tutor_price + commission
+            session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'commission': commission}
+            return render(request, 'confirmBooking.html', {'session_info': session_info, 'sessionID':sessionID})
     else:
         form = BookingForm(pk)
     return render(request, 'tutor-info.html', {'form': form})
