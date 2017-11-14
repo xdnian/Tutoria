@@ -65,10 +65,20 @@
         <th>21</th>
       </tr> -->
 
-    {% for each in form.slots %}
+<!--     {% for each in form.slots %}
       <tr>
           <td>{{ each }}</td>
       </tr>
+    {% endfor %} -->
+    {% for field in form %}
+        <tr>
+          <th>
+            {{ field.label_tag }}
+          </th>
+          <td>
+            {{ field }}
+          </td>
+        </tr>
     {% endfor %}
     </table>
 
