@@ -46,48 +46,57 @@
 
 <!-- main -->
 {% block content %}
-  <h1 class="bd-title">Change Offering Slots</h1>
+    <h1 class="bd-title">Change Offering Slots</h1>
+    <p class="bd-lead">Please click on the schedule to modify your available timeslots.</p> 
+    <p style="margin-bottom: 2rem;"><span class="badge badge-success">Open for booking</span> <span class="badge badge-dark">Blacked out</span> <span class="badge badge-danger">Cannot modify</span></p>
 
-  <form method="post">
-    {% csrf_token %}
-    <table class="table table-hover table-sm table-bordered" id="offerslots">
-        <thead>
-            <tr>
-                <th></th>
-                {% for slots in timeslots %}
-                    <th>{{slots}}</th>
+    <form method="post">
+        {% csrf_token %}
+        <table class="table table-hover table-sm table-bordered table-responsive" id="offerslots" style="display: none;">
+            <thead>
+                <tr>
+                    <th></th>
+                    {% for slots in timeslots %}
+                        <th>{{slots}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for field in form %}
+                    {% ifchanged field.field.widget.attrs.date %}
+                        {% if forloop.counter0 != 0 %}
+                        </tr>
+                        {% endif %}
+                        <tr>
+                        <th>
+                            {{ field.field.widget.attrs.date }}
+                        </th>
+                        {% endifchanged %}
+                        <td class="checkable 
+                            {% if field.field.widget.attrs.status == 'Available' %} bg-success
+                            {% elif field.field.widget.attrs.status == 'Blocked' %} bg-dark
+                            {% elif field.field.widget.attrs.status == 'Unavailable' %} bg-danger
+                            {% elif field.field.widget.attrs.status == 'Booked' %} bg-danger
+                            {% elif field.field.widget.attrs.status == 'Committed' %} bg-danger
+                            {% endif %}">
+                            <label class="d-none">{{ field }}</label>
+                        </td>
                 {% endfor %}
-            </tr>
-        </thead>
+                </tr>
+            </tbody>
+        </table>
 
-        <tbody>
-            {% for field in form %}
-                {% ifchanged field.field.widget.attrs.date %}
-                    {% if forloop.counter0 != 0 %}
-                    </tr>
-                    {% endif %}
-                    <tr>
-                    <th>
-                        {{ field.field.widget.attrs.date }}
-                    </th>
-                    {% endifchanged %}
-                    <td class="{% if field.field.widget.attrs.status == 'Available' %} available
-                               {% elif field.field.widget.attrs.status == 'Blocked' %} blocked
-                               {% elif field.field.widget.attrs.status == 'Unavailable' %} unavailable
-                               {% elif field.field.widget.attrs.status == 'Booked' %} unavailable
-                               {% elif field.field.widget.attrs.status == 'Committed' %} unavailable
-                               {% endif %}">
-                        <label class="custom-control custom-checkbox">
-                            {{ field }}
-                            <span class="custom-control-indicator"></span>
-                        </label>
-                    </td>
-            {% endfor %}
-            </tr>
-        </tbody>
-    </table>
+        <div class="container">
+            <div class="row justify-content-center">
+                <button class="btn btn-primary" id="black-out-save-btn" style="text-align:center" type="submit">Save</button>
+            </div>
+        </div>
+    </form>
+    <br>
 
-    <button class="btn btn-primary" type="submit">submit</button>
-  </form>
+{% endblock %}
 
+{% block script %}
+    <script src="/static/js/offer-slots.js"></script>
 {% endblock %}

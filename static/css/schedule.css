@@ -1,15 +1,31 @@
-.available {
-    background-color: #eaffef;
+table#offerslots {
+    border-collapse: collapse;
 }
 
-.blocked {
-    background-color: #363636;
-}
-
-.unavailable {
-    background-color: #adadad;
-}
-
-.table#offerslots td {
+table#offerslots td {
     text-align: center;
+    padding: 0px;
+}
+
+table#offerslots label {
+    display: block;
+    padding: 5px;
+    margin: 0;
+}
+
+table#offerslots .bg-success:hover {
+    background-color: #218f3a!important;
+}
+
+table#offerslots .bg-dark:hover {
+    background-color: #4d5359!important;
+}
+
+#black-out-save-btn {
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.bd-lead {
+    margin-bottom: 0;
 }

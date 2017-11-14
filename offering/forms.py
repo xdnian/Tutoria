@@ -6,8 +6,6 @@ import pytz
 
 TIMEZONELOCAL = pytz.timezone('Asia/Hong_Kong')
 
-
-
 # class TimeForm(forms.Form):
 #     slots = forms.ModelMultipleChoiceField(queryset=Timeslot.objects.none(), widget=forms.CheckboxSelectMultiple, to_field_name="time")
 #     def __init__(self, Tutor, *args, **kwargs):
@@ -26,12 +24,12 @@ class TimeForm(forms.Form):
         for i in range(len(self.allSlots)):
             startlocal = self.allSlots[i].start.astimezone(TIMEZONELOCAL)
             endlocal = self.allSlots[i].end.astimezone(TIMEZONELOCAL)
-            date = startlocal.strftime('%Y-%m-%d')
+            date = startlocal.strftime('%b %d')
             startTime = startlocal.strftime('%H:%M')
             endTime = endlocal.strftime('%H:%M')
             status = self.allSlots[i].status
 
-            attrs = {'class':'custom-control-input', 'status': status, 'date':date, 'startTime':startTime, 'endTime':endTime}
+            attrs = {'status': status, 'date':date, 'startTime':startTime, 'endTime':endTime}
             if status != 'Available':
                 if status == 'Blocked':
                     attrs['checked'] = ''
@@ -44,4 +42,7 @@ class TimeForm(forms.Form):
         for i in range(len(self.allSlots)):
             if self.cleaned_data["slot{0}".format(i)] == True:
                 self.allSlots[i].status = 'Blocked'
+                self.allSlots[i].save()
+            elif self.allSlots[i].status == 'Blocked':
+                self.allSlots[i].status = 'Available'
                 self.allSlots[i].save()
