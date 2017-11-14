@@ -11,6 +11,7 @@ class Profile(models.Model):
     SCHOOL_CHOICES = (('1', 'University of Hong Kong'),('2', 'Hong Kong University of Science and Technology'),
         ('3', 'Chinese University of Hong Kong'), ('4', 'City University of Hong Kong'), 
         ('5', 'The Hong Kong Polytechnic University'), ('6', 'Hong Kong Baptist University'))
+    SCHOOL_CHOICES_DICT = dict((x, y) for x, y in SCHOOL_CHOICES)
     school = models.CharField(max_length=2, choices=SCHOOL_CHOICES, default='1')
     phone = models.CharField(max_length=30)
     courses = models.TextField(blank=True)
@@ -20,6 +21,9 @@ class Profile(models.Model):
     price = models.DecimalField(default=0.00, max_digits=10, decimal_places=2)
     def __str__(self):
         return self.user.username
+
+    def getSchoolName(self):
+        return self.SCHOOL_CHOICES_DICT[self.school]
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

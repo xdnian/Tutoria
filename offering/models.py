@@ -11,11 +11,6 @@ class Timeslot(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
     status = models.CharField(max_length=20, default='Available')
-    # time = None
-    
-    def __init__(self, *args, **kwargs):
-        super(Timeslot, self).__init__(*args, **kwargs)
-        self.time = self.start.astimezone(TIMEZONELOCAL).strftime('%Y-%m-%d %H:%M')
 
     def __str__(self):
         startlocal = self.start.astimezone(TIMEZONELOCAL)
