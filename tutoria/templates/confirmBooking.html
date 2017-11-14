@@ -1,32 +1,93 @@
-{% extends 'account.html' %}
+{% extends 'nav.html' %}
 
-{% block title %}Reset Password - Tutoria{% endblock %}
+<!-- title -->
+{% block title %} Search - Tutoria {% endblock %}
+
+<!-- extra style sheet -->
+{% block stylesheet %}
+  <link href="/static/css/catalogue.css" rel="stylesheet"> 
+{% endblock %}
+
+<!-- menu -->
+{% block menu %}
+{% if user.is_authenticated %}
+  <div class="bd-toc-item">
+    <a class="bd-toc-link" href="{% url 'home' %}">
+      Overview
+    </a>
+  </div>
+
+  <div class="bd-toc-item">
+    <a class="bd-toc-link" href="{% url 'session' %}">
+      My Tutorials
+    </a>
+  </div>
+
+  <div class="bd-toc-item active">
+    <a class="bd-toc-link" href="{% url 'search' %}">
+      Search Tutor
+    </a>
+  </div>
+
+  {% if user.profile.identity != 'S' %}
+    <div class="bd-toc-item">
+      <a class="bd-toc-link" href="{% url 'offerslot' %}">
+        Set Timeslots
+      </a>
+    </div>
+  {% endif %}
+
+  <div class="bd-toc-item">
+      <a class="bd-toc-link" href="{% url 'wallet' %}">
+          My Wallet
+      </a>
+  </div>
+
+{% endif %}
+{% endblock %}
 
 {% block content %}
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-sm-6">
-        <a class="brand" href="/">
-          <img src="/static/assets/brand/tutoria-logo.png" alt="Tutoria">
-        </a>
+  <h1 class="bd-title">Booking Confirmation</h1> 
+    <div class="container">
+      <div class="row">
+        <table class="table">
+          <tbody>
+            <tr>
+              <th>Tutor</th>
+              <td>{{ session_info.name }}</td>
+            </tr>
+            <tr>
+              <th>University</th>
+              <td>{{ session_info.school }}</td>
+            </tr>
+            <tr>
+              <th>Date</th>
+              <td>{{ session_info.date }}</td>
+            </tr>
+            <tr>
+              <th>Time</th>
+              <td>{{ session_info.time }}</td>
+            </tr>
+            <tr>
+              <th>Rate</th>
+              <td>HK$ {{ session_info.tutor_price }} / hr</td>
+            </tr>
+            <tr>
+              <th>Total Pay</th>
+              <td>HK$ {{ session_info.total_price }} (including HK$ {{ session_info.commission }} as commission)</td>
+            </tr>
+          </tbody>
+          </thead>
+        </table>
+      </div>
+
+      <div class="confirm-btn-set">
+        <a href="/cancelConfirmBooking/{{sessionID}}" class="btn btn-danger confirm-btn">Cancel</a>
+        <a href="/confirmBooking/{{sessionID}}" class="btn btn-success confirm-btn">Confirm and Pay</a>
       </div>
     </div>
 
-    <div class="row justify-content-center">
-      <div class="col-sm-6 align-self-center">
-        <div class="card text-center">
-          <div class="card-body">
-            <br>
-            <h4 class="card-title">Confirm booking?</h4>
-            <p class="card-text">You will pay HK$ {{ price }}</p>
-            <br>
-            <a href="/confirmBooking/{{sessionID}}" class="btn-lg btn btn-success">Confirm</a>
-            <a href="/cancelConfirmBooking/{{sessionID}}" class="btn-lg btn btn-success">Cancel</a>
-          </div>
-        </div>
-      </div>
-    </div>
     
-  </div>
+
   <!-- /container -->
 {% endblock %}

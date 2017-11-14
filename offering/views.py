@@ -5,6 +5,10 @@ from .forms import TimeForm
 import pytz, datetime, sys
 from .models import Timeslot
 
+PRIVATE_TUTOR_TIMESLOTS = [(str(i) + ':00') for i in range(8,22)]
+CONTRACTED_TUTOR_TIMESLOTS = [[str(i) + ':00', str(i) + ':30'] for i in range(8,22)]
+CONTRACTED_TUTOR_TIMESLOTS = [item for sublist in CONTRACTED_TUTOR_TIMESLOTS for item in sublist]
+
 @login_required
 def offerslot(request):
     start_date = datetime.date.today()
@@ -56,4 +60,5 @@ def offerslot(request):
             return redirect('home')
     else:
         form = TimeForm(request.user)
-    return render(request, 'offerslot.html', {'form': form})
+    timeslots = PRIVATE_TUTOR_TIMESLOTS if request.user.profile.identity == 'T' else CONTRACTED_TUTOR_TIMESLOTS
+    return render(request, 'offerslot.html', {'form': form, 'timeslots': timeslots})

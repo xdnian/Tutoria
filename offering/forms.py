@@ -30,15 +30,16 @@ class TimeForm(forms.Form):
             startTime = startlocal.strftime('%H:%M')
             endTime = endlocal.strftime('%H:%M')
             status = self.allSlots[i].status
-            if status == 'Available':
-                self.fields["slot{0}".format(i)] = forms.BooleanField(required=False, 
-                    widget=forms.CheckboxInput(attrs={'status': status, 'date':date, 'startTime':startTime, 'endTime':endTime}))
-            elif status == 'Blocked':
-                self.fields["slot{0}".format(i)] = forms.BooleanField(required=False, 
-                    widget=forms.CheckboxInput(attrs={'checked': '' ,'status': status, 'date':date, 'startTime':startTime, 'endTime':endTime}))
-            else:
-                self.fields["slot{0}".format(i)] = forms.BooleanField(required=False, 
-                    widget=forms.CheckboxInput(attrs={'disabled': '' ,'status': status, 'date':date, 'startTime':startTime, 'endTime':endTime}))
+
+            attrs = {'class':'custom-control-input', 'status': status, 'date':date, 'startTime':startTime, 'endTime':endTime}
+            if status != 'Available':
+                if status == 'Blocked':
+                    attrs['checked'] = ''
+                else:
+                    attrs['disabled'] = ''
+
+            self.fields["slot{0}".format(i)] = forms.BooleanField(required=False, 
+                    widget=forms.CheckboxInput(attrs = attrs))
     def save(self):
         for i in range(len(self.allSlots)):
             if self.cleaned_data["slot{0}".format(i)] == True:
