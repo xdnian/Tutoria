@@ -4,7 +4,7 @@ from django.views.decorators.cache import cache_control
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from .forms import UserForm, PasswordResetRequestForm, PasswordResetForm
-from .models import Reset_token
+from .models import Reset_token, Notification
 from transaction.models import Wallet
 from uuid import uuid4
 
@@ -48,7 +48,7 @@ def passwordResetRequest(request):
                 rand_token = uuid4()
                 reset_token = Reset_token(user=this_user[0], token=str(rand_token))
                 reset_token.save()
-                print('Use this token to reset your password: ' + str(rand_token))
+                Notification(this_user[0], 'Use this token to reset your password: ' + str(rand_token))
                 return redirect('passwordReset')
             else:
                 form = PasswordResetRequestForm()
