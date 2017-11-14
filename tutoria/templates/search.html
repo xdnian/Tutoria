@@ -6,6 +6,7 @@
 <!-- extra style sheet -->
 {% block stylesheet %}
   <link href="/static/css/catalogue.css" rel="stylesheet"> 
+  <link href="/static/css/tablesorter.css" rel="stylesheet"> 
 {% endblock %}
 
 <!-- menu -->
@@ -50,7 +51,7 @@
 {% block content %}
   <h1 class="bd-title">Search Tutor</h1>
 
-  <form class="tutor-search" action="{% url 'search' %}" method="POST">
+  <form class="search-box" action="{% url 'search' %}" method="POST">
     <table class="table table-sm">
       <tbody>
         {% csrf_token %}
@@ -99,12 +100,14 @@
 
   <!-- List all avaliable sessions -->
   {% if allTutors %}
-  <div class="row" id="tutorial-list">
-      <table class="table table-hover table-responsive">
+  <div class="row result-list">
+      <table class="table table-hover table-responsive tablesorter" id="tutor-table">
         <thead>
           <tr>
             <th scope="col" style="min-width:90px;">Tutor</th>
-            <th scope="col" style="min-width:90px;">Price <span style="color:gray;font-size:0.75rem">(HKD)</span></th>
+            <th scope="col" style="min-width:90px;">
+              Price<span style="color:gray;font-size:0.75rem">(HKD)</span>
+            </th>
             <th scope="col">Subjects</th>
             <th scope="col">Reviews</th>
           </tr>
@@ -112,7 +115,7 @@
         <tbody>
           {% for tutor in allTutors %}
           <tr class="tutor-info" tutor-id="{{ tutor.id }}">
-            <th>{{ tutor.username }}</th>
+            <th>{{ tutor.first_name }} {{ tutor.last_name }}</th>
             <td>{{ tutor.profile.price }}</td>
             <td>
               {% for tag in tutor.profile.subjects %}
@@ -128,15 +131,16 @@
 
   {% else %}
     <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-        <span class="text">There are no tutors to meet the conditions.</span>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
+      <span class="text">Currently no result.</span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
   {% endif %}
 {% endblock %}
 
 <!-- custom scripts -->
 {% block script %}
   <script src="/static/js/booking.js"></script>
+  <script type="text/javascript" src="/static/assets/js/jquery.tablesorter.js"></script> 
 {% endblock %}
