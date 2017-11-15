@@ -14,6 +14,13 @@ from transaction.models import Transaction
 from django.db.models.functions import Trunc
 from django.db.models import Count, DateTimeField
 
+TIMEZONELOCAL = pytz.timezone('Asia/Hong_Kong')
+
+PRIVATE_TUTOR_TIMESLOTS = [(str(i) + ':00') for i in range(8,22)]
+CONTRACTED_TUTOR_TIMESLOTS = [[str(i) + ':00', str(i) + ':30'] for i in range(8,22)]
+CONTRACTED_TUTOR_TIMESLOTS = [item for sublist in CONTRACTED_TUTOR_TIMESLOTS for item in sublist]
+
+
 @login_required
 def search(request):
     if request.method == 'POST':
@@ -83,7 +90,7 @@ def booking(request, pk):
     timeslot.status = 'Booked'
     timeslot.save()
 
-    session = Session(student=Student, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end, status='Pending')
+    session = Session(student=request.user, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end, status='Pending')
     session.save()
 
     name = session.tutor.get_full_name()
@@ -103,15 +110,9 @@ def booking(request, pk):
     return render(request, 'confirmBooking.html', {'session_info': session_info, 'sessionID':sessionID})
 
 def viewTutor(request, pk):
-
-# Sales.objects
-#     .annotate(month=TruncMonth('timestamp'))  # Truncate to month and add to select list
-#     .values('month')                          # Group By month
-#     .annotate(c=Count('id'))   
-    # allDates = Timeslot.objects.filter(tutor__id=pk).order_by('start').annotate(day=Trunc('start', 'day', output_field=DateTimeField())).distinct('')
-    # print (allDates)
-    allSlots = Timeslot.objects.filter(tutor__id=pk).order_by('start')
-
+    currentTimeTruncDate = datetime.datetime.combine(timezone.now(), datetime.datetime.min.time()) 
+    nextWeekTimeTruncDate = timezone.localtime(timezone.make_aware(currentTimeTruncDate, TIMEZONELOCAL) + datetime.timedelta(days = 7), TIMEZONELOCAL)
+    allSlots = Timeslot.objects.filter(tutor__id=pk, start__lte=nextWeekTimeTruncDate).order_by('start')
     for slot in allSlots:
         startlocal = slot.start.astimezone(TIMEZONELOCAL)
         endlocal = slot.end.astimezone(TIMEZONELOCAL)
@@ -120,11 +121,11 @@ def viewTutor(request, pk):
         endTime = endlocal.strftime('%H:%M')
 
         slot_time_str = {'date':date, 'startTime':startTime, 'endTime':endTime}
-        slot['slot_time_str'] = slot_time_str
+        slot.slot_time_str = slot_time_str
 
     tutor = User.objects.get(id=pk)
     timeslots = PRIVATE_TUTOR_TIMESLOTS if tutor.profile.identity == 'T' else CONTRACTED_TUTOR_TIMESLOTS
-    return render(request, 'tutor-info.html', {'allSlots': allSlots})
+    return render(request, 'tutor-info.html', {'allSlots': allSlots, 'timeslots': timeslots})
 
 
 def confirmBooking(request, pk):
