@@ -52,22 +52,73 @@
 {% block content %}
   <h1 class="bd-title">Details</h1> 
 
+  <!-- tutor info -->
+  <div class="container">
+    <div class="row">
+      <table class="table">
+        <tbody>
+          <tr>
+            <th>Tutor</th>
+            <td>{{ session_info.name }}</td>
+          </tr>
+          <tr>
+            <th>University</th>
+            <td>{{ session_info.school }}</td>
+          </tr>
+          <tr>
+            <th>Date</th>
+            <td>{{ session_info.date }}</td>
+          </tr>
+          <tr>
+            <th>Time</th>
+            <td>{{ session_info.time }}</td>
+          </tr>
+          <tr>
+            <th>Rate</th>
+            <td>HK$ {{ session_info.tutor_price }} / hr</td>
+          </tr>
+          <tr>
+            <th>Total Pay</th>
+            <td>HK$ {{ session_info.total_price }} (including HK$ {{ session_info.commission }} as commission)</td>
+          </tr>
+        </tbody>
+        </thead>
+      </table>
+    </div>
   <!-- List all avaliable sessions -->
-  <form method="post">
-    <ul class="list-group">
-      {% csrf_token %}
-      {% for field in form %}
-        {% for each in field%}
-        <li class="list-group-item">{{ each }}</li>
+  <table class="table table-hover table-sm table-bordered table-responsive" id="timeslot-select" style="display: none;">
+    <thead>
+        <tr>
+            <th></th>
+            {% for slots in timeslots %}
+                <th>{{slots}}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for slot in allSlots %}
+            {% ifchanged slot.slot_time_str.date %}
+                {% if forloop.counter0 != 0 %}
+                </tr>
+                {% endif %}
+                <tr>
+                <th>
+                    {{ slot.slot_time_str.date }}
+                </th>
+                {% endifchanged %}
+                <td class="clickable {% if slot.status == 'Available' %}bg-success{% else %}bg-dark{% endif %}">
+                </td>
         {% endfor %}
-      {% endfor %}
-    </ul>
-    <button type="submit" class="btn btn-success confirmbtn">Submit</button>
+        </tr>
+    </tbody>
+</table>
+
     <a href="javascript:history.go(-1)"><button type="button" class="btn btn-secondary confirmbtn">Back</button></a>
-  </form>
 {% endblock %}
 
 <!-- custom scripts -->
 {% block script %}
-  <script src="/static/js/booking.js"></script>
+  <script src="/static/js/jquery.tabletransposer.js"></script>
+  <script src="/static/js/view-tutor.js"></script>
 {% endblock %}

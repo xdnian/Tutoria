@@ -8,6 +8,9 @@ from .forms import ChangeBalanceForm
 from .models import Wallet, Transaction
 import decimal, pytz, datetime
 
+PRIVATE_TUTOR_TIMESLOTS = [(str(i) + ':00') for i in range(8,22)]
+CONTRACTED_TUTOR_TIMESLOTS = [[str(i) + ':00', str(i) + ':30'] for i in range(8,22)]
+CONTRACTED_TUTOR_TIMESLOTS = [item for sublist in CONTRACTED_TUTOR_TIMESLOTS for item in sublist]
 
 @login_required
 def wallet(request):
