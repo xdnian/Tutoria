@@ -22,26 +22,53 @@ class TutorForm(forms.Form):
     available_only = forms.BooleanField(label=("Available_only"), required=False, widget=forms.CheckboxInput(attrs={'class': 'custom-control-input'}))
 
 class BookingForm(forms.Form):
-    slots = forms.ModelChoiceField(queryset=Timeslot.objects.all(), widget=forms.RadioSelect, empty_label=None)
+    # slots = forms.ModelChoiceField(queryset=Timeslot.objects.all(), widget=forms.RadioSelect, empty_label=None)
+    fields = {}
     def __init__(self, TutorID, *args, **kwargs):
         super(BookingForm, self).__init__(*args, **kwargs)
-        utcCurrentTime = timezone.now()
-        timezonelocal = pytz.timezone('Asia/Hong_Kong')
-        currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
 
-        endTime = currentTime + datetime.timedelta(days=7)
-        if currentTime.minute < 30:
-            mintime = datetime.datetime(currentTime.year, currentTime.month, currentTime.day+1, currentTime.hour, 30, 0, 0)
-        else:
-            #TODO
-            mintime = datetime.datetime(currentTime.year, currentTime.month, currentTime.day+1, currentTime.hour+1, 0, 0, 0)
-        maxtime = datetime.datetime(endTime.year, endTime.month, endTime.day, 22, 0, 0, 0)
-        self.fields['slots'].queryset = Timeslot.objects.filter(tutor__id=TutorID, status='Available', start__lte=maxtime, start__gte=mintime)
+        self.allSlots = Timeslot.objects.filter(tutor__id=TutorID).order_by('start')
+        for i in range(len(self.allSlots)):
+            startlocal = self.allSlots[i].start.astimezone(TIMEZONELOCAL)
+            endlocal = self.allSlots[i].end.astimezone(TIMEZONELOCAL)
+            date = startlocal.strftime('%Y-%m-%d')
+            startTime = startlocal.strftime('%H:%M')
+            endTime = endlocal.strftime('%H:%M')
+            status = self.allSlots[i].status
+            if status == 'Available':
+                self.fields["slot{0}".format(i)] = forms.BooleanField(required=False, 
+                    widget=forms.CheckboxInput(attrs={'status': status, 'date':date, 'startTime':startTime, 'endTime':endTime}))
+            else:
+                self.fields["slot{0}".format(i)] = forms.BooleanField(required=False, 
+                    widget=forms.CheckboxInput(attrs={'disabled': '' ,'status': status, 'date':date, 'startTime':startTime, 'endTime':endTime}))
+
+        # utcCurrentTime = timezone.now()
+        # timezonelocal = pytz.timezone('Asia/Hong_Kong')
+        # currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
+
+        # endTime = currentTime + datetime.timedelta(days=7)
+        # if currentTime.minute < 30:
+        #     mintime = datetime.datetime(currentTime.year, currentTime.month, currentTime.day+1, currentTime.hour, 30, 0, 0)
+        # else:
+        #     mintime = datetime.datetime(currentTime.year, currentTime.month, currentTime.day+1, currentTime.hour+1, 0, 0, 0)
+        # maxtime = datetime.datetime(endTime.year, endTime.month, endTime.day, 22, 0, 0, 0)
+        # self.fields['slots'].queryset = Timeslot.objects.filter(tutor__id=TutorID, status='Available', start__lte=maxtime, start__gte=mintime)
     def save(self, Student):
-        timeslot = self.cleaned_data['slots']
-        timeslot.status = 'Booked'
-        timeslot.save()
-        session = Session(student=Student, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end, status='Pending')
-        session.save()
-        return session.id
+
+        for i in range(len(self.allSlots)):
+            if self.cleaned_data["slot{0}".format(i)] == True:
+                timeslot = self.allSlots[i]
+                timeslot.status = 'Booked'
+                timeslot.save()
+                session = Session(student=Student, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end, status='Pending')
+                session.save()
+                return session.id
+
+        # timeslot = self.cleaned_data['slots']
+        # timeslot.status = 'Booked'
+        # timeslot.save()
+        # session = Session(student=Student, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end, status='Pending')
+        # session.save()
+        # return session.id
+        # 
         

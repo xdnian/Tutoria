@@ -11,7 +11,8 @@ import decimal, pytz, datetime
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, render
 from transaction.models import Transaction
-
+from django.db.models.functions import Trunc
+from django.db.models import Count, DateTimeField
 
 @login_required
 def search(request):
@@ -76,32 +77,54 @@ def search(request):
         form = TutorForm()
     return render(request, 'search.html', {'form': form})
 
+def booking(request, pk):
+    # pk is a time slot ID
+    timeslot = Timeslot.objects.get(pk=pk)
+    timeslot.status = 'Booked'
+    timeslot.save()
+
+    session = Session(student=Student, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end, status='Pending')
+    session.save()
+
+    name = session.tutor.get_full_name()
+
+    timezonelocal = pytz.timezone('Asia/Hong_Kong')
+    startTime = timezone.localtime(session.start, timezonelocal)
+    endTime = timezone.localtime(session.end, timezonelocal)
+
+    dateStr = startTime.strftime('%Y-%m-%d')
+    timeStr = startTime.strftime('%H:%M')  + ' ~ ' + endTime.strftime('%H:%M')
+
+    tutor_price = session.tutor.profile.price
+    commission = round(tutor_price *decimal.Decimal(0.05), 2)
+    school = session.tutor.profile.getSchoolName()
+    total_price = tutor_price + commission
+    session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'commission': commission}
+    return render(request, 'confirmBooking.html', {'session_info': session_info, 'sessionID':sessionID})
 
 def viewTutor(request, pk):
-    if request.method == 'POST':
-        form = BookingForm(pk, request.POST)
-        if form.is_valid():
-            sessionID = form.save(request.user)
-            session = Session.objects.get(pk=sessionID)
 
-            name = session.tutor.get_full_name()
+# Sales.objects
+#     .annotate(month=TruncMonth('timestamp'))  # Truncate to month and add to select list
+#     .values('month')                          # Group By month
+#     .annotate(c=Count('id'))   
+    # allDates = Timeslot.objects.filter(tutor__id=pk).order_by('start').annotate(day=Trunc('start', 'day', output_field=DateTimeField())).distinct('')
+    # print (allDates)
+    allSlots = Timeslot.objects.filter(tutor__id=pk).order_by('start')
 
-            timezonelocal = pytz.timezone('Asia/Hong_Kong')
-            startTime = timezone.localtime(session.start, timezonelocal)
-            endTime = timezone.localtime(session.end, timezonelocal)
+    for slot in allSlots:
+        startlocal = slot.start.astimezone(TIMEZONELOCAL)
+        endlocal = slot.end.astimezone(TIMEZONELOCAL)
+        date = startlocal.strftime('%b %d')
+        startTime = startlocal.strftime('%H:%M')
+        endTime = endlocal.strftime('%H:%M')
 
-            dateStr = startTime.strftime('%Y-%m-%d')
-            timeStr = startTime.strftime('%H:%M')  + ' ~ ' + endTime.strftime('%H:%M')
+        slot_time_str = {'date':date, 'startTime':startTime, 'endTime':endTime}
+        slot['slot_time_str'] = slot_time_str
 
-            tutor_price = session.tutor.profile.price
-            commission = round(tutor_price *decimal.Decimal(0.05), 2)
-            school = session.tutor.profile.getSchoolName()
-            total_price = tutor_price + commission
-            session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'commission': commission}
-            return render(request, 'confirmBooking.html', {'session_info': session_info, 'sessionID':sessionID})
-    else:
-        form = BookingForm(pk)
-    return render(request, 'tutor-info.html', {'form': form})
+    tutor = User.objects.get(id=pk)
+    timeslots = PRIVATE_TUTOR_TIMESLOTS if tutor.profile.identity == 'T' else CONTRACTED_TUTOR_TIMESLOTS
+    return render(request, 'tutor-info.html', {'allSlots': allSlots})
 
 
 def confirmBooking(request, pk):
