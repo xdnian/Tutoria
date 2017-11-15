@@ -41,8 +41,12 @@ class TimeForm(forms.Form):
     def save(self):
         for i in range(len(self.allSlots)):
             if self.cleaned_data["slot{0}".format(i)] == True:
-                self.allSlots[i].status = 'Blocked'
-                self.allSlots[i].save()
+                if self.allSlots[i].status == 'Available':
+                    self.allSlots[i].status = 'Blocked'
+                    self.allSlots[i].save()
+                else:
+                    # TODO: error msg
+                    pass
             elif self.allSlots[i].status == 'Blocked':
                 self.allSlots[i].status = 'Available'
                 self.allSlots[i].save()
