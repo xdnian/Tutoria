@@ -126,9 +126,16 @@ def viewTutor(request, pk):
         slot.slot_time_str = slot_time_str
 
     tutor = User.objects.get(id=pk)
-    timeslots = PRIVATE_TUTOR_TIMESLOTS if tutor.profile.identity == 'T' else CONTRACTED_TUTOR_TIMESLOTS
-    return render(request, 'tutor-info.html', {'allSlots': allSlots, 'timeslots': timeslots})
+    name = tutor.get_full_name()
 
+    tutor_price = tutor.profile.price
+    commission = round(tutor_price *decimal.Decimal(0.05), 2)
+    school = tutor.profile.getSchoolName()
+    total_price = tutor_price + commission
+    tutor_info = {'name': name, 'school': school, 'tutor_price': tutor_price, 'commission': commission}
+
+    timeslots = PRIVATE_TUTOR_TIMESLOTS if tutor.profile.identity == 'T' else CONTRACTED_TUTOR_TIMESLOTS
+    return render(request, 'tutor-info.html', {'allSlots': allSlots, 'timeslots': timeslots, 'tutor_info': tutor_info})
 
 def confirmBooking(request, pk):
     session = Session.objects.get(pk=pk)
