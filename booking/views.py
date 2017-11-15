@@ -111,8 +111,10 @@ def booking(request, pk):
 
 def viewTutor(request, pk):
     currentTimeTruncDate = datetime.datetime.combine(timezone.now(), datetime.datetime.min.time()) 
+    tomorrowTimeTruncDate = timezone.localtime(timezone.make_aware(currentTimeTruncDate, TIMEZONELOCAL) + datetime.timedelta(days = 1), TIMEZONELOCAL)
     nextWeekTimeTruncDate = timezone.localtime(timezone.make_aware(currentTimeTruncDate, TIMEZONELOCAL) + datetime.timedelta(days = 7), TIMEZONELOCAL)
-    allSlots = Timeslot.objects.filter(tutor__id=pk, start__lte=nextWeekTimeTruncDate).order_by('start')
+    
+    allSlots = Timeslot.objects.filter(tutor__id=pk, start__lte = nextWeekTimeTruncDate, start__gte = tomorrowTimeTruncDate).order_by('start')
     for slot in allSlots:
         startlocal = slot.start.astimezone(TIMEZONELOCAL)
         endlocal = slot.end.astimezone(TIMEZONELOCAL)
