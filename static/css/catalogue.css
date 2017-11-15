@@ -77,3 +77,14 @@ select.form-control:not([size]):not([multiple]) {
     padding-right: 30px;
 }
 
+table#timeslot-select .bg-success:hover {
+    background-color: #218f3a!important;
+}
+
+table#timeslot-select th {
+    text-align: center;
+}
+
+table#timeslot-select .available:hover {
+    cursor: pointer;
+}

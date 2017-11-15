@@ -73,12 +73,10 @@
                             {{ field.field.widget.attrs.date }}
                         </th>
                         {% endifchanged %}
-                        <td class="checkable 
-                            {% if field.field.widget.attrs.status == 'Available' %} bg-success
-                            {% elif field.field.widget.attrs.status == 'Blocked' %} bg-dark
-                            {% elif field.field.widget.attrs.status == 'Unavailable' %} bg-danger
-                            {% elif field.field.widget.attrs.status == 'Booked' %} bg-danger
-                            {% elif field.field.widget.attrs.status == 'Committed' %} bg-danger
+                        <td class=" 
+                            {% if field.field.widget.attrs.status == 'Available' %} checkable bg-success
+                            {% elif field.field.widget.attrs.status == 'Blocked' %} checkable bg-dark
+                            {% else %} bg-danger
                             {% endif %}">
                             <label class="d-none">{{ field }}</label>
                         </td>

@@ -3,7 +3,7 @@ $(document).ready(function () {
     transpose('table#timeslot-select');
 
     //clickable table cell
-    $(".tutor-info").click(function () {
-        window.location = "/viewTutor/" + $(this).attr("tutor-id");
+    $(".timeslot.available").click(function () {
+        window.location = "/booking/" + $(this).attr("timeslot-id");
     });
 });

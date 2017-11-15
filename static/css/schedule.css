@@ -21,6 +21,14 @@ table#offerslots .bg-dark:hover {
     background-color: #4d5359!important;
 }
 
+table#offerslots .checkable:hover {
+    cursor: pointer;
+}
+
+table#offerslots th {
+    text-align: center;
+}
+
 #black-out-save-btn {
     padding-left: 2rem;
     padding-right: 2rem;

@@ -11,4 +11,8 @@ $(document).ready(function () {
         // If it's checked then uncheck it and vice versa
         target.prop('checked', !target.prop('checked'));
     });
+
+    $(".modifiable").click(function () {
+        window.location = "/viewTutor/" + $(this).attr("tutor-id");
+    });
 });

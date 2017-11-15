@@ -84,6 +84,29 @@ def search(request):
         form = TutorForm()
     return render(request, 'search.html', {'form': form})
 
+def viewTutor(request, pk):
+    currentTimeTruncDate = datetime.datetime.combine(timezone.now(), datetime.datetime.min.time()) 
+    tomorrowTimeTruncDate = timezone.localtime(timezone.make_aware(currentTimeTruncDate, TIMEZONELOCAL) + datetime.timedelta(days = 1), TIMEZONELOCAL)
+    nextWeekTimeTruncDate = timezone.localtime(timezone.make_aware(currentTimeTruncDate, TIMEZONELOCAL) + datetime.timedelta(days = 7), TIMEZONELOCAL)
+    
+    allSlots = Timeslot.objects.filter(tutor__id=pk, start__lte = nextWeekTimeTruncDate, start__gte = tomorrowTimeTruncDate).order_by('start')
+    for slot in allSlots:
+        startlocal = slot.start.astimezone(TIMEZONELOCAL)
+        endlocal = slot.end.astimezone(TIMEZONELOCAL)
+        date = startlocal.strftime('%b %d')
+        startTime = startlocal.strftime('%H:%M')
+        endTime = endlocal.strftime('%H:%M')
+
+        slot_time_str = {'date':date, 'startTime':startTime, 'endTime':endTime}
+        slot.slot_time_str = slot_time_str
+
+    tutor = User.objects.get(id=pk)
+    tutor.profile.courses = tutor.profile.courses.split(';')
+    tutor.profile.subjects = tutor.profile.subjects.split(';')
+
+    timeslots = PRIVATE_TUTOR_TIMESLOTS if tutor.profile.identity == 'T' else CONTRACTED_TUTOR_TIMESLOTS
+    return render(request, 'tutor-info.html', {'allSlots': allSlots, 'timeslots': timeslots, 'tutor': tutor})
+
 def booking(request, pk):
     # pk is a time slot ID
     timeslot = Timeslot.objects.get(pk=pk)
@@ -106,36 +129,8 @@ def booking(request, pk):
     commission = round(tutor_price *decimal.Decimal(0.05), 2)
     school = session.tutor.profile.getSchoolName()
     total_price = tutor_price + commission
-    session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'commission': commission}
-    return render(request, 'confirmBooking.html', {'session_info': session_info, 'sessionID':sessionID})
-
-def viewTutor(request, pk):
-    currentTimeTruncDate = datetime.datetime.combine(timezone.now(), datetime.datetime.min.time()) 
-    tomorrowTimeTruncDate = timezone.localtime(timezone.make_aware(currentTimeTruncDate, TIMEZONELOCAL) + datetime.timedelta(days = 1), TIMEZONELOCAL)
-    nextWeekTimeTruncDate = timezone.localtime(timezone.make_aware(currentTimeTruncDate, TIMEZONELOCAL) + datetime.timedelta(days = 7), TIMEZONELOCAL)
-    
-    allSlots = Timeslot.objects.filter(tutor__id=pk, start__lte = nextWeekTimeTruncDate, start__gte = tomorrowTimeTruncDate).order_by('start')
-    for slot in allSlots:
-        startlocal = slot.start.astimezone(TIMEZONELOCAL)
-        endlocal = slot.end.astimezone(TIMEZONELOCAL)
-        date = startlocal.strftime('%b %d')
-        startTime = startlocal.strftime('%H:%M')
-        endTime = endlocal.strftime('%H:%M')
-
-        slot_time_str = {'date':date, 'startTime':startTime, 'endTime':endTime}
-        slot.slot_time_str = slot_time_str
-
-    tutor = User.objects.get(id=pk)
-    name = tutor.get_full_name()
-
-    tutor_price = tutor.profile.price
-    commission = round(tutor_price *decimal.Decimal(0.05), 2)
-    school = tutor.profile.getSchoolName()
-    total_price = tutor_price + commission
-    tutor_info = {'name': name, 'school': school, 'tutor_price': tutor_price, 'commission': commission}
-
-    timeslots = PRIVATE_TUTOR_TIMESLOTS if tutor.profile.identity == 'T' else CONTRACTED_TUTOR_TIMESLOTS
-    return render(request, 'tutor-info.html', {'allSlots': allSlots, 'timeslots': timeslots, 'tutor_info': tutor_info})
+    session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'total_price': total_price, 'commission': commission}
+    return render(request, 'confirmBooking.html', {'session_info': session_info, 'sessionID':session.id})
 
 def confirmBooking(request, pk):
     session = Session.objects.get(pk=pk)
