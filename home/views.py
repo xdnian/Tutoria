@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.cache import cache_control
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
-from .forms import UserForm, PasswordResetRequestForm, PasswordResetForm
+from .forms import UserForm, PasswordResetRequestForm, PasswordResetForm, EditProfileForm, ChangePasswordForm
 from .models import Reset_token, Notification
 from transaction.models import Wallet
 from uuid import uuid4
@@ -36,6 +36,16 @@ def signup(request):
             return redirect('home')
     else:
         form = UserForm()
+    return render(request, 'signup.html', {'form': form})
+
+def editProfile(request):
+    if request.method == 'POST':
+        form = EditProfileForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = EditProfileForm(request.user)
     return render(request, 'signup.html', {'form': form})
 
 def passwordResetRequest(request):
@@ -104,4 +114,27 @@ def passwordReset(request):
                 return render(request, 'passwordReset.html', {'form': form, 'message': 'Wrong email'})
     else:
         form = PasswordResetForm()
+    return render(request, 'passwordReset.html', {'form': form})
+
+def changePassword(request):
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.POST)
+        if form.is_valid():
+            newpassword = form.cleaned_data.get('newpassword')
+            confirm_newpassword = form.cleaned_data.get('confirm_newpassword')
+            if newpassword != confirm_newpassword:
+                form = ChangePasswordForm()
+                return render(request, 'passwordReset.html', {'form': form, 'message': 'The two passwords do not match, please enter again.'})
+            else:
+                validation = validate_password_strength(newpassword)
+                if validation == True:
+                    u = request.user
+                    u.set_password(newpassword)
+                    u.save()
+                    return render(request, 'passwordResetConfrim.html')
+                else:
+                    form = ChangePasswordForm()
+                    return render(request, 'passwordReset.html', {'form': form, 'message': 'a password is as least 8 characters long and contains both numbers and letters'})
+    else:
+        form = ChangePasswordForm()
     return render(request, 'passwordReset.html', {'form': form})
