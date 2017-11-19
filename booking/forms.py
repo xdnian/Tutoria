@@ -15,8 +15,8 @@ class TutorForm(forms.Form):
     course = forms.CharField(label=("Course"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Course code..'}))
     name = forms.CharField(label=("Name"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Tutor name..'}))
     subject = forms.CharField(label=("Subject"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Subject tags, separate by ";"..'}))
-    IDENTITY_CHOICES = (('A', 'All'),('T', 'Private Tutor'),('C', 'Contracted Tutor'))
-    identity = forms.ChoiceField(label=("Identity"), required=False, choices=IDENTITY_CHOICES, widget=forms.Select(attrs={'class': 'form-control custom-select'}))
+    TUTORTYPE_CHOICES = (('A', 'All'),('P', 'Private Tutor'),('C', 'Contracted Tutor'))
+    tutortype = forms.ChoiceField(label=("Tutortype"), required=False, choices=TUTORTYPE_CHOICES, widget=forms.Select(attrs={'class': 'form-control custom-select'}))
     price_min = forms.DecimalField(label=("Price_min"), required=False, max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Minimum rate'}))
     price_max = forms.DecimalField(label=("Price_max"), required=False, max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Maximum rate'}))
     available_only = forms.BooleanField(label=("Available_only"), required=False, widget=forms.CheckboxInput(attrs={'class': 'custom-control-input'}))
@@ -60,7 +60,7 @@ class BookingForm(forms.Form):
                 timeslot = self.allSlots[i]
                 timeslot.status = 'Booked'
                 timeslot.save()
-                session = Session(student=Student, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end, status='Pending')
+                session = Session(student=Student, timeslot=timeslot, status='Pending')
                 session.save()
                 return session.id
 

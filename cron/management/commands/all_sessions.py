@@ -33,28 +33,28 @@ class Command(BaseCommand):
             timeslot.status = 'Committed'
             timeslot.save()
 
-        allBookedSessions = Session.objects.filter( Q(start__lte=tomorrowTime, status = 'Booked')).order_by('start')
+        allBookedSessions = Session.objects.filter( Q(timeslot__start__lte=tomorrowTime, status = 'Booked')).order_by('start')
         for session in allBookedSessions:
             session.status = 'Committed'
             session.save()
 
-        allStartedSessions = Session.objects.filter( Q(start__lte=currentTime, status = 'Committed')).order_by('start')
+        allStartedSessions = Session.objects.filter( Q(timeslot__start__lte=currentTime, status = 'Committed')).order_by('start')
         for session in allBookedSessions:
             session.status = 'Started'
             session.save()
 
         # End all sessions
-        allFinishedSessions = Session.objects.filter (Q(end__lte=currentTime, status = 'Started')).order_by('end')
+        allFinishedSessions = Session.objects.filter (Q(timeslot__end__lte=currentTime, status = 'Started')).order_by('end')
         for session in allFinishedSessions:
             session.status = 'Ended'
-            price = session.tutor.profile.price
-            commission = round(session.tutor.profile.price*decimal.Decimal(0.05), 2)
+            price = session.timeslot.tutor.tutorprofile.price
+            commission = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(0.05), 2)
             total = price + commission
-            session.tutor.profile.wallet.addBalance(price)
+            session.timeslot.tutor.profile.wallet.addBalance(price)
             MyTutors = User.objects.get(username='MyTutors')
             MyTutors.profile.wallet.addBalance(commission)
             medium = User.objects.get(username='admin')
             medium.profile.wallet.withdraw(total)
-            Notification(session.tutor, 'A tutorial session fee of HK$' + str(price) + ' had been added to your wallet.')
+            Notification(session.timeslot.tutor, 'A tutorial session fee of HK$' + str(price) + ' had been added to your wallet.')
             Notification(session.student, 'You are invited to write a review for this tutorial session.')
             session.save()

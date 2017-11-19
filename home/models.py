@@ -6,7 +6,7 @@ from transaction.models import Wallet
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    IDENTITY_CHOICES = (('S', 'Student'),('T', 'Private Tutor'),('C', 'Contracted Tutor'))
+    IDENTITY_CHOICES = (('S', 'Student'),('T', 'Tutor'))
     identity = models.CharField(max_length=2, choices=IDENTITY_CHOICES, default='S')
     SCHOOL_CHOICES = (('1', 'University of Hong Kong'),('2', 'Hong Kong University of Science and Technology'),
         ('3', 'Chinese University of Hong Kong'), ('4', 'City University of Hong Kong'), 
@@ -14,16 +14,26 @@ class Profile(models.Model):
     SCHOOL_CHOICES_DICT = dict((x, y) for x, y in SCHOOL_CHOICES)
     school = models.CharField(max_length=2, choices=SCHOOL_CHOICES, default='1')
     phone = models.CharField(max_length=30)
-    courses = models.TextField(blank=True)
-    biography = models.TextField(blank=True)
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, null=True)
-    subjects = models.TextField(blank=True)
-    price = models.DecimalField(default=0.00, max_digits=10, decimal_places=2)
+    
     def __str__(self):
         return self.user.username
 
     def getSchoolName(self):
         return self.SCHOOL_CHOICES_DICT[self.school]
+
+class Tutorprofile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    TUTOR_CHOICES = ('P', 'Private Tutor'),('C', 'Contracted Tutor')
+    tutortype = models.CharField(max_length=2, choices=TUTOR_CHOICES, default='P')
+    courses = models.TextField(blank=True)
+    biography = models.TextField(blank=True) 
+    subjects = models.TextField(blank=True)
+    price = models.DecimalField(default=0.00, max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.user.username
+        
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

@@ -116,9 +116,9 @@
           {% for tutor in allTutors %}
           <tr class="tutor-info" tutor-id="{{ tutor.id }}">
             <th>{{ tutor.first_name }} {{ tutor.last_name }}</th>
-            <td>{{ tutor.profile.price }}</td>
+            <td>{{ tutor.tutorprofile.price }}</td>
             <td>
-              {% for tag in tutor.profile.subjects %}
+              {% for tag in tutor.tutorprofile.subjects %}
               <span class="badge badge-secondary subject-tag">{{ tag }}</span>
               {% endfor %}
             </td>

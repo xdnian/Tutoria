@@ -17,4 +17,4 @@ class Timeslot(models.Model):
         endlocal = self.end.astimezone(TIMEZONELOCAL)
         date = startlocal.strftime('%Y-%m-%d')
         time = startlocal.strftime('%H:%M')  + ' ~ ' + endlocal.strftime('%H:%M')
-        return self.tutor.username + ' ' + date + ' ' + time + ' price: $' + str(self.tutor.profile.price)
+        return self.tutor.username + ' ' + date + ' ' + time + ' price: $' + str(self.tutor.tutorprofile.price)

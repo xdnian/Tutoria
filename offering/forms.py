@@ -39,14 +39,19 @@ class TimeForm(forms.Form):
             self.fields["slot{0}".format(i)] = forms.BooleanField(required=False, 
                     widget=forms.CheckboxInput(attrs = attrs))
     def save(self):
+        warning = False
         for i in range(len(self.allSlots)):
             if self.cleaned_data["slot{0}".format(i)] == True:
                 if self.allSlots[i].status == 'Available':
                     self.allSlots[i].status = 'Blocked'
                     self.allSlots[i].save()
-                else:
-                    # TODO: error msg
-                    pass
+                elif self.allSlots[i].status == 'Booked':
+                    warning = True
             elif self.allSlots[i].status == 'Blocked':
                 self.allSlots[i].status = 'Available'
                 self.allSlots[i].save()
+        if warning:
+            return 'Some of the timeslots you want to black-out have been booked.'
+        else:
+            return ''
+

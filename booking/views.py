@@ -30,29 +30,29 @@ def search(request):
             course = form.cleaned_data.get('course')
             name = form.cleaned_data.get('name')
             subject = form.cleaned_data.get('subject')
-            identity = form.cleaned_data.get('identity')
+            tutortype = form.cleaned_data.get('tutortype')
             available_only = form.cleaned_data.get('available_only')
             price_min = form.cleaned_data.get('price_min')
             price_max = form.cleaned_data.get('price_max')
             '''start query'''
-            allTutors = User.objects.filter(~Q(id=request.user.id) & (Q(profile__identity='T') | Q(profile__identity='C')))
+            allTutors = User.objects.filter(~Q(id=request.user.id) & Q(profile__identity='T'))
 
-            if identity == 'T':
-                allTutors = allTutors.filter(profile__identity='T')
-            elif identity == 'C':
-                allTutors = allTutors.filter(profile__identity='C')
+            if tutortype== 'P':
+                allTutors = allTutors.filter(tutorprofile__tutortype='P')
+            elif tutortype == 'C':
+                allTutors = allTutors.filter(tutorprofile__tutortype='C')
 
             if univserity != '0':
                 allTutors = allTutors.filter(profile__school=univserity)
             if course != '':
                 for tutor in allTutors:
-                    tutor.profile.courses = tutor.profile.courses.split(';')
-                    if course not in tutor.profile.courses:
+                    tutor.tutorprofile.courses = tutor.tutorprofile.courses.split(';')
+                    if course not in tutor.tutorprofile.courses:
                         allTutors = allTutors.exclude(id=tutor.id)
             if subject != '':
                 for tutor in allTutors:
-                    tutor.profile.subjects = tutor.profile.subjects.split(';')
-                    if subject not in tutor.profile.subjects:
+                    tutor.tutorprofile.subjects = tutor.tutorprofile.subjects.split(';')
+                    if subject not in tutor.tutorprofile.subjects:
                         allTutors = allTutors.exclude(id=tutor.id)
             if name != '':
                 name = name.split(' ')
@@ -63,10 +63,10 @@ def search(request):
                      | (Q(first_name=name[1])&Q(last_name=name[0])))
             if price_min != None:
                 price_min = decimal.Decimal(price_min)
-                allTutors = allTutors.filter(profile__price__gte=price_min)
+                allTutors = allTutors.filter(tutorprofile__price__gte=price_min)
             if price_max != None:
                 price_max = decimal.Decimal(price_max)
-                allTutors = allTutors.filter(profile__price__lte=price_max)
+                allTutors = allTutors.filter(tutorprofile__price__lte=price_max)
             if available_only == True:
                 start_date = datetime.date.today()
                 end_date = start_date + datetime.timedelta(days=7)
@@ -76,9 +76,9 @@ def search(request):
                     if len(available_timeslot) == 0:
                         allTutors = allTutors.exclude(id=tutor.id)
             for tutor in allTutors:
-                    tutor.profile.subjects = tutor.profile.subjects.split(';')
+                    tutor.tutorprofile.subjects = tutor.tutorprofile.subjects.split(';')
             for tutor in allTutors:
-                    tutor.profile.courses = tutor.profile.courses.split(';')
+                    tutor.tutorprofile.courses = tutor.tutorprofile.courses.split(';')
             return render(request, 'search.html', {'form': form, 'allTutors': allTutors})
     else:
         form = TutorForm()
@@ -101,11 +101,11 @@ def viewTutor(request, pk):
         slot.slot_time_str = slot_time_str
 
     tutor = User.objects.get(id=pk)
-    tutor.profile.courses = tutor.profile.courses.split(';')
-    tutor.profile.subjects = tutor.profile.subjects.split(';')
+    tutor.tutorprofile.courses = tutor.tutorprofile.courses.split(';')
+    tutor.tutorprofile.subjects = tutor.tutorprofile.subjects.split(';')
 
-    timeslots = PRIVATE_TUTOR_TIMESLOTS if tutor.profile.identity == 'T' else CONTRACTED_TUTOR_TIMESLOTS
-    return render(request, 'tutor-info.html', {'allSlots': allSlots, 'timeslots': timeslots, 'tutor': tutor})
+    times = PRIVATE_TUTOR_TIMESLOTS if tutor.tutorprofile.tutortype == 'P' else CONTRACTED_TUTOR_TIMESLOTS
+    return render(request, 'tutor-info.html', {'allSlots': allSlots, 'timeslots': times, 'tutor': tutor})
 
 def booking(request, pk):
     # pk is a time slot ID
@@ -113,71 +113,80 @@ def booking(request, pk):
     timeslot.status = 'Booked'
     timeslot.save()
 
-    session = Session(student=request.user, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end, status='Pending')
+    session = Session(student=request.user, timeslot=timeslot, status='Pending')
     session.save()
 
-    name = session.tutor.get_full_name()
+    name = timeslot.tutor.get_full_name()
 
     timezonelocal = pytz.timezone('Asia/Hong_Kong')
-    startTime = timezone.localtime(session.start, timezonelocal)
-    endTime = timezone.localtime(session.end, timezonelocal)
+    startTime = timezone.localtime(timeslot.start, timezonelocal)
+    endTime = timezone.localtime(timeslot.end, timezonelocal)
 
     dateStr = startTime.strftime('%Y-%m-%d')
     timeStr = startTime.strftime('%H:%M')  + ' ~ ' + endTime.strftime('%H:%M')
 
-    tutor_price = session.tutor.profile.price
+    tutor_price = timeslot.tutor.tutorprofile.price
     commission = round(tutor_price *decimal.Decimal(0.05), 2)
-    school = session.tutor.profile.getSchoolName()
+    school = timeslot.tutor.profile.getSchoolName()
     total_price = tutor_price + commission
     session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'total_price': total_price, 'commission': commission}
     return render(request, 'confirmBooking.html', {'session_info': session_info, 'sessionID':session.id})
 
 def confirmBooking(request, pk):
     session = Session.objects.get(pk=pk)
-    price = round(session.tutor.profile.price*decimal.Decimal(1.05), 2)
-    session_day_start = datetime.datetime(session.start.year, session.start.month, session.start.day, 0, 0, 0, 0)
-    session_day_end = datetime.datetime(session.start.year, session.start.month, session.start.day, 23, 0, 0, 0)
-    history = Session.objects.filter(start__gte=session_day_start, start__lte=session_day_end, status='Booked')
+    session_day_start = datetime.datetime(session.timeslot.start.year, session.timeslot.start.month, session.timeslot.start.day, 0, 0, 0, 0)
+    session_day_end = datetime.datetime(session.timeslot.start.year, session.timeslot.start.month, session.timeslot.start.day, 23, 0, 0, 0)
+    sameTutorHistory = Session.objects.filter(student=request.user, timeslot__tutor=session.timeslot.tutor, timeslot__start__gte=session_day_start, timeslot__start__lte=session_day_end, status='Booked')
     check1 = False
-    if len(history) == 0:
+    if len(sameTutorHistory) == 0:
         check1 = True
-    check2 = session.student.profile.wallet.checkBalance(price)
-    status = 'successful'
     if check1 == True:
+        timeClashHistory = Session.objects.filter(Q(student=request.user) & ~Q(timeslot__tutor=session.timeslot.tutor) & (Q(timeslot__start=session.timeslot.start) | Q(timeslot__end=session.timeslot.end)) & Q(status='Booked'))
+        check2 = False
+        if len(timeClashHistory) == 0:
+            check2 = True
         if check2 == True:
-            session.student.profile.wallet.withdraw(price)
-            medium = User.objects.get(username='admin')
-            medium.profile.wallet.addBalance(price)
-            utcCurrentTime = timezone.now()
-            timezonelocal = pytz.timezone('Asia/Hong_Kong')
-            currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
-            new_transaction = Transaction(from_wallet = session.student.profile.wallet, to_wallet = medium.profile.wallet, 
-                time = currentTime, amount = price, description = 'Tutorial payment')
-            new_transaction.save()
-            session.status = 'Booked'
-            session.save()
-            Notification(session.student, 'Your session booking is successful, your have paid HK$' + str(price) + '.')
+            price = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(1.05), 2)
+            check3 = session.student.profile.wallet.checkBalance(price)
+            status = 'successful'
+            if check3 == True:
+                session.student.profile.wallet.withdraw(price)
+                medium = User.objects.get(username='admin')
+                medium.profile.wallet.addBalance(price)
+                utcCurrentTime = timezone.now()
+                timezonelocal = pytz.timezone('Asia/Hong_Kong')
+                currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
+                new_transaction = Transaction(from_wallet = session.student.profile.wallet, to_wallet = medium.profile.wallet, 
+                    time = currentTime, amount = price, description = 'Tutorial payment')
+                new_transaction.save()
+                session.status = 'Booked'
+                session.save()
+                Notification(session.student, 'Your session booking is successful, your have paid HK$' + str(price) + '.')
+            else:
+                session.timeslot.status = 'Available'
+                session.timeslot.save()
+                Notification(session.student, 'Your session booking is unsuccessful due to insufficient balance.')
+                session.delete()
+                status = 'unsuccessful'
+            return render(request, 'confirmConfirmBooking.html', {'status': status})
         else:
-            timeslot = Timeslot.objects.filter(tutor=session.tutor, start=session.start, end=session.end, status='Booked')[0]
-            timeslot.status = 'Available'
-            timeslot.save()
-            Notification(session.student, 'Your session booking is unsuccessful due to insufficient balance.')
+            session.timeslot.status = 'Available'
+            session.timeslot.save()
+            tutor_id = session.timeslot.tutor.id
             session.delete()
-            status = 'unsuccessful'
-        return render(request, 'confirmConfirmBooking.html', {'status': status})
+            return render(request, 'timeclashBooking.html', {'tutor_id': tutor_id})
     else:
-        timeslot = Timeslot.objects.filter(tutor=session.tutor, start=session.start, end=session.end, status='Booked')[0]
-        timeslot.status = 'Available'
-        timeslot.save()
+        session.timeslot.status = 'Available'
+        session.timeslot.save()
+        tutor_id = session.timeslot.tutor.id
         session.delete()
-        return render(request, 'samedayBooking.html', {'tutor_id': session.tutor.id})
+        return render(request, 'samedayBooking.html', {'tutor_id': tutor_id})
 
 def cancelConfirmBooking(request, pk):
     session = Session.objects.get(pk=pk)
-    tutor_id = session.tutor.id
-    timeslot = Timeslot.objects.filter(tutor=session.tutor, start=session.start, end=session.end, status='Booked')[0]
-    timeslot.status = 'Available'
-    timeslot.save()
+    session.timeslot.status = 'Available'
+    session.timeslot.save()
+    tutor_id = session.timeslot.tutor.id
     session.delete()
     return redirect('viewTutor', pk=tutor_id)
 
@@ -188,10 +197,9 @@ def confirmCanceling(request, pk):
     session = Session.objects.filter(pk=pk)[0]
     session.status = 'Canceled'
     session.save()
-    timeslot = Timeslot.objects.filter(tutor=session.tutor, start=session.start, end=session.end, status='Booked')[0]
-    timeslot.status = 'Available'
-    timeslot.save()
-    price = round(session.tutor.profile.price*decimal.Decimal(1.05), 2)
+    session.timeslot.status = 'Available'
+    session.timeslot.save()
+    price = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(1.05), 2)
     session.student.profile.wallet.addBalance(price)
     medium = User.objects.get(username='admin')
     medium.profile.wallet.withdraw(price)
@@ -216,5 +224,8 @@ def sessionHistory(request):
     return render(request, 'records.html', {'allSessions': allSessions, 'active':1})
 
 def viewSession(request, pk):
-    session_info = Session.objects.get(pk=pk)
-    return render(request, 'viewSession.html', {'session':session_info, 'sessionID':pk})
+    session = Session.objects.get(pk=pk)
+    totalprice = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(1.05), 2)
+    commission = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(0.05), 2)
+    return render(request, 'viewSession.html', {'session':session, 'sessionID':pk, 
+        'totalprice':totalprice, 'commission':commission})

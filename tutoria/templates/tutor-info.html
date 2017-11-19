@@ -68,7 +68,7 @@
           <tr>
             <th>Courses</th>
             <td>
-                {% for course in tutor.profile.courses %}
+                {% for course in tutor.tutorprofile.courses %}
                   <span class="badge badge-secondary subject-tag">{{ course }}</span>
                 {% endfor %}
             </td>
@@ -76,14 +76,14 @@
           <tr>
             <th>Subject tags</th>
             <td>
-              {% for tag in tutor.profile.subjects %}
+              {% for tag in tutor.tutorprofile.subjects %}
                 <span class="badge badge-secondary subject-tag">{{ tag }}</span>
               {% endfor %}
             </td>
           </tr>
           <tr>
             <th>Rate</th>
-            <td>HK$ {{ tutor.profile.price }} / hour</td>
+            <td>HK$ {{ tutor.tutorprofile.price }} / hour</td>
           </tr>
         </tbody>
       </table>

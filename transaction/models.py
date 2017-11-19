@@ -36,5 +36,10 @@ class Transaction(models.Model):
         timelocal = self.time.astimezone(timezonelocal)
         date = timelocal.strftime('%Y-%m-%d')
         time = timelocal.strftime('%H:%M')
-        return self.from_wallet.user.username + ' to ' + self.to_wallet.user.username + ' $' + str(self.amount) + ' ' + date + ' ' + time
+        if self.from_wallet != None and self.to_wallet != None:
+            return self.from_wallet.user.username + ' to ' + self.to_wallet.user.username + ' $' + str(self.amount) + ' ' + date + ' ' + time
+        elif self.from_wallet == None:
+            return 'bank account' + ' to ' + self.to_wallet.user.username + ' $' + str(self.amount) + ' ' + date + ' ' + time
+        else:
+            return self.from_wallet.user.username + ' to ' + 'bank account' + ' $' + str(self.amount) + ' ' + date + ' ' + time
     

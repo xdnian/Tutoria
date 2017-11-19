@@ -68,12 +68,12 @@
           <tbody>
             <tr>
               <th>Tutor</th>
-              <td><p class="card-text">{{ session.tutor.first_name }} {{ session.tutor.last_name }}</p></td>
+              <td><p class="card-text">{{ session.timeslot.tutor.first_name }} {{ session.timeslot.tutor.last_name }}</p></td>
             </tr>
 
             <tr>
               <th>University</th>
-              <td><p class="card-text">{{ session.tutor.profile.school }}</p></td>
+              <td><p class="card-text">{{ session.timeslot.tutor.profile.school }}</p></td>
             </tr>
 
             <tr>
@@ -83,17 +83,17 @@
 
             <tr>
               <th>Time</th>
-              <td><p class="card-text">{{ session.start }} - {{ session.end }}</p></td>
+              <td><p class="card-text">{{ session.timeslot.start }} - {{ session.timeslot.end }}</p></td>
             </tr>
 
             <tr>
               <th>Rate</th>
-              <td><p class="card-text">{{ session.tutor.price }}</p></td>
+              <td><p class="card-text">HK$ {{ session.timeslot.tutor.tutorprofile.price }}</p></td>
             </tr>
 
             <tr>
               <th>Total Pay</th>
-              <td>HK$ {{ session_info.total_price }} (including HK$ {{ session_info.commission }} as commission)</td>
+              <td>HK$ {{ totalprice }} (including HK$ {{ commission }} as commission)</td>
             </tr>
 
           </tbody>
