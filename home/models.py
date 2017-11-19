@@ -19,7 +19,7 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-    def getSchoolName(self):
+    def get_school_name(self):
         return self.SCHOOL_CHOICES_DICT[self.school]
 
 class Tutorprofile(models.Model):

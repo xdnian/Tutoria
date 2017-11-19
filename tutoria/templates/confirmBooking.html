@@ -48,45 +48,67 @@
 
 {% block content %}
   <h1 class="bd-title">Booking Confirmation</h1> 
-    <div class="container">
-      <div class="row">
-        <table class="table">
-          <tbody>
-            <tr>
-              <th>Tutor</th>
-              <td>{{ session_info.name }}</td>
-            </tr>
-            <tr>
-              <th>University</th>
-              <td>{{ session_info.school }}</td>
-            </tr>
-            <tr>
-              <th>Date</th>
-              <td>{{ session_info.date }}</td>
-            </tr>
-            <tr>
-              <th>Time</th>
-              <td>{{ session_info.time }}</td>
-            </tr>
-            <tr>
-              <th>Rate</th>
-              <td>HK$ {{ session_info.tutor_price }} / hour</td>
-            </tr>
-            <tr>
-              <th>Total Pay</th>
-              <td>HK$ {{ session_info.total_price }} (including HK$ {{ session_info.commission }} as commission)</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="confirm-btn-set">
-        <a href="/cancelConfirmBooking/{{sessionID}}" class="btn btn-danger confirm-btn">Cancel</a>
-        <a href="/confirmBooking/{{sessionID}}" class="btn btn-success confirm-btn">Confirm and Pay</a>
-      </div>
+  <div class="container">
+    <div class="row">
+      <table class="table">
+        <tbody>
+          <tr>
+            <th>Tutor</th>
+            <td>{{ session_info.name }}</td>
+          </tr>
+          <tr>
+            <th>University</th>
+            <td>{{ session_info.school }}</td>
+          </tr>
+          <tr>
+            <th>Date</th>
+            <td>{{ session_info.date }}</td>
+          </tr>
+          <tr>
+            <th>Time</th>
+            <td>{{ session_info.time }}</td>
+          </tr>
+          <tr>
+            <th>Rate</th>
+            <td>HK$ {{ session_info.tutor_price }} / hour</td>
+          </tr>
+          <tr>
+            <th>Total Pay</th>
+            <td>HK$ {{ session_info.total_price }} (including HK$ {{ session_info.commission }} as commission)</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    
+    <div class="confirm-btn-set">
+      <a href="/cancelConfirmBooking/{{sessionID}}" class="btn btn-secondary confirm-btn">Back</a>
+      <!-- Confirm button notice modal -->
+      <button type="button" class="btn btn-success confirm-btn" data-toggle="modal" data-target="#confrimModal">
+        Confirm
+      </button>
+
+      <!-- Modal -->
+      <div class="modal fade" id="confrimModal" tabindex="-1" role="dialog" aria-labelledby="confrimModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confrimModalLabel">Notice</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Are you sure to confirm the booking and payment will be deducted from your wallet?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+              <a href="/confirmBooking/{{sessionID}}" class="btn btn-success">Confirm & Pay</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- /container -->
 {% endblock %}

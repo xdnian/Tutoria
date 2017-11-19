@@ -67,10 +67,36 @@
     <div class="card" >
       <div class="card-body" sessionId="{{ session.id }}">
         <h4 class="card-title" status="{{ session.status }}">{{ session.topic }}</h4>
-        <p class="card-text">Tutor: {{ session.timeslot.tutor }}
-          <br>Time: {{ session.timeslot.start }}-{{ session.timeslot.end }}</p>
+        <p class="card-text">Tutor: {{ session.timeslot.tutor.get_full_name }}
+          <br>Start time: {{ session.timeslot.start }}
+          <br>End time: {{ session.timeslot.end }}</p>
         <a href="/viewSession/{{session.id}}" class="btn btn-primary session-detail-btn">Details</a>
-        <button class="btn btn-danger session-cancel-btn">Cancel</button>
+        {% if session.status == "Booked" %}
+          <!-- Cancel button notice modal -->
+          <button type="button" class="btn btn-danger session-cancel-btn" data-toggle="modal" data-target="#confrimModal">
+              Cancel
+          </button>
+          <!-- Modal -->
+          <div class="modal fade" id="confrimModal" tabindex="-1" role="dialog" aria-labelledby="confrimModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="confrimModalLabel">Warning</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  Are you sure to cancel this session? <br>The payment will be returned to your wallet.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">  No  </button>
+                  <a href="/canceling/{{sessionID}}" class="btn btn-danger">  Yes  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
       </div>
     </div>
     {% endfor %}

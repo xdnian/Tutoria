@@ -68,12 +68,12 @@
           <tbody>
             <tr>
               <th>Tutor</th>
-              <td><p class="card-text">{{ session.timeslot.tutor.first_name }} {{ session.timeslot.tutor.last_name }}</p></td>
+              <td><p class="card-text">{{ session.timeslot.tutor.get_full_name }}</p></td>
             </tr>
 
             <tr>
               <th>University</th>
-              <td><p class="card-text">{{ session.timeslot.tutor.profile.school }}</p></td>
+              <td><p class="card-text">{{ session.timeslot.tutor.profile.get_school_name }}</p></td>
             </tr>
 
             <tr>
@@ -87,8 +87,8 @@
             </tr>
 
             <tr>
-              <th>Rate</th>
-              <td><p class="card-text">HK$ {{ session.timeslot.tutor.tutorprofile.price }}</p></td>
+              <th>Tutor rate</th>
+              <td><p class="card-text">HK$ {{ session.timeslot.tutor.tutorprofile.price }} / hour</p></td>
             </tr>
 
             <tr>
@@ -96,12 +96,15 @@
               <td>HK$ {{ totalprice }} (including HK$ {{ commission }} as commission)</td>
             </tr>
 
+            <tr>
+              <th>Status</th>
+              <td>{{ session.status }}</td>
+            </tr>
+
           </tbody>
           </thead>
         </table>
       </div>
-
-
 
     <a href="javascript:history.go(-1)"><button type="button" class="btn btn-secondary confirmbtn">Back</button></a>
   </form>

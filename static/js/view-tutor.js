@@ -6,4 +6,10 @@ $(document).ready(function () {
     $(".timeslot.available").click(function () {
         window.location = "/booking/" + $(this).attr("timeslot-id");
     });
+
+    $("#showTimeslotBtn").click(function() {
+        $('html, body').delay(200).animate({
+            scrollTop: $("#showTimeslotBtn").offset().top
+        }, 600);
+    });
 });

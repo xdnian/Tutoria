@@ -127,7 +127,7 @@ def booking(request, pk):
 
     tutor_price = timeslot.tutor.tutorprofile.price
     commission = round(tutor_price *decimal.Decimal(0.05), 2)
-    school = timeslot.tutor.profile.getSchoolName()
+    school = timeslot.tutor.profile.get_school_name()
     total_price = tutor_price + commission
     session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'total_price': total_price, 'commission': commission}
     return render(request, 'confirmBooking.html', {'session_info': session_info, 'sessionID':session.id})
@@ -227,5 +227,5 @@ def viewSession(request, pk):
     session = Session.objects.get(pk=pk)
     totalprice = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(1.05), 2)
     commission = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(0.05), 2)
-    return render(request, 'viewSession.html', {'session':session, 'sessionID':pk, 
+    return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 
         'totalprice':totalprice, 'commission':commission})

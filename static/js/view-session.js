@@ -11,7 +11,7 @@ $(document).ready(function(){
     // console.log($(".card-title").attr("status"));
     $(".card-title").after(status_badge[$(".card-title").attr("status")]);
     
-    $(".session-cancel-btn").click(function(){
-        window.location = "/canceling/"+$(this).parent().attr("sessionId");
-    });
+    // $(".session-cancel-btn").click(function(){
+    //     window.location = "/canceling/"+$(this).parent().attr("sessionId");
+    // });
 });

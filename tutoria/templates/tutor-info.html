@@ -59,11 +59,11 @@
         <tbody>
           <tr>
             <th>Breif biography</th>
-            <td>{{ tutor.profile.getSchoolName }}</td>
+            <td>{{ tutor.profile.get_school_name }}</td>
           </tr>
           <tr>
             <th>University</th>
-            <td>{{ tutor.profile.getSchoolName }}</td>
+            <td>{{ tutor.profile.get_school_name }}</td>
           </tr>
           <tr>
             <th>Courses</th>
@@ -91,37 +91,49 @@
   </div>
 
   <!-- List all avaliable time -->
-  {% if timeslots %}
-  <div class="container">
-    <div class="row">
-      <table class="table table-hover table-sm table-bordered table-responsive" id="timeslot-select" style="display: none;">
-        <thead>
-            <tr>
-                <th></th>
-                {% for slots in timeslots %}
-                    <th>{{slots}}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for slot in allSlots %}
-                {% ifchanged slot.slot_time_str.date %}
-                    {% if forloop.counter0 != 0 %}
-                    </tr>
-                    {% endif %}
+  {% if allSlots %}
+    <p>
+      <button class="btn btn-outline-info" type="button" data-toggle="collapse" data-target="#collapseTimeslots" aria-expanded="false" aria-controls="collapseTimeslots" id="showTimeslotBtn">
+        Show all available timeslots >>
+      </button>
+    </p>
+      
+    <div class="container">
+      <div class="collapse" id="collapseTimeslots">
+        <p style="margin-bottom: 1rem;"><span class="badge badge-success">Available</span> <span class="badge badge-dark">Unavailable</span></p>
+        <div class="row">
+          <table class="table table-hover table-sm table-bordered table-responsive" id="timeslot-select" style="display: none;">
+            <thead>
+                <tr>
+                    <th></th>
+                    {% for slots in timeslots %}
+                        <th>{{slots}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for slot in allSlots %}
+                  {% ifchanged slot.slot_time_str.date %}
+                    {% if forloop.counter0 != 0 %}</tr>{% endif %}
                     <tr>
-                    <th>
-                        {{ slot.slot_time_str.date }}
-                    </th>
-                    {% endifchanged %}
+                    <th>{{ slot.slot_time_str.date }}</th>
+                  {% endifchanged %}
                     <td class="timeslot {% if slot.status == 'Available' %}available bg-success{% else %}unavailable bg-dark{% endif %}" timeslot-id="{{slot.id}}">
                     </td>
-            {% endfor %}
-            </tr>
-        </tbody>
-      </table>
+                {% endfor %}
+                </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-  </div>
+
+  {% else %}
+    <p>
+      <button class="btn btn-outline-secondary" type="button" disabled>
+        No available timeslots currently.
+      </button>
+    </p>
   {% endif %}
 {% endblock %}
 
