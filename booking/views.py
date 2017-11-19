@@ -146,7 +146,8 @@ def confirmBooking(request, pk):
         if len(timeClashHistory) == 0:
             check2 = True
         if check2 == True:
-            price = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(1.05), 2)
+            session.commission = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(0.05), 2)
+            price = session.timeslot.tutor.tutorprofile.price + session.commission
             check3 = session.student.profile.wallet.checkBalance(price)
             status = 'successful'
             if check3 == True:
@@ -159,6 +160,7 @@ def confirmBooking(request, pk):
                 new_transaction = Transaction(from_wallet = session.student.profile.wallet, to_wallet = medium.profile.wallet, 
                     time = currentTime, amount = price, description = 'Tutorial payment')
                 new_transaction.save()
+                session.transactions[0] = new_transaction
                 session.status = 'Booked'
                 session.save()
                 Notification(session.student, 'Your session booking is successful, your have paid HK$' + str(price) + '.')
@@ -196,10 +198,9 @@ def canceling(request, pk):
 def confirmCanceling(request, pk):
     session = Session.objects.filter(pk=pk)[0]
     session.status = 'Canceled'
-    session.save()
     session.timeslot.status = 'Available'
     session.timeslot.save()
-    price = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(1.05), 2)
+    price = session.transactions[0].amount
     session.student.profile.wallet.addBalance(price)
     medium = User.objects.get(username='admin')
     medium.profile.wallet.withdraw(price)
@@ -209,6 +210,8 @@ def confirmCanceling(request, pk):
     new_transaction = Transaction(from_wallet = medium.profile.wallet, to_wallet = session.student.profile.wallet, 
         time = currentTime, amount = price, description = 'Tutorial payment')
     new_transaction.save()
+    session.transactions[1] = new_transaction
+    session.save()
     Notification(session.student, 'Your session has been canceled, a refund of HK$' + str(price) + ' has been added to your wallet.')
     return redirect('session')
 
@@ -225,7 +228,5 @@ def sessionHistory(request):
 
 def viewSession(request, pk):
     session = Session.objects.get(pk=pk)
-    totalprice = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(1.05), 2)
-    commission = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(0.05), 2)
-    return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 
-        'totalprice':totalprice, 'commission':commission})
+    commission = round(session.transactions[0].amount/decimal.Decimal(21), 2)
+    return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 'commission':commission})

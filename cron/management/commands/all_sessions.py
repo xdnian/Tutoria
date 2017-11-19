@@ -5,6 +5,7 @@ from django.utils import timezone
 from booking.models import Session
 from offering.models import Timeslot
 from home.models import Notification
+from transaction.models import Transaction
 import datetime, decimal
 import pytz
 
@@ -47,14 +48,24 @@ class Command(BaseCommand):
         allFinishedSessions = Session.objects.filter (Q(timeslot__end__lte=currentTime, status = 'Started')).order_by('end')
         for session in allFinishedSessions:
             session.status = 'Ended'
-            price = session.timeslot.tutor.tutorprofile.price
-            commission = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(0.05), 2)
-            total = price + commission
-            session.timeslot.tutor.profile.wallet.addBalance(price)
+            price = session.transactions[0].amount
+            commission = session.commission
+            session.timeslot.tutor.profile.wallet.addBalance(price-commission)
+            utcCurrentTime = timezone.now()
+            timezonelocal = pytz.timezone('Asia/Hong_Kong')
+            currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
+            new_transaction = Transaction(from_wallet = medium.profile.wallet, to_wallet = session.timeslot.tutor.profile.wallet, 
+                time = currentTime, amount = price-commission, description = 'Tutorial payment')
+            new_transaction.save()
+            session.transactions[1] = new_transaction
+            
             MyTutors = User.objects.get(username='MyTutors')
             MyTutors.profile.wallet.addBalance(commission)
+            new_transaction = Transaction(from_wallet = medium.profile.wallet, to_wallet = MyTutors.profile.wallet, 
+                time = currentTime, amount = commission, description = 'Commission fee')
+            new_transaction.save()
             medium = User.objects.get(username='admin')
-            medium.profile.wallet.withdraw(total)
+            medium.profile.wallet.withdraw(price)
             Notification(session.timeslot.tutor, 'A tutorial session fee of HK$' + str(price) + ' had been added to your wallet.')
             Notification(session.student, 'You are invited to write a review for this tutorial session.')
             session.save()

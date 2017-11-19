@@ -5,8 +5,10 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db.models import Q
 from .forms import ChangeBalanceForm
-from .models import Wallet, Transaction
+from .models import Wallet, Transaction, Coupon
 import decimal, pytz, datetime
+
+from django.http import HttpResponse
 
 PRIVATE_TUTOR_TIMESLOTS = [(str(i) + ':00') for i in range(8,22)]
 CONTRACTED_TUTOR_TIMESLOTS = [[str(i) + ':00', str(i) + ':30'] for i in range(8,22)]
@@ -37,7 +39,6 @@ def addBalanceRequest(request):
         form = ChangeBalanceForm()
     return render(request, 'changeBalanceRequest.html', {'form': form, 'action': 'add'})
 
-
 def withdrawBalanceRequest(request):
     if request.method == 'POST':
         form = ChangeBalanceForm(request.POST)
@@ -50,3 +51,15 @@ def withdrawBalanceRequest(request):
     else:
         form = ChangeBalanceForm()
     return render(request, 'changeBalanceRequest.html', {'form': form, 'action': 'withdraw'})
+
+def isValidCoupon(request, code):
+    utcCurrentTime = timezone.now()
+    timezonelocal = pytz.timezone('Asia/Hong_Kong')
+    currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
+    allCodes = Coupon.objects.filter(expire_date__gte=currentTime)
+    print(code)
+    for each in allCodes:
+        if each.code == code:
+            return HttpResponse('1')
+    return HttpResponse('0')
+
