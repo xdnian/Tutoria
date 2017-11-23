@@ -87,13 +87,8 @@
             </tr>
 
             <tr>
-              <th>Tutor rate</th>
-              <td><p class="card-text">HK$ {{ session.timeslot.tutor.tutorprofile.price }} / hour</p></td>
-            </tr>
-
-            <tr>
               <th>Total Pay</th>
-              <td>HK$ {{ totalprice }} (including HK$ {{ commission }} as commission)</td>
+              <td>HK$ {{ transactions[0].amount }} (including HK$ {{ commission }} as commission)</td>
             </tr>
 
             <tr>

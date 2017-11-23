@@ -193,9 +193,6 @@ def cancelConfirmBooking(request, pk):
     return redirect('viewTutor', pk=tutor_id)
 
 def canceling(request, pk):
-    return render(request, 'confirmCanceling.html', {'sessionID':pk})
-
-def confirmCanceling(request, pk):
     session = Session.objects.filter(pk=pk)[0]
     session.status = 'Canceled'
     session.timeslot.status = 'Available'
@@ -213,9 +210,6 @@ def confirmCanceling(request, pk):
     session.transactions[1] = new_transaction
     session.save()
     Notification(session.student, 'Your session has been canceled, a refund of HK$' + str(price) + ' has been added to your wallet.')
-    return redirect('session')
-
-def cancelConfirmCanceling(request):
     return redirect('session')
 
 def session(request):
