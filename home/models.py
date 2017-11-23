@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from transaction.models import Wallet
+from booking.models import Review
+from django.db.models import Count, Avg
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -33,7 +35,21 @@ class Tutorprofile(models.Model):
 
     def __str__(self):
         return self.user.username
-        
+
+    def get_review_average(self):
+        reviews = Review.objects.filter(session__timeslot__tutor = self.user)
+        if len(reviews) == 0:
+            return None
+        else:
+            return reviews.aggregate(Avg('score'))['score__avg']
+
+    def get_formatted_review_average(self):
+        review = self.get_review_average()
+        if (review is None):
+            return 'Insufficient Reviews'
+        else:
+            return str(review)
+
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

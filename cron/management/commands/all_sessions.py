@@ -48,7 +48,7 @@ class Command(BaseCommand):
         allFinishedSessions = Session.objects.filter (Q(timeslot__end__lte=currentTime, status = 'Started')).order_by('end')
         for session in allFinishedSessions:
             session.status = 'Ended'
-            price = session.transactions[0].amount
+            price = session.transaction0.amount
             commission = session.commission
             session.timeslot.tutor.profile.wallet.addBalance(price-commission)
             utcCurrentTime = timezone.now()
@@ -57,7 +57,7 @@ class Command(BaseCommand):
             new_transaction = Transaction(from_wallet = medium.profile.wallet, to_wallet = session.timeslot.tutor.profile.wallet, 
                 time = currentTime, amount = price-commission, description = 'Tutorial payment')
             new_transaction.save()
-            session.transactions[1] = new_transaction
+            session.transaction1 = new_transaction
             
             MyTutors = User.objects.get(username='MyTutors')
             MyTutors.profile.wallet.addBalance(commission)
