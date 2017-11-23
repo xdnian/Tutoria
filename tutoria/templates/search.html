@@ -20,7 +20,7 @@
 
     <div class="bd-toc-item">
       <a class="bd-toc-link" href="{% url 'session' %}">
-        My Tutorials
+        My Bookings
       </a>
     </div>
 
@@ -51,7 +51,7 @@
 {% block content %}
   <h1 class="bd-title">Search Tutor</h1>
 
-  <form class="search-box" action="{% url 'search' %}" method="POST">
+  <form class="info-box search-box" action="{% url 'search' %}" method="POST">
     <table class="table table-sm">
       <tbody>
         {% csrf_token %}
@@ -94,7 +94,7 @@
       <span class="custom-control-description">Only show avaliable tutors</span>
     </label>
   
-    <button class="btn btn-info" id="tutor-search-btn" type="submit" value="Search">Search</button>
+    <button class="btn btn-info wide-btn" id="tutor-search-btn" type="submit" value="Search">Search</button>
   </form>
   <br>
 

@@ -17,9 +17,11 @@ class UserForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
 
-        for f in self.fields: self.fields[f].widget.attrs['class'] = 'form-control'
-        self.fields['identity'].widget.attrs['class'] = 'form-control custom-select'
-        self.fields['school'].widget.attrs['class'] = 'form-control custom-select'
+        for f in self.fields: 
+            if self.fields[f].__class__.__name__ == 'ChoiceField':
+                self.fields[f].widget.attrs['class'] = 'form-control custom-select'
+            else:
+                self.fields[f].widget.attrs['class'] = 'form-control'
 
         self.fields['username'].help_text = 'enter a username'
         self.fields['identity'].help_text = 'register as student/tutor'
@@ -42,15 +44,19 @@ class EditProfileForm(forms.Form):
         if self.user.profile.identity == 'T':
             self.fields['tutortype'] = forms.ChoiceField(choices=Tutorprofile.TUTOR_CHOICES, initial=self.user.tutorprofile.tutortype)
             self.fields['courses'] = forms.CharField(initial=self.user.tutorprofile.courses, required=False)
-            self.fields['biography'] = forms.CharField(initial=self.user.tutorprofile.biography, required=False) 
+            self.fields['biography'] = forms.CharField(initial=self.user.tutorprofile.biography, required=False, widget=forms.Textarea(attrs={'rows':3})) 
             self.fields['subjects'] = forms.CharField(initial=self.user.tutorprofile.subjects, required=False)
-            self.fields['price'] = forms.DecimalField(initial=self.user.tutorprofile.price)
+            self.fields['price'] = forms.DecimalField(initial=self.user.tutorprofile.price, widget=forms.NumberInput(attrs={'step':10, 'min':0}))
+            self.fields['price'].help_text = 'must be a multiple of 10'
 
-            self.fields['tutortype'].widget.attrs['class'] = 'form-control custom-select'
+        for f in self.fields: 
+            if self.fields[f].__class__.__name__ == 'ChoiceField':
+                self.fields[f].widget.attrs['class'] = 'form-control-plaintext custom-select'
+                self.fields[f].widget.attrs['disabled'] = ''
+            else:
+                self.fields[f].widget.attrs['class'] = 'form-control-plaintext'
+                self.fields[f].widget.attrs['readonly'] = ''
 
-        for f in self.fields: self.fields[f].widget.attrs['class'] = 'form-control'
-        self.fields['identity'].widget.attrs['class'] = 'form-control custom-select'
-        self.fields['school'].widget.attrs['class'] = 'form-control custom-select'
     def save(self):
         self.user.first_name = self.cleaned_data['first_name']
         self.user.last_name = self.cleaned_data['last_name']

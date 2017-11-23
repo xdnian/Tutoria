@@ -1,0 +1,90 @@
+{% extends 'nav.html' %}
+
+<!-- title -->
+{% block title %} My Profile - Tutoria {% endblock %}
+
+<!-- extra style sheet -->
+{% block stylesheet %}
+  <link href="/static/css/catalogue.css" rel="stylesheet"> 
+{% endblock %}
+
+<!-- menu -->
+{% block menu %} 
+    {% if user.is_authenticated %}
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'home' %}">
+                Overview
+            </a>
+        </div>
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'session' %}">
+                My Bookings
+            </a>
+        </div>
+
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'search' %}">
+                Search Tutor
+            </a>
+        </div>
+
+        {% if user.profile.identity != 'S' %}
+            <div class="bd-toc-item">
+                <a class="bd-toc-link" href="{% url 'offerslot' %}">
+                    Set Timeslots
+                </a>
+            </div>
+        {% endif %} 
+
+        <div class="bd-toc-item">
+            <a class="bd-toc-link" href="{% url 'wallet' %}">
+                My Wallet
+            </a>
+        </div>
+        
+    {% endif %} 
+{% endblock %}
+
+<!-- main -->
+{% block content %}
+<h1 class="bd-title">
+    My Profile
+    <button class="btn btn-secondary btn-sm" type="button" id="edit-profile-btn">Edit</button>
+</h1>
+    
+{% if save_msg %}
+    <div class="alert {% if save_msg.error %}alert alert-danger{% else %}alert alert-success{% endif %} alert-dismissible fade show" role="alert">
+        <span class="text">{{ save_msg.msg }}</span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+{% endif %}
+
+<form class="info-box" id="profile-form" method="POST">
+    <table class="table table-sm">
+        <tbody>
+            {% csrf_token %} 
+            {% for field in form %} 
+            <tr>
+                <th>
+                    {{ field.label_tag }}
+                </th>
+                <td>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <small class="help-text" style="display:none">{{ field.help_text }}</small>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <button class="btn btn-primary wide-btn bottom-btn" id="save-profile-btn" style="display: none" type="submit" value="Save">Save</button>
+</form>
+{% endblock %}
+
+{% block script %}
+<script src="/static/js/edit-profile.js"></script>
+{% endblock %}

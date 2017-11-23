@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^login/$', auth_views.login, {'template_name': 'login.html'}, name='login'),
     url(r'^logout/$', auth_views.logout, {'next_page': 'login'}, name='logout'),
     url(r'^signup/$', home_views.signup, name='signup'),
-    url(r'^editProfile/$', home_views.editProfile, name='editProfile'),
+    url(r'^profile/$', home_views.editProfile, name='profile'),
     url(r'^changePassword/$', home_views.changePassword, name='changePassword'),
     url(r'^passwordResetRequest/$', home_views.passwordResetRequest, name='passwordResetRequest'),
     url(r'^passwordReset/$', home_views.passwordReset, name='passwordReset'),
@@ -49,6 +49,5 @@ urlpatterns = [
     url(r'^wallet/history/$', transaction_views.transactionHistory, name='transactionHistory'),
     url(r'^wallet/add/$', transaction_views.addBalanceRequest, name='addBalance'),
     url(r'^wallet/withdraw/$', transaction_views.withdrawBalanceRequest, name='withdrawBalance'),
-    url(r'^profile/', book_views.session, name='profile'),
     url(r'^admin/', admin.site.urls),
 ]

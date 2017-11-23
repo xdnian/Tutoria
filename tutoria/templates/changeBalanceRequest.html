@@ -6,6 +6,7 @@
 <!-- extra style sheet -->
 {% block stylesheet %}
     <link href="/static/css/wallet.css" rel="stylesheet">
+    <link href="/static/css/catalogue.css" rel="stylesheet">
 {% endblock %}
 
 
@@ -19,7 +20,7 @@
         </div>
         <div class="bd-toc-item">
             <a class="bd-toc-link" href="{% url 'session' %}">
-                My Tutorials
+                My Bookings
             </a>
         </div>
 
@@ -62,6 +63,6 @@
       {% endfor %}
     {% endfor %}
     <br>
-    <button class="btn btn-info" type="submit" value="Search">Confirm</button>
+    <button class="btn btn-info wide-btn" type="submit" value="Search">Confirm</button>
   </form>
 {% endblock %}

@@ -38,15 +38,19 @@ def signup(request):
         form = UserForm()
     return render(request, 'signup.html', {'form': form})
 
+@login_required
 def editProfile(request):
+    save_msg = None
     if request.method == 'POST':
         form = EditProfileForm(request.user, request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            save_msg = {'error': False, 'msg': 'Your edit has been saved.'}
+        else:
+            save_msg = {'error': True, 'msg': 'Error when saving your edit. Please try again.'}
     else:
         form = EditProfileForm(request.user)
-    return render(request, 'signup.html', {'form': form})
+    return render(request, 'profile.html', {'form': form, 'save_msg': save_msg})
 
 def passwordResetRequest(request):
     if request.method == 'POST':
@@ -116,6 +120,7 @@ def passwordReset(request):
         form = PasswordResetForm()
     return render(request, 'passwordReset.html', {'form': form})
 
+@login_required
 def changePassword(request):
     if request.method == 'POST':
         form = ChangePasswordForm(request.POST)

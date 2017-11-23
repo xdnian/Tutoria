@@ -5,6 +5,7 @@
 
 {% block stylesheet %}
     <link href="/static/css/schedule.css" rel="stylesheet"> 
+    <link href="/static/css/catalogue.css" rel="stylesheet"> 
 {% endblock %}
 
 <!-- menu -->
@@ -17,7 +18,7 @@
         </div>
         <div class="bd-toc-item">
             <a class="bd-toc-link" href="{% url 'session' %}">
-                My Tutorials
+                My Bookings
             </a>
         </div>
 
@@ -87,7 +88,7 @@
 
         <div class="container">
             <div class="row justify-content-center">
-                <button class="btn btn-primary" id="black-out-save-btn" style="text-align:center" type="submit">Save</button>
+                <button class="btn btn-primary wide-btn" id="black-out-save-btn" style="text-align:center" type="submit">Save</button>
             </div>
         </div>
     </form>
