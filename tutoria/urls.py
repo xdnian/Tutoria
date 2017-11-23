@@ -20,6 +20,7 @@ from home import views as home_views
 from offering import views as offer_views
 from booking import views as book_views
 from transaction import views as transaction_views
+from chat import views as chat_views
 
 
 urlpatterns = [
@@ -48,5 +49,8 @@ urlpatterns = [
     url(r'^wallet/history/$', transaction_views.transactionHistory, name='transactionHistory'),
     url(r'^wallet/add/$', transaction_views.addBalanceRequest, name='addBalance'),
     url(r'^wallet/withdraw/$', transaction_views.withdrawBalanceRequest, name='withdrawBalance'),
+    url(r'^chat/(?P<name>\w+)/$', chat_views.chat, name='chat'),
+    url(r'^post/$', chat_views.Post, name='post'),
+    url(r'^messages/$', chat_views.Messages, name='messages'),
     url(r'^admin/', admin.site.urls),
 ]
