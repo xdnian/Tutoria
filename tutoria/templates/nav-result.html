@@ -1,0 +1,91 @@
+{% extends 'nav.html' %}
+
+<!-- title -->
+{% block title %} Booking - Tutoria {% endblock %}
+
+<!-- extra style sheet -->
+{% block stylesheet %}
+  <link href="/static/css/catalogue.css" rel="stylesheet"> 
+{% endblock %}
+
+<!-- menu -->
+{% block menu %}
+  {% if user.is_authenticated %}
+    <div class="bd-toc-item">
+      <a class="bd-toc-link" href="{% url 'home' %}">
+        Overview
+      </a>
+    </div>
+
+    <div class="bd-toc-item">
+      <a class="bd-toc-link" href="{% url 'session' %}">
+        My Bookings
+      </a>
+    </div>
+
+    <div class="bd-toc-item active">
+      <a class="bd-toc-link" href="{% url 'search' %}">
+        Search Tutor
+      </a>
+    </div>
+  
+    {% if user.profile.identity != 'S' %}
+      <div class="bd-toc-item">
+        <a class="bd-toc-link" href="{% url 'offerslot' %}">
+          Set Timeslots
+        </a>
+      </div>
+    {% endif %}
+
+    <div class="bd-toc-item">
+        <a class="bd-toc-link" href="{% url 'wallet' %}">
+            My Wallet
+        </a>
+    </div>
+
+  {% endif %}
+{% endblock %}
+
+<!-- main -->
+{% block content %}
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card text-center" id="result-card">
+        <div class="card-body">
+          
+            {% if return_msg.success %}
+              <div>
+                  <img src="/static/assets/img/material-design-icons/svg/ic_done_green_24px.svg" height="80" width="80" alt="Success">
+              </div>
+            {% else %}
+              <div>
+                  <img src="/static/assets/img/material-design-icons/svg/ic_clear_red_24px.svg" height="80" width="80" alt="Fail">
+              </div>
+            {% endif %}
+
+            <h4 class="card-title">{{ return_msg.msg }}</h4>
+            
+            {% if return_msg.reason %}
+            <hr>
+            <p>{{ return_msg.reason }}</p>
+            {% endif %}
+            
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    {% if return_msg.button %}
+    <a class="btn btn-primary" href="{{ return_msg.button.link }}">{{ return_msg.button.label }}</a>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
+
+<!-- custom scripts -->
+{% block script %}
+{% endblock %}

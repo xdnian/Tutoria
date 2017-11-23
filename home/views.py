@@ -53,6 +53,8 @@ def editProfile(request):
     return render(request, 'profile.html', {'form': form, 'save_msg': save_msg})
 
 def passwordResetRequest(request):
+    instruct = 'Please enter the email you used for Tutoria account to receive token.'
+    button_text = 'Send'
     if request.method == 'POST':
         form = PasswordResetRequestForm(request.POST)
         if form.is_valid():
@@ -66,10 +68,10 @@ def passwordResetRequest(request):
                 return redirect('passwordReset')
             else:
                 form = PasswordResetRequestForm()
-                return render(request, 'passwordResetRequest.html', {'form': form, 'message': 'This email does not exist.'})
+                return render(request, 'password-reset.html', {'form': form, 'instruct': instruct, 'button_text': button_text, 'message': 'This email does not exist.'})
     else:
         form = PasswordResetRequestForm()
-    return render(request, 'passwordResetRequest.html', {'form': form})
+    return render(request, 'password-reset.html', {'form': form, 'instruct': instruct, 'button_text': button_text})
 
 def validate_password_strength(value):
     """a password is as least 8 characters long and contains both numbers and letters.
@@ -90,6 +92,8 @@ def validate_password_strength(value):
     return True
 
 def passwordReset(request):
+    instruct = 'Please enter the email, token and set your new password.'
+    button_text = 'Confirm'
     if request.method == 'POST':
         form = PasswordResetForm(request.POST)
         if form.is_valid():
@@ -102,23 +106,25 @@ def passwordReset(request):
                 related_token = Reset_token.objects.filter(user=this_user[0])
                 if len(related_token) != 0 and related_token[0].token == token:
                     u = User.objects.get(username=this_user[0].username)
-                    if validation == True:
+                    if validation:
                         u.set_password(newpassword)
                         u.save()
                         related_token.delete()
-                        return render(request, 'passwordResetConfrim.html')
+                        button = {'label':'Confirm', 'link': '/'}
+                        return_msg = {'success': True, 'msg': 'Your password has been reset sucessfully.', 'button': button}
+                        return render(request, 'account-result.html', {'return_msg': return_msg})
                     else:
                         form = PasswordResetForm()
-                        return render(request, 'passwordReset.html', {'form': form, 'message': 'a password is as least 8 characters long and contains both numbers and letters'})
+                        return render(request, 'password-reset.html', {'form': form, 'instruct': instruct, 'button_text': button_text, 'message': 'a password is as least 8 characters long and contains both numbers and letters'})
                 else:
                     form = PasswordResetForm()
-                    return render(request, 'passwordReset.html', {'form': form, 'message': 'Wrong token'})
+                    return render(request, 'password-reset.html', {'form': form, 'instruct': instruct, 'button_text': button_text, 'message': 'Wrong token'})
             else:
                 form = PasswordResetForm()
-                return render(request, 'passwordReset.html', {'form': form, 'message': 'Wrong email'})
+                return render(request, 'password-reset.html', {'form': form, 'instruct': instruct, 'button_text': button_text, 'message': 'Wrong email'})
     else:
         form = PasswordResetForm()
-    return render(request, 'passwordReset.html', {'form': form})
+    return render(request, 'password-reset.html', {'form': form, 'instruct': instruct, 'button_text': button_text})
 
 @login_required
 def changePassword(request):
@@ -129,17 +135,19 @@ def changePassword(request):
             confirm_newpassword = form.cleaned_data.get('confirm_newpassword')
             if newpassword != confirm_newpassword:
                 form = ChangePasswordForm()
-                return render(request, 'passwordReset.html', {'form': form, 'message': 'The two passwords do not match, please enter again.'})
+                return render(request, 'change-password.html', {'form': form, 'message': 'The two passwords do not match, please enter again.'})
             else:
                 validation = validate_password_strength(newpassword)
-                if validation == True:
+                if validation:
                     u = request.user
                     u.set_password(newpassword)
                     u.save()
-                    return render(request, 'passwordResetConfrim.html')
+                    button = {'label':'Log in', 'link': '/login/'}
+                    return_msg = {'success': True, 'msg': 'Your password has been reset sucessfully.', 'button': button}
+                    return render(request, 'account-result.html', {'return_msg': return_msg})
                 else:
                     form = ChangePasswordForm()
-                    return render(request, 'passwordReset.html', {'form': form, 'message': 'a password is as least 8 characters long and contains both numbers and letters'})
+                    return render(request, 'change-password.html', {'form': form, 'message': 'a password is as least 8 characters long and contains both numbers and letters'})
     else:
         form = ChangePasswordForm()
-    return render(request, 'passwordReset.html', {'form': form})
+    return render(request, 'change-password.html', {'form': form})

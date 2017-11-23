@@ -69,7 +69,7 @@
 }
 
 .custom-control-input:focus~.custom-control-indicator {
-    box-shadow: 0 0 0 1px #fff, 0 0 0 3px rgba(0,123,255,.25);
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px rgba(0, 123, 255, .25);
 }
 
 .bottom-btn {
@@ -81,6 +81,7 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
 
 /* table style */
 
@@ -123,3 +124,18 @@ table#timeslot-select .available:hover {
     cursor: pointer;
 }
 
+#result-card {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+#result-card .card-body {
+    padding-top: 2.5rem;
+    padding-bottom: 1.5rem;
+}
+
+#result-card .card-title {
+    margin-top: 1.25rem;
+    margin-bottom: 2.25rem;
+    color: grey;
+}

@@ -78,3 +78,12 @@ body {
 .form-signup label {
   margin-bottom: .2rem;
 }
+
+#result-card .card-body {
+  padding-top: 2.5rem;
+  padding-bottom: 2rem;
+}
+
+#result-card .main-msg {
+  margin-bottom: 2rem;
+}
