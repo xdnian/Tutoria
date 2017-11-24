@@ -235,6 +235,16 @@ def sessionHistory(request):
     return render(request, 'records.html', {'allSessions': allSessions, 'active':1})
 
 @login_required
+def sessionTutoring(request):
+    allSessions = Session.objects.filter(timeslot__tutor=request.user, status='Booked')
+    return render(request, 'recordsTutoring.html', {'allSessions': allSessions, 'active':0})
+
+@login_required
+def sessionTutoringHistory(request):
+    allSessions = Session.objects.filter(Q(timeslot__tutor=request.user) & ~Q(status='Booked'))
+    return render(request, 'recordsTutoring.html', {'allSessions': allSessions, 'active': 1})
+
+@login_required
 def viewSession(request, pk):
     session = Session.objects.get(pk=pk)
     payment = session.transaction0.amount

@@ -54,4 +54,6 @@ urlpatterns = [
     url(r'^post/$', chat_views.Post, name='post'),
     url(r'^messages/(?P<name>\w+)/$', chat_views.Messages, name='messages'),
     url(r'^admin/', admin.site.urls),
+    url(r'^sessionTutoring/', book_views.sessionTutoring, name='sessionTutoring'),
+    url(r'^sessionTutoringHistory/', book_views.sessionTutoringHistory, name='sessionTutoringHistory')
 ]
