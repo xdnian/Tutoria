@@ -51,6 +51,6 @@ urlpatterns = [
     url(r'^wallet/withdraw/$', transaction_views.withdrawBalanceRequest, name='withdrawBalance'),
     url(r'^chat/(?P<name>\w+)/$', chat_views.chat, name='chat'),
     url(r'^post/$', chat_views.Post, name='post'),
-    url(r'^messages/$', chat_views.Messages, name='messages'),
+    url(r'^messages/(?P<name>\w+)/$', chat_views.Messages, name='messages'),
     url(r'^admin/', admin.site.urls),
 ]
