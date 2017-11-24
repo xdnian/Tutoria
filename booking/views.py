@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404, render
 from transaction.models import Transaction
 from django.db.models.functions import Trunc
 from django.db.models import Count, DateTimeField, Avg
+from django.http import JsonResponse
 
 TIMEZONELOCAL = pytz.timezone('Asia/Hong_Kong')
 
@@ -241,12 +242,13 @@ def viewSession(request, pk):
     commission = round(payment/decimal.Decimal(21), 2)
     reviews = Review.objects.filter(session = session)
 
-    if session.status == 'Ended':
+    review = None
+    form = None
+    if session.status == 'Ended' and session.student == request.user:
         form = ReviewForm()
-    else:
-        form = None
-    
-    return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 'payment':payment, 'commission':commission, 'form':form})
+    elif session.status == 'Reviewed' and session.student == request.user:
+        review = Review.objects.get(session = session)
+    return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 'payment':payment, 'commission':commission, 'form':form, 'review':review})
 
 @login_required
 def submitReview(request, pk):
@@ -277,3 +279,12 @@ def submitReview(request, pk):
         save_msg = {}
         form = ReviewForm()
     return render(request, 'submitReview.html', {'form': form, 'save_msg': save_msg, 'session': session})
+
+def getAllReviewFormatted(request, pk):
+    user = User.objects.get(id = pk)
+    all_reviews = user.tutorprofile.get_all_reviews()
+    formatted_list_reviews = [{'author': review.session.student.get_full_name() if not review.isAnonymous else 'Anonymous User', 
+        'avatar': '/' + review.session.student.profile.picture.url if not review.isAnonymous else '/static/assets/img/avatar/def_avatar.png',
+        'score': review.score, 'comment': review.comment} for review in all_reviews]
+    # print(formatted_list_reviews)
+    return JsonResponse({'reviews': formatted_list_reviews})
