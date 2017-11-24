@@ -6,6 +6,8 @@ TIMEZONELOCAL = pytz.timezone('Asia/Hong_Kong')
 
 # Create your models here.
 class Timeslot(models.Model):
+    # Possible status:
+    # Available, Booked, Unavailable, Blocked
     global TIMEZONELOCAL
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     start = models.DateTimeField()

@@ -36,8 +36,11 @@ class Tutorprofile(models.Model):
     def __str__(self):
         return self.user.username
 
+    def get_all_reviews(self):
+        return Review.objects.filter(session__timeslot__tutor = self.user)
+
     def get_review_average(self):
-        reviews = Review.objects.filter(session__timeslot__tutor = self.user)
+        reviews = self.get_all_reviews()
         # TODO: change to 3
         if len(reviews) < 1:
             return None

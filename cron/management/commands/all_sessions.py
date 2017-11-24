@@ -29,23 +29,13 @@ class Command(BaseCommand):
             timeslot.status = 'Unavailable'
             timeslot.save()
 
-        allBookedTimeslots = Timeslot.objects.filter( Q(start__lte=tomorrowTime, status = 'Booked')).order_by('start')
-        for timeslot in allBookedTimeslots:
-            timeslot.status = 'Committed'
-            timeslot.save()
-
         allBookedSessions = Session.objects.filter( Q(timeslot__start__lte=tomorrowTime, status = 'Booked')).order_by('start')
         for session in allBookedSessions:
             session.status = 'Committed'
             session.save()
 
-        allStartedSessions = Session.objects.filter( Q(timeslot__start__lte=currentTime, status = 'Committed')).order_by('start')
-        for session in allBookedSessions:
-            session.status = 'Started'
-            session.save()
-
         # End all sessions
-        allFinishedSessions = Session.objects.filter (Q(timeslot__end__lte=currentTime, status = 'Started')).order_by('end')
+        allFinishedSessions = Session.objects.filter (Q(timeslot__end__lte=currentTime, status = 'Committed')).order_by('end')
         for session in allFinishedSessions:
             session.status = 'Ended'
             price = session.transaction0.amount

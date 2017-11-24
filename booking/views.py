@@ -233,11 +233,12 @@ def viewSession(request, pk):
     commission = round(payment/decimal.Decimal(21), 2)
     reviews = Review.objects.filter(session = session)
 
-    if len(reviews) == 0 and session.status == 'Ended':
-        reviewEnabled = True        
+    if session.status == 'Ended':
+        form = ReviewForm()
     else:
-        reviewEnabled = False
-    return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 'payment':payment, 'commission':commission, 'reviewEnabled':reviewEnabled})
+        form = None
+    
+    return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 'payment':payment, 'commission':commission, 'form':form})
 
 def submitReview(request, pk):
     session = Session.objects.get(pk=pk)
@@ -249,12 +250,16 @@ def submitReview(request, pk):
             comment = form.cleaned_data.get('comment')
             isAnonymous = form.cleaned_data.get('isAnonymous')
 
-            new_review = Review(session = session, score = score, comment = comment, isAnonymous = isAnonymous)
+            utcCurrentTime = timezone.now()
+            timezonelocal = pytz.timezone('Asia/Hong_Kong')
+            currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
+            
+            new_review = Review(session = session, score = score, time = currentTime, comment = comment, isAnonymous = isAnonymous)
             new_review.save()
 
-            session.review = new_review
+            session.status = 'Reviewed'
             session.save()
-            return redirect('home')
+            return redirect('viewSession', pk=pk)
             save_msg = {'error': False, 'msg': 'Your review has been submitted.'}
             #return render(request, 'reviewConfirm.html', {})
         else:
