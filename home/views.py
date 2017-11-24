@@ -4,16 +4,50 @@ from django.views.decorators.cache import cache_control
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from .forms import UserForm, PasswordResetRequestForm, PasswordResetForm, EditProfileForm, ChangePasswordForm
+from .models import Reset_token, Notification
+from booking.models import Session
+from offering.models import Timeslot
 from .models import Reset_token, Notification, Tutorprofile
 from transaction.models import Wallet
+from django.utils import timezone
 from uuid import uuid4
 from django.template import RequestContext
+import pytz
 
 import os
 
+TIMEZONELOCAL = pytz.timezone('Asia/Hong_Kong')
+
+
 @login_required
 def home(request):
-    return render(request, 'overview.html')
+    utcCurrentTime = timezone.now()
+    timezonelocal = pytz.timezone('Asia/Hong_Kong')
+    currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
+
+    recentTutoringSessions = Session.objects.filter(timeslot__tutor = request.user, timeslot__start__gte = currentTime).order_by('timeslot__start')
+    recentAttendingSessions = Session.objects.filter(student = request.user, timeslot__start__gte = currentTime).order_by('timeslot__start')
+
+    for session in recentTutoringSessions:
+        startlocal = session.timeslot.start.astimezone(TIMEZONELOCAL)
+        endlocal = session.timeslot.end.astimezone(TIMEZONELOCAL)
+        date = startlocal.strftime('%b %d')
+        startTime = startlocal.strftime('%H:%M')
+        endTime = endlocal.strftime('%H:%M')
+
+        slot_time_str = {'date':date, 'startTime':startTime, 'endTime':endTime}
+        session.timeslot.slot_time_str = slot_time_str
+
+    for session in recentAttendingSessions:
+        startlocal = session.timeslot.start.astimezone(TIMEZONELOCAL)
+        endlocal = session.timeslot.end.astimezone(TIMEZONELOCAL)
+        date = startlocal.strftime('%b %d')
+        startTime = startlocal.strftime('%H:%M')
+        endTime = endlocal.strftime('%H:%M')
+
+        slot_time_str = {'date':date, 'startTime':startTime, 'endTime':endTime}
+        session.timeslot.slot_time_str = slot_time_str
+    return render(request, 'overview.html', {'recentTutoringSessions': recentTutoringSessions, 'recentAttendingSessions':recentAttendingSessions})
 
 
 def signup(request):
@@ -30,7 +64,7 @@ def signup(request):
             if user.profile.identity == 'T':
                 newTutorporfile = Tutorprofile(user=user)
                 newTutorporfile.save()
-            
+
             # create wallet and assosiate it to the user
             newWallet = Wallet(user = user, balance = 0)
             newWallet.save()
