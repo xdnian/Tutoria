@@ -5,10 +5,10 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from .forms import UserForm, PasswordResetRequestForm, PasswordResetForm, EditProfileForm, ChangePasswordForm
-from .models import Reset_token, Notification
+from .models import Reset_token, Notification, Tutorprofile
 from booking.models import Session
 from offering.models import Timeslot
-from .models import Reset_token, Notification, Tutorprofile
+from chat.models import Chat
 from transaction.models import Wallet
 from django.utils import timezone
 from uuid import uuid4
@@ -176,6 +176,18 @@ def passwordReset(request):
     else:
         form = PasswordResetForm()
     return render(request, 'password-reset.html', {'form': form, 'instruct': instruct, 'button_text': button_text})
+
+@login_required
+def viewNotifications(request):
+    user = request.user
+
+    all_distinct_users_from = Chat.objects.filter(user_to = user).extra(select={'user_id': 'user_from_id'}).values('user_id').distinct()
+    all_distinct_users_to = Chat.objects.filter(user_from = user).extra(select={'user_id': 'user_to_id'}).values('user_id').distinct()
+
+    intermediate_list = list(all_distinct_users_from) + list(all_distinct_users_to)
+    final_list = list(set([i['user_id'] for i in intermediate_list]))
+    allUsers = User.objects.filter(id__in = final_list)
+    return render(request, 'notifications.html', {'allUsers': allUsers})
 
 @login_required
 def changePassword(request):

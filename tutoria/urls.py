@@ -52,6 +52,7 @@ urlpatterns = [
     url(r'^wallet/add/$', transaction_views.addBalanceRequest, name='addBalance'),
     url(r'^wallet/withdraw/$', transaction_views.withdrawBalanceRequest, name='withdrawBalance'),
     url(r'^chat/(?P<name>\w+)/$', chat_views.chat, name='chat'),
+    url(r'^viewNotifications/$', home_views.viewNotifications, name='viewNotifications'),
     url(r'^post/$', chat_views.Post, name='post'),
     url(r'^messages/(?P<name>\w+)/$', chat_views.Messages, name='messages'),
     url(r'^admin/', admin.site.urls),

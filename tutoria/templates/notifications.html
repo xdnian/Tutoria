@@ -53,20 +53,22 @@
 
 <!-- main -->
 {% block content %}
-  <h1 class="bd-title">Transaction History</h1>
+  <h1 class="bd-title">Notifications</h1>
 
   <!-- List all avaliable sessions -->
   <div class="row result-list">
     <table class="table table-hover">
       <thead>
         <tr>
-          <th scope="col">From</th>
+          <th scope="col">Message with</th>
         </tr>
       </thead>
       <tbody>
         {% for user in allUsers %}
         <tr class="transaction-info">
-          <td>{{ user.get_full_name }}</td>
+          <td>
+            <a href="{% url 'chat' name=user.username %}">{{ user.get_full_name }} </a>
+          </td>
         </tr>
         {% endfor %}
       </tbody>

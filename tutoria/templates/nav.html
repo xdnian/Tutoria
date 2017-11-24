@@ -55,9 +55,10 @@
                         </div>
                         <div class="dropdown-divider"></div>
                         <div class="dropdown-item">
-                            <a class="dropdown-item-link" href="#" style="display:inline">Notification</a>
+                            <a class="dropdown-item-link" href="{% url 'viewNotifications' %}" style="display:inline">Notification</a>
                             <!-- Notificaiton icon -->
-                            <span class="badge badge-pill badge-danger">2</span>
+                            
+                            <!-- <span class="badge badge-pill badge-danger">2</span> -->
                         </div>
                         <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
                         {% if user.profile.identity == 'T' %}
