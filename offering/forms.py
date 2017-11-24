@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Timeslot
-import pytz
+import pytz, datetime
 
 TIMEZONELOCAL = pytz.timezone('Asia/Hong_Kong')
 
@@ -20,7 +20,9 @@ class TimeForm(forms.Form):
     fields = {}
     def __init__(self, Tutor, *args, **kwargs):
         super(TimeForm, self).__init__(*args, **kwargs)
-        self.allSlots = Timeslot.objects.filter(tutor__id=Tutor.id).order_by('start')
+        today = datetime.date.today()
+        start_time = datetime.datetime(today.year, today.month, today.day, 0, 0, 0, 0)
+        self.allSlots = Timeslot.objects.filter(tutor__id=Tutor.id, start__gte=start_time).order_by('start')
         for i in range(len(self.allSlots)):
             startlocal = self.allSlots[i].start.astimezone(TIMEZONELOCAL)
             endlocal = self.allSlots[i].end.astimezone(TIMEZONELOCAL)

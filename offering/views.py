@@ -24,7 +24,7 @@ def offerslot(request):
         start_date = timeslots[0].start.date()
         scope = (end_date - start_date).days
         for i in range(1, scope+1):
-            this_date = end_date
+            this_date = start_date + datetime.timedelta(days=i)
             addOneDaySlots(user=request.user, date=this_date)
     
     if request.method == 'POST':
