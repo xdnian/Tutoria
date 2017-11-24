@@ -45,12 +45,20 @@
                         <!-- name -->
                         <span>{{ user.get_full_name }}</span>
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <span>
-                            <a class="dropdown-item" href="#" style="display:inline">Notification</a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <div class="dropdown-item user-info">
+                            <img src="/{{ user.profile.picture }}"> 
+                            <div class="user-info-blk">
+                                {{ user.get_full_name }}<br>
+                                <span style="color:grey">@{{ user.username }}</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item">
+                            <a class="dropdown-item-link" href="#" style="display:inline">Notification</a>
                             <!-- Notificaiton icon -->
                             <span class="badge badge-pill badge-danger">2</span>
-                        </span>
+                        </div>
                         <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
                         {% if user.profile.identity == 'T' %}
                         <a class="dropdown-item" href="{% url 'viewTutor' user.id %}">My Tutor Info Page</a>

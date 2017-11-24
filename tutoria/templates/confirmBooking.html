@@ -54,66 +54,78 @@
 {% block content %}
   <h1 class="bd-title">Booking Confirmation</h1> 
   <div class="container">
-    <div class="row">
-      <table class="table">
-        <tbody>
-          <tr>
-            <th>Tutor</th>
-            <td>{{ session_info.name }}</td>
-          </tr>
-          <tr>
-            <th>University</th>
-            <td>{{ session_info.school }}</td>
-          </tr>
-          <tr>
-            <th>Date</th>
-            <td>{{ session_info.date }}</td>
-          </tr>
-          <tr>
-            <th>Time</th>
-            <td>{{ session_info.time }}</td>
-          </tr>
-          <tr>
-            <th>Rate</th>
-            <td>HK$ {{ session_info.tutor_price }} / hour</td>
-          </tr>
-          <tr>
-            <th>Total Pay</th>
-            <td>HK$ {{ session_info.total_price }} (including HK$ {{ session_info.commission }} as commission)</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
 
-    <div class="confirm-btn-set">
-      <a href="/cancelConfirmBooking/{{sessionID}}" class="btn btn-secondary wide-btn confirm-btn">Back</a>
-      <!-- Confirm button notice modal -->
-      <button type="button" class="btn btn-success wide-btn confirm-btn" data-toggle="modal" data-target="#confrimModal">
-        Confirm
-      </button>
+    <form action="/confirmBooking/{{sessionID}}" method="POST">
+      <div class="row">
+        <table class="table">
+          <tbody>
+            <tr>
+              <th>Tutor</th>
+              <td>{{ session_info.name }}</td>
+            </tr>
+            <tr>
+              <th>University</th>
+              <td>{{ session_info.school }}</td>
+            </tr>
+            <tr>
+              <th>Date</th>
+              <td>{{ session_info.date }}</td>
+            </tr>
+            <tr>
+              <th>Time</th>
+              <td>{{ session_info.time }}</td>
+            </tr>
+            <tr>
+              <th>Rate</th>
+              <td>HK$ <span id="rate">{{ session_info.tutor_price }}</span> / hour</td>
+            </tr>
+            <tr>
+              <th>Coupon</th>
+              <td><input type="text" name="coupon" class="form-control" placeholder="Coupon code.." maxlength="15" id="id_coupon" style="max-width:15rem"></td>
+            </tr>
+            <tr>
+              <th>Total Pay</th>
+              <td>HK$ <span id="total">{{ session_info.total_price }}</span> (including HK$ <span id="commission">{{ session_info.commission }}</span> as commission)</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-      <!-- Modal -->
-      <div class="modal fade" id="confrimModal" tabindex="-1" role="dialog" aria-labelledby="confrimModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="confrimModalLabel">Notice</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              Are you sure to confirm the booking and payment will be deducted from your wallet?
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-              <a href="/confirmBooking/{{sessionID}}" class="btn btn-success">Confirm & Pay</a>
+      <div class="confirm-btn-set">
+        <a href="/cancelConfirmBooking/{{sessionID}}" class="btn btn-secondary wide-btn confirm-btn">Back</a>
+        <!-- Confirm button notice modal -->
+        <button type="button" class="btn btn-success wide-btn confirm-btn" data-toggle="modal" data-target="#confrimModal">
+          Confirm
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="confrimModal" tabindex="-1" role="dialog" aria-labelledby="confrimModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="confrimModalLabel">Notice</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Are you sure to confirm the booking and payment will be deducted from your wallet?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button class="btn btn-success" type="submit">Confirm & Pay</a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </form>
+
   </div>
 
   <!-- /container -->
+{% endblock %}
+
+{% block script %}
+  <script src="/static/js/booking.js"></script>
 {% endblock %}

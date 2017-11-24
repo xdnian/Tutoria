@@ -68,21 +68,21 @@ class EditProfileForm(forms.Form):
         old_identity = self.user.profile.identity
         self.user.profile.identity = self.cleaned_data['identity']
         self.user.profile.school = self.cleaned_data['school']
-        self.user.profile.picture = self.cleaned_data['picture']
         self.user.profile.wallet.bank_account = self.cleaned_data['bank_account']
+        if self.cleaned_data['picture'] != None:
+            self.user.profile.picture = self.cleaned_data['picture']
         
         if self.user.profile.identity == 'T' and old_identity == 'S':
             tutorprofiles = Tutorprofile.objects.filter(user = self.user)
             if (len(tutorprofiles) == 0):
-                # print("CREATE AAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
                 newTutorporfile = Tutorprofile(user=self.user)
                 newTutorporfile.save()
             self.user.save()
             self.user.profile.save()
             self.user.profile.wallet.save()
             self.user.tutorprofile.save()
-
             return ['Identity Change']
+
         elif self.user.profile.identity == 'T':
             self.user.tutorprofile.tutortype = self.cleaned_data['tutortype']
             all_course_str = self.cleaned_data['courses']
