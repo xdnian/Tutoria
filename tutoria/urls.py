@@ -44,6 +44,7 @@ urlpatterns = [
     url(r'^session/$', book_views.session, name='session'),
     url(r'^viewSession/(?P<pk>\d+)/$', book_views.viewSession, name='viewSession'),
     url(r'^submitReview/(?P<pk>\d+)/$', book_views.submitReview, name='submitReview'),
+    url(r'^getAllReviewFormatted/(?P<pk>\d+)/$', book_views.getAllReviewFormatted, name='getAllReviewFormatted'),
     url(r'^sessionHistory/$', book_views.sessionHistory, name='sessionHistory'),
     url(r'^canceling/(?P<pk>\d+)/$', book_views.canceling, name='canceling'),
     url(r'^wallet/$', transaction_views.wallet, name='wallet'),
@@ -54,4 +55,6 @@ urlpatterns = [
     url(r'^post/$', chat_views.Post, name='post'),
     url(r'^messages/(?P<name>\w+)/$', chat_views.Messages, name='messages'),
     url(r'^admin/', admin.site.urls),
+    url(r'^sessionTutoring/', book_views.sessionTutoring, name='sessionTutoring'),
+    url(r'^sessionTutoringHistory/', book_views.sessionTutoringHistory, name='sessionTutoringHistory')
 ]
