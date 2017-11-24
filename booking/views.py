@@ -10,7 +10,7 @@ from offering.models import Timeslot
 import decimal, pytz, datetime
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, render
-from transaction.models import Transaction
+from transaction.models import Transaction, Coupon
 from django.db.models.functions import Trunc
 from django.db.models import Count, DateTimeField, Avg
 from django.http import JsonResponse
@@ -36,7 +36,7 @@ def search(request):
             price_min = form.cleaned_data.get('price_min')
             price_max = form.cleaned_data.get('price_max')
             '''start query'''
-            allTutors = User.objects.filter(~Q(id=request.user.id) & Q(profile__identity='T'))
+            allTutors = User.objects.filter(~Q(id=request.user.id) & Q(profile__identity='T') & Q(tutorprofile__show_profile=1))
 
             if tutortype== 'P':
                 allTutors = allTutors.filter(tutorprofile__tutortype='P')
@@ -130,10 +130,11 @@ def booking(request, pk):
     timeStr = startTime.strftime('%H:%M')  + ' ~ ' + endTime.strftime('%H:%M')
 
     tutor_price = timeslot.tutor.tutorprofile.price
+    tutor_type = timeslot.tutor.tutorprofile.tutortype
     commission = round(tutor_price *decimal.Decimal(0.05), 2)
     school = timeslot.tutor.profile.get_school_name()
     total_price = tutor_price + commission
-    session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'total_price': total_price, 'commission': commission}
+    session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'tutor_type': tutor_type, 'total_price': total_price, 'commission': commission}
     return render(request, 'confirmBooking.html', {'session_info': session_info, 'sessionID':session.id})
 
 @login_required
@@ -154,6 +155,14 @@ def confirmBooking(request, pk):
         if check2 == True:
             session.commission = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(0.05), 2)
             price = session.timeslot.tutor.tutorprofile.price + session.commission
+
+            if request.method == 'POST':
+                coupon_code = request.POST.get('id_coupon', None)
+                check2_5 = Coupon.isValid(coupon_code)
+                if check2_5 == True:
+                    session.commission = 0
+                    price = session.timeslot.tutor.tutorprofile.price
+
             check3 = session.student.profile.wallet.checkBalance(price)
             
             if check3 == True:
@@ -239,7 +248,7 @@ def sessionHistory(request):
 def viewSession(request, pk):
     session = Session.objects.get(pk=pk)
     payment = session.transaction0.amount
-    commission = round(payment/decimal.Decimal(21), 2)
+    commission = session.commission
     reviews = Review.objects.filter(session = session)
 
     review = None
