@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.cache import cache_control
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
+from django.db.models import Q
 from .forms import UserForm, PasswordResetRequestForm, PasswordResetForm, EditProfileForm, ChangePasswordForm
 from .models import Reset_token, Notification
 from booking.models import Session
@@ -22,11 +23,12 @@ TIMEZONELOCAL = pytz.timezone('Asia/Hong_Kong')
 @login_required
 def home(request):
     utcCurrentTime = timezone.now()
-    timezonelocal = pytz.timezone('Asia/Hong_Kong')
-    currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
+    currentTime = timezone.now()
+    # timezonelocal = pytz.timezone('Asia/Hong_Kong')
+    # currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
 
-    recentTutoringSessions = Session.objects.filter(timeslot__tutor = request.user, timeslot__start__gte = currentTime).order_by('timeslot__start')
-    recentAttendingSessions = Session.objects.filter(student = request.user, timeslot__start__gte = currentTime).order_by('timeslot__start')
+    recentTutoringSessions = Session.objects.filter(Q(timeslot__tutor = request.user) & Q(timeslot__start__gte = currentTime) & (Q(status = 'Booked') | Q(status = 'Committed')) ).order_by('timeslot__start')
+    recentAttendingSessions = Session.objects.filter(Q(student = request.user) & Q(timeslot__start__gte = currentTime) &  (Q(status = 'Booked') | Q(status = 'Committed'))).order_by('timeslot__start')
 
     for session in recentTutoringSessions:
         startlocal = session.timeslot.start.astimezone(TIMEZONELOCAL)
@@ -47,7 +49,7 @@ def home(request):
 
         slot_time_str = {'date':date, 'startTime':startTime, 'endTime':endTime}
         session.timeslot.slot_time_str = slot_time_str
-    return render(request, 'overview.html', {'recentTutoringSessions': recentTutoringSessions, 'recentAttendingSessions':recentAttendingSessions})
+    return render(request, 'overview.html', {'user':request.user, 'recentTutoringSessions': recentTutoringSessions[:2], 'recentAttendingSessions':recentAttendingSessions[:2]})
 
 
 def signup(request):
