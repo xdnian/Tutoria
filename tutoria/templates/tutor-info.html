@@ -58,8 +58,8 @@
       <table class="table">
         <tbody>
           <tr>
-            <th>Breif biography</th>
-            <td>{{ tutor.profile.get_school_name }}</td>
+            <th>Brief biography</th>
+            <td>{{ tutor.tutorprofile.biography }}</td>
           </tr>
           <tr>
             <th>University</th>
@@ -87,7 +87,26 @@
           </tr>
           <tr>
             <th>Average Review Score</th>
-            <td> {{ tutor.tutorprofile.get_formatted_review_average }}</td>
+            <td>
+              {% if tutor.tutorprofile.get_review_average_stars %}
+                
+                {% for i in tutor.tutorprofile.get_review_average_stars.0 %}
+                  <img src="/static/assets/img/material-design-icons/svg/ic_star_black_24px.svg" height="24" width="24">
+                {% endfor %}
+
+                {% for i in tutor.tutorprofile.get_review_average_stars.1 %}
+                    <img src="/static/assets/img/material-design-icons/svg/ic_star_half_black_24px.svg" height="24" width="24">
+                {% endfor %}
+
+                {% for i in tutor.tutorprofile.get_review_average_stars.2 %}
+                  <img src="/static/assets/img/material-design-icons/svg/ic_star_border_black_24px.svg" height="24" width="24">
+                {% endfor %}
+                <span>{{ tutor.tutorprofile.get_review_average }}</span>
+
+              {% else %}
+                Insufficient Reviews
+              {% endif %}
+            </td>
           </tr>
         </tbody>
       </table>

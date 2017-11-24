@@ -38,17 +38,28 @@ class Tutorprofile(models.Model):
 
     def get_review_average(self):
         reviews = Review.objects.filter(session__timeslot__tutor = self.user)
-        if len(reviews) == 0:
+        # TODO: change to 3
+        if len(reviews) < 1:
             return None
         else:
             return reviews.aggregate(Avg('score'))['score__avg']
 
     def get_formatted_review_average(self):
-        review = self.get_review_average()
-        if (review is None):
+        avg_score = self.get_review_average()
+        if (avg_score is None):
             return 'Insufficient Reviews'
         else:
-            return str(review)
+            avg_score = int(avg_score*2) / 2.0
+            return str(avg_score)
+
+    def get_review_average_stars(self):
+        avg_score = self.get_review_average()
+        if (avg_score is None):
+            return []
+        else:
+            stars = int(avg_score)
+            half_stars = int(avg_score*2) % 2
+            return [stars*'*', half_stars*'*', (5-stars-half_stars)*'*']
 
 
 @receiver(post_save, sender=User)

@@ -122,7 +122,25 @@
               <span class="badge badge-secondary subject-tag">{{ tag }}</span>
               {% endfor %}
             </td>
-            <td>{{ tutor.tutorprofile.get_formatted_review_average }}</td>
+            <td>
+              {% if tutor.tutorprofile.get_review_average_stars %}
+                <span style="display:none">{{ tutor.tutorprofile.get_review_average }}</span>
+                {% for i in tutor.tutorprofile.get_review_average_stars.0 %}
+                  <img src="/static/assets/img/material-design-icons/svg/ic_star_black_24px.svg" height="24" width="24">
+                {% endfor %}
+
+                {% for i in tutor.tutorprofile.get_review_average_stars.1 %}
+                    <img src="/static/assets/img/material-design-icons/svg/ic_star_half_black_24px.svg" height="24" width="24">
+                {% endfor %}
+
+                {% for i in tutor.tutorprofile.get_review_average_stars.2 %}
+                  <img src="/static/assets/img/material-design-icons/svg/ic_star_border_black_24px.svg" height="24" width="24">
+                {% endfor %}
+
+              {% else %}
+                <span style="display:none">-1</span>Insufficient Reviews
+              {% endif %}
+            </td>
           </tr>
           {% endfor %}
         </tbody>

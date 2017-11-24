@@ -144,13 +144,14 @@ def confirmBooking(request, pk):
     if check1 == True:
         timeClashHistory = Session.objects.filter(Q(student=request.user) & ~Q(timeslot__tutor=session.timeslot.tutor) & (Q(timeslot__start=session.timeslot.start) | Q(timeslot__end=session.timeslot.end)) & Q(status='Booked'))
         check2 = False
+        return_msg = {'success': False, 'msg': ''}
         if len(timeClashHistory) == 0:
             check2 = True
         if check2 == True:
             session.commission = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(0.05), 2)
             price = session.timeslot.tutor.tutorprofile.price + session.commission
             check3 = session.student.profile.wallet.checkBalance(price)
-            return_msg = {'success': False, 'msg': ''}
+            
             if check3 == True:
                 session.student.profile.wallet.withdraw(price)
                 medium = User.objects.get(username='admin')
@@ -165,7 +166,7 @@ def confirmBooking(request, pk):
                 session.status = 'Booked'
                 session.save()
                 Notification(session.student, 'Your session booking is successful, your have paid HK$' + str(price) + '.')
-                return_msg = {'success': True,  'msg': 'Booking Successfully Placed'},
+                return_msg = {'success': True,  'msg': 'Booking Successfully Placed'}
             else:
                 session.timeslot.status = 'Available'
                 session.timeslot.save()
@@ -178,14 +179,14 @@ def confirmBooking(request, pk):
             session.timeslot.save()
             tutor_id = session.timeslot.tutor.id
             session.delete()
-            button = {'label':'Go back to browse other timeslots', 'link': '/viewTutor/'+tutor_id}
+            button = {'label':'Go back to browse other timeslots', 'link': '/viewTutor/' + str(tutor_id)}
             return_msg = {'success': False, 'msg': 'Booking Unsuccessful', 'reason': "A time clash with your previously booked sessions occurs.", 'button': button}
     else:
         session.timeslot.status = 'Available'
         session.timeslot.save()
         tutor_id = session.timeslot.tutor.id
         session.delete()
-        button = {'label':'Go back to browse other timeslots', 'link': '/viewTutor/'+tutor_id}
+        button = {'label':'Go back to browse other timeslots', 'link': '/viewTutor/' + str(tutor_id)}
         return_msg = {'success': False, 'msg': 'Booking Unsuccessful', 'reason': "You can't book more than one sessions of the same tutor on the same day.", 'button': button}
     
     return render(request, 'nav-result.html', {'return_msg': return_msg})
