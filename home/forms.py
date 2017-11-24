@@ -10,9 +10,10 @@ class UserForm(UserCreationForm):
     phone = forms.CharField()
     identity = forms.ChoiceField(choices=Profile.IDENTITY_CHOICES)
     school = forms.ChoiceField(choices=Profile.SCHOOL_CHOICES)
+    picture = forms.ImageField()
     class Meta:
         model = User
-        fields = ('username','first_name', 'last_name', 'email', 'phone', 'identity', 'school', 'password1', 'password2')
+        fields = ('username','first_name', 'last_name', 'email', 'phone', 'identity', 'school', 'password1', 'password2','picture')
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
@@ -34,6 +35,7 @@ class EditProfileForm(forms.Form):
     def __init__(self, thisUser, *args, **kwargs):
         super(EditProfileForm, self).__init__(*args, **kwargs)
         self.user = User.objects.get(id=thisUser.id)
+        self.fields['picture'] = forms.ImageField(required=False)
         self.fields['first_name'] = forms.CharField(initial=self.user.first_name)
         self.fields['last_name'] = forms.CharField(initial=self.user.last_name)
         self.fields['email'] = forms.CharField(initial=self.user.email)
@@ -65,11 +67,13 @@ class EditProfileForm(forms.Form):
         self.user.profile.identity = self.cleaned_data['identity']
         self.user.profile.school = self.cleaned_data['school']
         self.user.profile.wallet.bank_account = self.cleaned_data['bank_account']
+        self.user.profile.picture = self.cleaned_data['picture']
         if self.user.profile.identity == 'T':
             self.user.tutorprofile.tutortype = self.cleaned_data['tutortype']
             self.user.tutorprofile.courses = self.cleaned_data['courses']
             self.user.tutorprofile.biography = self.cleaned_data['biography']
             self.user.tutorprofile.subjects = self.cleaned_data['subjects']
+            self.user.tutorprofile.save()
             if self.user.tutorprofile.tutortype == 'C':
                 self.user.tutorprofile.price = decimal.Decimal(0.00)
             else:

@@ -16,6 +16,8 @@ class Profile(models.Model):
     SCHOOL_CHOICES_DICT = dict((x, y) for x, y in SCHOOL_CHOICES)
     school = models.CharField(max_length=2, choices=SCHOOL_CHOICES, default='1')
     phone = models.CharField(max_length=30)
+    picture = models.ImageField(upload_to='static/assets/img/avatar/',
+                                default='static/assets/img/avatar/def_avatar.png')
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, null=True)
     
     def __str__(self):

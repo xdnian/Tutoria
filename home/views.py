@@ -7,6 +7,9 @@ from .forms import UserForm, PasswordResetRequestForm, PasswordResetForm, EditPr
 from .models import Reset_token, Notification
 from transaction.models import Wallet
 from uuid import uuid4
+from django.template import RequestContext
+
+import os
 
 @login_required
 def home(request):
@@ -42,7 +45,7 @@ def signup(request):
 def editProfile(request):
     save_msg = None
     if request.method == 'POST':
-        form = EditProfileForm(request.user, request.POST)
+        form = EditProfileForm(request.user, request.POST, request.FILES)
         if form.is_valid():
             form.save()
             save_msg = {'error': False, 'msg': 'Your edit has been saved.'}
