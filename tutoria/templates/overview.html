@@ -43,5 +43,33 @@
 <!-- main -->
 {% block content %}
 <h1 class="bd-title">Overview</h1>
-<p>Under Constuction.</p>
+
+<!-- View all booked tutorials -->
+  <div class="card-columns" id="all-tutorials">
+    {% for session in recentTutoringSessions %}
+      <div class="card" >
+      <div class="card-body" sessionId="{{ session.id }}">
+        <h4 class="card-title" status="{{ session.status }}">{{ session.topic }}</h4>
+        <p class="card-text">Tutor: {{ session.timeslot.tutor.get_full_name }}
+          <br>Start time: {{ session.timeslot.start }}
+          <br>End time: {{ session.timeslot.end }}</p>
+        <a href="/viewSession/{{session.id}}" class="btn btn-primary session-detail-btn">Details</a>
+
+      </div>
+    </div>
+    {% endfor %}
+    {% for session in recentAttendingSessions %}
+      <div class="card" >
+      <div class="card-body" sessionId="{{ session.id }}">
+        <h4 class="card-title" status="{{ session.status }}">{{ session.topic }}</h4>
+        <p class="card-text">Tutor: {{ session.timeslot.tutor.get_full_name }}
+          <br>Start time: {{ session.timeslot.start }}
+          <br>End time: {{ session.timeslot.end }}</p>
+        <a href="/viewSession/{{session.id}}" class="btn btn-primary session-detail-btn">Details</a>
+
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
 {% endblock %}
