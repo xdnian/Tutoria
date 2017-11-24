@@ -7,6 +7,7 @@ from .forms import UserForm, PasswordResetRequestForm, PasswordResetForm, EditPr
 from .models import Reset_token, Notification
 from booking.models import Session
 from offering.models import Timeslot
+from .models import Reset_token, Notification, Tutorprofile
 from transaction.models import Wallet
 from django.utils import timezone
 from uuid import uuid4
@@ -59,7 +60,11 @@ def signup(request):
             user.profile.identity = form.cleaned_data.get('identity')
             user.profile.school = form.cleaned_data.get('school')
             user.save()
-            
+
+            if user.profile.identity == 'T':
+                newTutorporfile = Tutorprofile(user=user)
+                newTutorporfile.save()
+
             # create wallet and assosiate it to the user
             newWallet = Wallet(user = user, balance = 0)
             newWallet.save()
@@ -80,12 +85,20 @@ def editProfile(request):
     if request.method == 'POST':
         form = EditProfileForm(request.user, request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            save_msg = {'error': False, 'msg': 'Your edit has been saved.'}
+            msg = form.save()
+            if msg[0] == 'Valid':
+                save_msg = {'error': False, 'msg': 'Your edit has been saved.'}
+            elif msg[0] == 'Course_code':
+                if msg[1] == '':
+                    save_msg = {'error': True, 'msg': 'There is an empty course code (maybe caused an extra \';\'). Please try again.'}
+                else:
+                    save_msg = {'error': True, 'msg': 'Your course code('+ error +') is not valid. Please try again.'}
+            elif msg[0] == 'Identity Change':
+                save_msg = {'error': True, 'msg': 'You have changed your identity to tutor. Please change your tutoring information accordingly and save.'}
         else:
             save_msg = {'error': True, 'msg': 'Error when saving your edit. Please try again.'}
-    else:
-        form = EditProfileForm(request.user)
+    # else:
+    form = EditProfileForm(request.user)
     return render(request, 'profile.html', {'form': form, 'save_msg': save_msg})
 
 def passwordResetRequest(request):
