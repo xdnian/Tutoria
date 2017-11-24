@@ -31,7 +31,7 @@
       </a>
     </div>
 
-    {% if user.profile.identity != 'S' %}
+    {% if user.profile.identity == 'T' %}
       <div class="bd-toc-item">
         <a class="bd-toc-link" href="{% url 'offerslot' %}">
           Set Timeslots
