@@ -61,20 +61,12 @@
       <thead>
         <tr>
           <th scope="col">From</th>
-          <th scope="col">To</th>
-          <th scope="col">Amount</th>
-          <th scope="col">Time</th>
-          <th scope="col">Description</th>
         </tr>
       </thead>
       <tbody>
-        {% for transaction in allTransactions %}
+        {% for user in allUsers %}
         <tr class="transaction-info">
-          <td>{{ transaction.from_wallet.user.username }}</td>
-          <td>{{ transaction.to_wallet.user.username }}</td>
-          <td>HK$ {{ transaction.amount }}</td>
-          <td>{{ transaction.time }} </td>
-          <td>{{ transaction.description }}</td>
+          <td>{{ user.get_full_name }}</td>
         </tr>
         {% endfor %}
       </tbody>
