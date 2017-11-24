@@ -73,7 +73,8 @@ class BookingForm(forms.Form):
         # 
 
 class ReviewForm(forms.Form):
+    SCORE_CHOICE = ((0, '-----'),(1, '*----'),(2, '**---'),(3, '***--'),(4, '****-'),(5, '*****'))
 
-    score = forms.IntegerField(label=("Score"), required=True, widget=forms.TextInput(attrs={'class': 'form-control custom-select'}))
-    comment = forms.CharField(label=("Comment"), required=False, max_length=1000, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Comment ..'}))
+    score = forms.ChoiceField(label=("Score"), required=True, choices=SCORE_CHOICE, widget=forms.Select(attrs={'class': 'form-control custom-select'}))
+    comment = forms.CharField(label=("Comment"), required=False, max_length=1000, widget=forms.Textarea(attrs={'rows':3, 'class': 'form-control', 'placeholder': 'Comment ..'}))
     isAnonymous = forms.BooleanField(label=("IsAnonymous"), required=True, widget=forms.CheckboxInput(attrs={'class': 'form-control-input'}))
