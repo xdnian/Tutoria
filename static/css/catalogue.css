@@ -13,6 +13,14 @@
     box-shadow: 0 0 0 3px rgba(4, 87, 183, .25);
 }
 
+.form-control.is-valid:focus {
+    border-color: #28a745;
+}
+
+.form-control.is-invalid:focus {
+    border-color: #dc3545;
+}
+
 .search-box select.form-control:not([size]):not([multiple]) {
     height: inherit;
 }

@@ -22,14 +22,29 @@
 
 .bd-search .form-control:focus {
     border-color: #0457b7;
-    box-shadow: 0 0 0 3px rgba(4,87,183,.25);
+    box-shadow: 0 0 0 3px rgba(4, 87, 183, .25);
 }
 
 .bd-title {
     margin-bottom: 1rem;
 }
 
-.dropdown-menu {
-    right: 0;
-    left: auto;
+.dropdown-item-link {
+    color: #16181b;
+}
+
+.dropdown-item-link:focus,
+.dropdown-item-link:hover {
+    color: #16181b;
+    text-decoration: none;
+}
+
+.dropdown-item.user-info img {
+    vertical-align: top;
+    padding-right: .5rem; 
+    height: 70px;
+}
+
+.dropdown-item.user-info .user-info-blk {
+    display: inline-block;
 }

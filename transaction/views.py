@@ -57,7 +57,6 @@ def isValidCoupon(request, code):
     timezonelocal = pytz.timezone('Asia/Hong_Kong')
     currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
     allCodes = Coupon.objects.filter(expire_date__gte=currentTime)
-    print(code)
     for each in allCodes:
         if each.code == code:
             return HttpResponse('1')

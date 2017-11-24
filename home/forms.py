@@ -67,7 +67,8 @@ class EditProfileForm(forms.Form):
         self.user.profile.identity = self.cleaned_data['identity']
         self.user.profile.school = self.cleaned_data['school']
         self.user.profile.wallet.bank_account = self.cleaned_data['bank_account']
-        self.user.profile.picture = self.cleaned_data['picture']
+        if self.cleaned_data['picture'] != None:
+            self.user.profile.picture = self.cleaned_data['picture']
         if self.user.profile.identity == 'T':
             self.user.tutorprofile.tutortype = self.cleaned_data['tutortype']
             self.user.tutorprofile.courses = self.cleaned_data['courses']
