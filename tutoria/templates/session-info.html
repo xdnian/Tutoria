@@ -86,7 +86,7 @@
 
             {% if user == session.student %}
               <tr>
-                <th>Tutor Phone Number</th>
+                <th>Tutor Phone</th>
                 <td>
                   <p class="card-text">
                     {{ session.timeslot.tutor.profile.phone }}
@@ -94,7 +94,7 @@
                 </td>
               </tr>
               <tr>
-                <th>Tutor Email Address</th>
+                <th>Tutor Email</th>
                 <td>
                   <p class="card-text">
                     {{ session.timeslot.tutor.email }}
@@ -117,7 +117,7 @@
 
             {% if user == session.timeslot.tutor %}
               <tr>
-                <th>Student Phone Number</th>
+                <th>Student Phone</th>
                 <td>
                   <p class="card-text">
                     {{ session.student.profile.phone }}
@@ -125,7 +125,7 @@
                 </td>
               </tr>
               <tr>
-                <th>Student Email Address</th>
+                <th>Student Email</th>
                 <td>
                   <p class="card-text">
                     {{ session.student.email }}
