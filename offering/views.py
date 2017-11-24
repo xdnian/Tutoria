@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from .forms import TimeForm
-import pytz, datetime, sys
+import pytz, datetime
 from .models import Timeslot
 
 PRIVATE_TUTOR_TIMESLOTS = [(str(i) + ':00') for i in range(8,22)]
