@@ -267,7 +267,7 @@ def viewSession(request, pk):
         form = ReviewForm()
     elif session.status == 'Reviewed' and session.student == request.user:
         review = Review.objects.get(session = session)
-    return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 'payment':payment, 'commission':commission, 'form':form, 'review':review})
+    return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 'payment':payment, 'commission':commission, 'form':form, 'review':review, 'user':request.user})
 
 @login_required
 def submitReview(request, pk):

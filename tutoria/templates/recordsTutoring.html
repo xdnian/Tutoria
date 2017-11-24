@@ -73,6 +73,7 @@
       <div class="card-body" sessionId="{{ session.id }}">
         <h4 class="card-title" status="{{ session.status }}">{{ session.topic }}</h4>
         <p class="card-text">Tutor: {{ session.timeslot.tutor.get_full_name }}
+          <br>Student: {{ session.student.get_full_name }}
           <br>Start time: {{ session.timeslot.start }}
           <br>End time: {{ session.timeslot.end }}</p>
         <a href="/viewSession/{{session.id}}" class="btn btn-primary session-detail-btn">Details</a>
