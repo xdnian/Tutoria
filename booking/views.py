@@ -85,6 +85,7 @@ def search(request):
         form = TutorForm()
     return render(request, 'search.html', {'form': form})
 
+@login_required
 def viewTutor(request, pk):
     currentTimeTruncDate = datetime.datetime.combine(timezone.now(), datetime.datetime.min.time()) 
     tomorrowTimeTruncDate = timezone.localtime(timezone.make_aware(currentTimeTruncDate, TIMEZONELOCAL) + datetime.timedelta(days = 1), TIMEZONELOCAL)
@@ -108,6 +109,7 @@ def viewTutor(request, pk):
     times = PRIVATE_TUTOR_TIMESLOTS if tutor.tutorprofile.tutortype == 'P' else CONTRACTED_TUTOR_TIMESLOTS
     return render(request, 'tutor-info.html', {'allSlots': allSlots, 'timeslots': times, 'tutor': tutor})
 
+@login_required
 def booking(request, pk):
     # pk is a time slot ID
     timeslot = Timeslot.objects.get(pk=pk)
@@ -133,6 +135,7 @@ def booking(request, pk):
     session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'total_price': total_price, 'commission': commission}
     return render(request, 'confirmBooking.html', {'session_info': session_info, 'sessionID':session.id})
 
+@login_required
 def confirmBooking(request, pk):
     session = Session.objects.get(pk=pk)
     session_day_start = datetime.datetime(session.timeslot.start.year, session.timeslot.start.month, session.timeslot.start.day, 0, 0, 0, 0)
@@ -191,6 +194,7 @@ def confirmBooking(request, pk):
     
     return render(request, 'nav-result.html', {'return_msg': return_msg})
 
+@login_required
 def cancelConfirmBooking(request, pk):
     session = Session.objects.get(pk=pk)
     session.timeslot.status = 'Available'
@@ -199,6 +203,7 @@ def cancelConfirmBooking(request, pk):
     session.delete()
     return redirect('viewTutor', pk=tutor_id)
 
+@login_required
 def canceling(request, pk):
     session = Session.objects.filter(pk=pk)[0]
     session.status = 'Canceled'
@@ -219,14 +224,17 @@ def canceling(request, pk):
     Notification(session.student, 'Your session has been canceled, a refund of HK$' + str(price) + ' has been added to your wallet.')
     return redirect('session')
 
+@login_required
 def session(request):
     allSessions = Session.objects.filter(student=request.user, status='Booked')
     return render(request, 'records.html', {'allSessions': allSessions, 'active':0})
 
+@login_required
 def sessionHistory(request):
     allSessions = Session.objects.filter(Q(student=request.user) & ~Q(status='Booked'))
     return render(request, 'records.html', {'allSessions': allSessions, 'active':1})
 
+@login_required
 def viewSession(request, pk):
     session = Session.objects.get(pk=pk)
     payment = session.transaction0.amount
@@ -234,11 +242,12 @@ def viewSession(request, pk):
     reviews = Review.objects.filter(session = session)
 
     if len(reviews) == 0 and session.status == 'Ended':
-        reviewEnabled = True        
+        reviewEnabled = True
     else:
         reviewEnabled = False
     return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 'payment':payment, 'commission':commission, 'reviewEnabled':reviewEnabled})
 
+@login_required
 def submitReview(request, pk):
     session = Session.objects.get(pk=pk)
 
