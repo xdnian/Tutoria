@@ -85,6 +85,10 @@
             <th>Rate</th>
             <td>HK$ {{ tutor.tutorprofile.price }} / hour</td>
           </tr>
+          <tr>
+            <th>Average Review Score</th>
+            <td> {{ tutor.tutorprofile.get_formatted_review_average }}</td>
+          </tr>
         </tbody>
       </table>
     </div>

@@ -71,4 +71,9 @@ class BookingForm(forms.Form):
         # session.save()
         # return session.id
         # 
-        
+
+class ReviewForm(forms.Form):
+
+    score = forms.IntegerField(label=("Score"), required=True, widget=forms.TextInput(attrs={'class': 'form-control custom-select'}))
+    comment = forms.CharField(label=("Comment"), required=False, max_length=1000, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Comment ..'}))
+    isAnonymous = forms.BooleanField(label=("IsAnonymous"), required=True, widget=forms.CheckboxInput(attrs={'class': 'form-control-input'}))

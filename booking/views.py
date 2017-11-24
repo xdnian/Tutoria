@@ -3,8 +3,8 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.db.models import Q
-from .forms import BookingForm, TutorForm
-from .models import Session
+from .forms import BookingForm, TutorForm, ReviewForm
+from .models import Session, Review
 from home.models import Notification
 from offering.models import Timeslot
 import decimal, pytz, datetime
@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404, render
 from transaction.models import Transaction
 from django.db.models.functions import Trunc
-from django.db.models import Count, DateTimeField
+from django.db.models import Count, DateTimeField, Avg
 
 TIMEZONELOCAL = pytz.timezone('Asia/Hong_Kong')
 
@@ -79,6 +79,7 @@ def search(request):
                     tutor.tutorprofile.subjects = tutor.tutorprofile.subjects.split(';')
             for tutor in allTutors:
                     tutor.tutorprofile.courses = tutor.tutorprofile.courses.split(';')
+
             return render(request, 'search.html', {'form': form, 'allTutors': allTutors})
     else:
         form = TutorForm()
@@ -160,7 +161,7 @@ def confirmBooking(request, pk):
                 new_transaction = Transaction(from_wallet = session.student.profile.wallet, to_wallet = medium.profile.wallet, 
                     time = currentTime, amount = price, description = 'Tutorial payment')
                 new_transaction.save()
-                session.transactions[0] = new_transaction
+                session.transaction0 = new_transaction
                 session.status = 'Booked'
                 session.save()
                 Notification(session.student, 'Your session booking is successful, your have paid HK$' + str(price) + '.')
@@ -202,7 +203,7 @@ def canceling(request, pk):
     session.status = 'Canceled'
     session.timeslot.status = 'Available'
     session.timeslot.save()
-    price = session.transactions[0].amount
+    price = session.transaction0.amount
     session.student.profile.wallet.addBalance(price)
     medium = User.objects.get(username='admin')
     medium.profile.wallet.withdraw(price)
@@ -212,7 +213,7 @@ def canceling(request, pk):
     new_transaction = Transaction(from_wallet = medium.profile.wallet, to_wallet = session.student.profile.wallet, 
         time = currentTime, amount = price, description = 'Tutorial payment')
     new_transaction.save()
-    session.transactions[1] = new_transaction
+    session.transaction1 = new_transaction
     session.save()
     Notification(session.student, 'Your session has been canceled, a refund of HK$' + str(price) + ' has been added to your wallet.')
     return redirect('session')
@@ -227,5 +228,37 @@ def sessionHistory(request):
 
 def viewSession(request, pk):
     session = Session.objects.get(pk=pk)
-    commission = round(session.transactions[0].amount/decimal.Decimal(21), 2)
-    return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 'commission':commission})
+    payment = session.transaction0.amount
+    commission = round(payment/decimal.Decimal(21), 2)
+    reviews = Review.objects.filter(session = session)
+
+    if len(reviews) == 0 and session.status == 'Ended':
+        reviewEnabled = True        
+    else:
+        reviewEnabled = False
+    return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 'payment':payment, 'commission':commission, 'reviewEnabled':reviewEnabled})
+
+def submitReview(request, pk):
+    session = Session.objects.get(pk=pk)
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            score = form.cleaned_data.get('score')
+            comment = form.cleaned_data.get('comment')
+            isAnonymous = form.cleaned_data.get('isAnonymous')
+
+            new_review = Review(session = session, score = score, comment = comment, isAnonymous = isAnonymous)
+            new_review.save()
+
+            session.review = new_review
+            session.save()
+            return redirect('home')
+            save_msg = {'error': False, 'msg': 'Your review has been submitted.'}
+            #return render(request, 'reviewConfirm.html', {})
+        else:
+            save_msg = {'error': True, 'msg': 'Error when submitting your review. Please try again.'}
+    else:
+        save_msg = {}
+        form = ReviewForm()
+    return render(request, 'submitReview.html', {'form': form, 'save_msg': save_msg, 'session': session})

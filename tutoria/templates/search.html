@@ -122,7 +122,7 @@
               <span class="badge badge-secondary subject-tag">{{ tag }}</span>
               {% endfor %}
             </td>
-            <td>Insufficient reviews</td>
+            <td>{{ tutor.tutorprofile.get_formatted_review_average }}</td>
           </tr>
           {% endfor %}
         </tbody>
