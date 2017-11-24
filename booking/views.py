@@ -37,13 +37,11 @@ def search(request):
             price_max = form.cleaned_data.get('price_max')
             '''start query'''
             allTutors = User.objects.filter(~Q(id=request.user.id) & Q(profile__identity='T') & Q(tutorprofile__show_profile=1))
-
             if tutortype== 'P':
                 allTutors = allTutors.filter(tutorprofile__tutortype='P')
             elif tutortype == 'C':
                 allTutors = allTutors.filter(tutorprofile__tutortype='C')
-
-            if univserity != '0':
+            if univserity != '0' and univserity != '':
                 allTutors = allTutors.filter(profile__school=univserity)
             if course != '':
                 for tutor in allTutors:
