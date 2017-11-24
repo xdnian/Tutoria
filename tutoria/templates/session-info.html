@@ -78,11 +78,30 @@
                 <p class="card-text">
                   {{ session.timeslot.tutor.get_full_name }}
                   {% if user == session.student %}
-                  <a href="{% url 'chat' name=session.timeslot.tutor.username %}"><button type="button" class="btn btn-secondary wide-btn">Send Message</button></a>
+                    <a href="{% url 'chat' name=session.timeslot.tutor.username %}"><button type="button" class="btn btn-secondary wide-btn">Send Message</button></a>
                   {% endif %}
                 </p>
               </td>
             </tr>
+
+            {% if user == session.student %}
+              <tr>
+                <th>Tutor Phone Number</th>
+                <td>
+                  <p class="card-text">
+                    {{ session.timeslot.tutor.profile.phone }}
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <th>Tutor Email Address</th>
+                <td>
+                  <p class="card-text">
+                    {{ session.timeslot.tutor.email }}
+                  </p>
+                </td>
+              </tr>
+            {% endif %}
 
             <tr>
               <th>Student</th>
@@ -95,6 +114,25 @@
                 </p>
               </td>
             </tr>
+
+            {% if user == session.timeslot.tutor %}
+              <tr>
+                <th>Student Phone Number</th>
+                <td>
+                  <p class="card-text">
+                    {{ session.student.profile.phone }}
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <th>Student Email Address</th>
+                <td>
+                  <p class="card-text">
+                    {{ session.student.email }}
+                  </p>
+                </td>
+              </tr>
+            {% endif %}
 
             <tr>
               <th>University</th>
