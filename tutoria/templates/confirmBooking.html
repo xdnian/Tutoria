@@ -55,7 +55,8 @@
   <h1 class="bd-title">Booking Confirmation</h1> 
   <div class="container">
 
-    <form action="/confirmBooking/{{sessionID}}" method="POST">
+    <form action="/confirmBooking/{{sessionID}}/" method="POST">
+      {% csrf_token %}
       <div class="row">
         <table class="table">
           <tbody>

@@ -157,7 +157,7 @@ def confirmBooking(request, pk):
             price = session.timeslot.tutor.tutorprofile.price + session.commission
 
             if request.method == 'POST':
-                coupon_code = request.POST.get('id_coupon', None)
+                coupon_code = request.POST.get('coupon', None)
                 check2_5 = Coupon.isValid(coupon_code)
                 if check2_5 == True:
                     session.commission = 0
@@ -236,12 +236,12 @@ def canceling(request, pk):
 
 @login_required
 def session(request):
-    allSessions = Session.objects.filter(student=request.user, status='Booked')
+    allSessions = Session.objects.filter(Q(student=request.user) & (Q(status='Booked') | Q(status='Pending')))
     return render(request, 'records.html', {'allSessions': allSessions, 'active':0})
 
 @login_required
 def sessionHistory(request):
-    allSessions = Session.objects.filter(Q(student=request.user) & ~Q(status='Booked'))
+    allSessions = Session.objects.filter(Q(student=request.user) & ~Q(status='Booked') & ~Q(status='Pending'))
     return render(request, 'records.html', {'allSessions': allSessions, 'active':1})
 
 @login_required

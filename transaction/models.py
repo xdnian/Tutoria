@@ -51,12 +51,13 @@ class Coupon(models.Model):
     def __str__(self):
         return self.code
 
-    def isValid(self, code):
-        utcCurrentTime = timezone.now()
-        timezonelocal = pytz.timezone('Asia/Hong_Kong')
-        currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
-        allCodes = Coupon.objects.filter(expire_date__gte=currentTime)
-        for each in allCodes:
-            if each.code == code:
-                return True
+    def isValid(code=None):
+        if code is not None:
+            utcCurrentTime = timezone.now()
+            timezonelocal = pytz.timezone('Asia/Hong_Kong')
+            currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
+            allCodes = Coupon.objects.filter(expire_date__gte=currentTime)
+            for each in allCodes:
+                if each.code == code:
+                    return True
         return False

@@ -10,10 +10,9 @@ class UserForm(UserCreationForm):
     phone = forms.CharField()
     identity = forms.ChoiceField(choices=Profile.IDENTITY_CHOICES)
     school = forms.ChoiceField(choices=Profile.SCHOOL_CHOICES)
-    picture = forms.ImageField()
     class Meta:
         model = User
-        fields = ('username','first_name', 'last_name', 'email', 'phone', 'identity', 'school', 'password1', 'password2','picture')
+        fields = ('username','first_name', 'last_name', 'email', 'phone', 'identity', 'school', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
@@ -105,7 +104,6 @@ class EditProfileForm(forms.Form):
         self.user.save()
         self.user.profile.save()
         self.user.profile.wallet.save()
-        self.user.tutorprofile.save()
         return ['Valid']
 
 class ChangePasswordForm(forms.Form):
