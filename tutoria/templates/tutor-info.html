@@ -31,7 +31,7 @@
       </a>
     </div>
 
-    {% if user.profile.identity != 'S' %}
+    {% if user.profile.identity == 'T' %}
       <div class="bd-toc-item">
         <a class="bd-toc-link" href="{% url 'offerslot' %}">
           Set Timeslots
@@ -114,6 +114,7 @@
   </div>
 
   <!-- List all avaliable time -->
+  {% if user.id != tutor.id %}
   {% if allSlots %}
     <p>
       <button class="btn btn-outline-info" type="button" data-toggle="collapse" data-target="#collapseTimeslots" aria-expanded="false" aria-controls="collapseTimeslots" id="showTimeslotBtn">
@@ -157,6 +158,7 @@
         No available timeslots currently.
       </button>
     </p>
+  {% endif %}
   {% endif %}
 {% endblock %}
 
