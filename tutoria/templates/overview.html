@@ -48,7 +48,7 @@
 <!-- main -->
 {% block content %}
 <h1 class="bd-title">Overview</h1>
-
+<h3>My Tutoring Sessions</h3>
 <!-- View all booked tutorials -->
   <div class="card-columns" id="all-tutorials">
     {% for session in recentTutoringSessions %}
@@ -63,6 +63,8 @@
       </div>
     </div>
     {% endfor %}
+      <br>
+<h3>My Bookings</h3>
     {% for session in recentAttendingSessions %}
       <div class="card" >
       <div class="card-body" sessionId="{{ session.id }}">
