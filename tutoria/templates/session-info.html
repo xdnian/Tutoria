@@ -96,6 +96,23 @@
               <td>{{ session.status }}</td>
             </tr>
 
+            {% if session != None %}
+              <tr>
+                <th>Review Score</th>
+                <td>{{ review.score }}</td>
+              </tr>
+
+              <tr>
+                <th>Review Comment</th>
+                <td>{{ review.comment }}</td>
+              </tr>
+
+              <tr>
+                <th>Review Anonymity</th>
+                <td>{{ review.isAnonynous }}</td>
+              </tr>
+            {% endif %}
+
           </tbody>
           </thead>
         </table>

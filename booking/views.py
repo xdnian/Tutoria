@@ -10,9 +10,10 @@ from offering.models import Timeslot
 import decimal, pytz, datetime
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, render
-from transaction.models import Transaction
+from transaction.models import Transaction, Coupon
 from django.db.models.functions import Trunc
 from django.db.models import Count, DateTimeField, Avg
+from django.http import JsonResponse
 
 TIMEZONELOCAL = pytz.timezone('Asia/Hong_Kong')
 
@@ -35,7 +36,7 @@ def search(request):
             price_min = form.cleaned_data.get('price_min')
             price_max = form.cleaned_data.get('price_max')
             '''start query'''
-            allTutors = User.objects.filter(~Q(id=request.user.id) & Q(profile__identity='T'))
+            allTutors = User.objects.filter(~Q(id=request.user.id) & Q(profile__identity='T') & Q(tutorprofile__show_profile=1))
 
             if tutortype== 'P':
                 allTutors = allTutors.filter(tutorprofile__tutortype='P')
@@ -129,10 +130,11 @@ def booking(request, pk):
     timeStr = startTime.strftime('%H:%M')  + ' ~ ' + endTime.strftime('%H:%M')
 
     tutor_price = timeslot.tutor.tutorprofile.price
+    tutor_type = timeslot.tutor.tutorprofile.tutortype
     commission = round(tutor_price *decimal.Decimal(0.05), 2)
     school = timeslot.tutor.profile.get_school_name()
     total_price = tutor_price + commission
-    session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'total_price': total_price, 'commission': commission}
+    session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'tutor_type': tutor_type, 'total_price': total_price, 'commission': commission}
     return render(request, 'confirmBooking.html', {'session_info': session_info, 'sessionID':session.id})
 
 @login_required
@@ -153,6 +155,14 @@ def confirmBooking(request, pk):
         if check2 == True:
             session.commission = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(0.05), 2)
             price = session.timeslot.tutor.tutorprofile.price + session.commission
+
+            if request.method == 'POST':
+                coupon_code = request.POST.get('id_coupon', None)
+                check2_5 = Coupon.isValid(coupon_code)
+                if check2_5 == True:
+                    session.commission = 0
+                    price = session.timeslot.tutor.tutorprofile.price
+
             check3 = session.student.profile.wallet.checkBalance(price)
             
             if check3 == True:
@@ -248,15 +258,16 @@ def sessionTutoringHistory(request):
 def viewSession(request, pk):
     session = Session.objects.get(pk=pk)
     payment = session.transaction0.amount
-    commission = round(payment/decimal.Decimal(21), 2)
+    commission = session.commission
     reviews = Review.objects.filter(session = session)
 
-    if session.status == 'Ended':
+    review = None
+    form = None
+    if session.status == 'Ended' and session.student == request.user:
         form = ReviewForm()
-    else:
-        form = None
-    
-    return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 'payment':payment, 'commission':commission, 'form':form})
+    elif session.status == 'Reviewed' and session.student == request.user:
+        review = Review.objects.get(session = session)
+    return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 'payment':payment, 'commission':commission, 'form':form, 'review':review})
 
 @login_required
 def submitReview(request, pk):
@@ -287,3 +298,12 @@ def submitReview(request, pk):
         save_msg = {}
         form = ReviewForm()
     return render(request, 'submitReview.html', {'form': form, 'save_msg': save_msg, 'session': session})
+
+def getAllReviewFormatted(request, pk):
+    user = User.objects.get(id = pk)
+    all_reviews = user.tutorprofile.get_all_reviews()
+    formatted_list_reviews = [{'author': review.session.student.get_full_name() if not review.isAnonymous else 'Anonymous User', 
+        'avatar': '/' + review.session.student.profile.picture.url if not review.isAnonymous else '/static/assets/img/avatar/def_avatar.png',
+        'score': review.score, 'comment': review.comment} for review in all_reviews]
+    # print(formatted_list_reviews)
+    return JsonResponse({'reviews': formatted_list_reviews})

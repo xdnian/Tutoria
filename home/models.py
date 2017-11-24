@@ -34,6 +34,7 @@ class Tutorprofile(models.Model):
     biography = models.TextField(blank=True) 
     subjects = models.TextField(blank=True)
     price = models.DecimalField(default=0.00, max_digits=10, decimal_places=2)
+    show_profile = models.BooleanField(default = True)
 
     def __str__(self):
         return self.user.username

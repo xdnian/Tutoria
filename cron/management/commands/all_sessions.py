@@ -56,11 +56,12 @@ class Command(BaseCommand):
             new_transaction.save()
             session.transaction1 = new_transaction
             
-            MyTutors = User.objects.get(username='MyTutors')
-            MyTutors.profile.wallet.addBalance(commission)
-            new_transaction = Transaction(from_wallet = medium.profile.wallet, to_wallet = MyTutors.profile.wallet, 
-                time = currentTime, amount = commission, description = 'Commission fee')
-            new_transaction.save()
+            if commission != 0:
+                MyTutors = User.objects.get(username='MyTutors')
+                MyTutors.profile.wallet.addBalance(commission)
+                new_transaction = Transaction(from_wallet = medium.profile.wallet, to_wallet = MyTutors.profile.wallet, 
+                    time = currentTime, amount = commission, description = 'Commission fee')
+                new_transaction.save()
             medium.profile.wallet.withdraw(price)
             Notification(session.timeslot.tutor, 'A tutorial session fee of HK$' + str(price) + ' had been added to your wallet.')
             Notification(session.student, 'You are invited to write a review for this tutorial session.')
