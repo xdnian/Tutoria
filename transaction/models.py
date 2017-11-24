@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import decimal, pytz, datetime
+from django.utils import timezone
 
 class Wallet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wallet_owner')
@@ -49,3 +50,13 @@ class Coupon(models.Model):
 
     def __str__(self):
         return self.code
+
+    def isValid(self, code):
+        utcCurrentTime = timezone.now()
+        timezonelocal = pytz.timezone('Asia/Hong_Kong')
+        currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
+        allCodes = Coupon.objects.filter(expire_date__gte=currentTime)
+        for each in allCodes:
+            if each.code == code:
+                return True
+        return False

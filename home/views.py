@@ -146,23 +146,30 @@ def changePassword(request):
     if request.method == 'POST':
         form = ChangePasswordForm(request.POST)
         if form.is_valid():
+            oldpassword = form.cleaned_data.get('oldpassword')
             newpassword = form.cleaned_data.get('newpassword')
             confirm_newpassword = form.cleaned_data.get('confirm_newpassword')
-            if newpassword != confirm_newpassword:
+
+            auth_user = authenticate(username=request.user.username, password=oldpassword)
+            if auth_user is None:
                 form = ChangePasswordForm()
-                return render(request, 'change-password.html', {'form': form, 'message': 'The two passwords do not match, please enter again.'})
+                return render(request, 'change-password.html', {'form': form, 'message': 'Please enter your correct old password.'})
             else:
-                validation = validate_password_strength(newpassword)
-                if validation:
-                    u = request.user
-                    u.set_password(newpassword)
-                    u.save()
-                    button = {'label':'Log in', 'link': '/login/'}
-                    return_msg = {'success': True, 'msg': 'Your password has been reset sucessfully.', 'button': button}
-                    return render(request, 'account-result.html', {'return_msg': return_msg})
-                else:
+                if newpassword != confirm_newpassword:
                     form = ChangePasswordForm()
-                    return render(request, 'change-password.html', {'form': form, 'message': 'a password is as least 8 characters long and contains both numbers and letters'})
+                    return render(request, 'change-password.html', {'form': form, 'message': 'The two passwords do not match, please enter again.'})
+                else:
+                    validation = validate_password_strength(newpassword)
+                    if validation:
+                        u = request.user
+                        u.set_password(newpassword)
+                        u.save()
+                        button = {'label':'Log in', 'link': '/login/'}
+                        return_msg = {'success': True, 'msg': 'Your password has been reset sucessfully.', 'button': button}
+                        return render(request, 'account-result.html', {'return_msg': return_msg})
+                    else:
+                        form = ChangePasswordForm()
+                        return render(request, 'change-password.html', {'form': form, 'message': 'a password is as least 8 characters long and contains both numbers and letters'})
     else:
         form = ChangePasswordForm()
     return render(request, 'change-password.html', {'form': form})

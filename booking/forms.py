@@ -77,4 +77,4 @@ class ReviewForm(forms.Form):
 
     score = forms.ChoiceField(label=("Score"), required=True, choices=SCORE_CHOICE, widget=forms.Select(attrs={'class': 'form-control custom-select'}))
     comment = forms.CharField(label=("Comment"), required=False, max_length=1000, widget=forms.Textarea(attrs={'rows':3, 'class': 'form-control', 'placeholder': 'Comment ..'}))
-    isAnonymous = forms.BooleanField(label=("IsAnonymous"), required=True, widget=forms.CheckboxInput(attrs={'class': 'form-control-input'}))
+    isAnonymous = forms.BooleanField(label=("IsAnonymous"), required=False, widget=forms.CheckboxInput(attrs={'class': 'form-control-input'}))
