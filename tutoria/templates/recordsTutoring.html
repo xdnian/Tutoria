@@ -19,7 +19,7 @@
       </a>
     </div>
 
-    <div class="bd-toc-item active">
+    <div class="bd-toc-item">
       <a class="bd-toc-link" href="{% url 'session' %}">
         My Bookings
       </a>
@@ -37,7 +37,7 @@
           Set Timeslots
         </a>
       </div>
-      <div class="bd-toc-item">
+      <div class="bd-toc-item active">
         <a class="bd-toc-link" href="{% url 'sessionTutoring' %}">
           My Tutoring Sessions
         </a>
@@ -55,14 +55,14 @@
 
 <!-- main -->
 {% block content %}
-  <h1 class="bd-title">My Bookings</h1>
+  <h1 class="bd-title">My Tutoring Sessions</h1>
 
   <ul class="nav nav-tabs">
     <li class="nav-item">
-      <a class="nav-link {% if active == 0 %} active {% endif %}" href="{% url 'session' %}">Upcoming</a>
+      <a class="nav-link {% if active == 0 %} active {% endif %}" href="{% url 'sessionTutoring' %}">Upcoming</a>
     </li>
     <li class="nav-item disabled">
-      <a class="nav-link {% if active == 1 %} active {% endif %}" href="{% url 'sessionHistory' %}">History</a>
+      <a class="nav-link {% if active == 1 %} active {% endif %}" href="{% url 'sessionTutoringHistory' %}">History</a>
     </li>
   </ul>
 

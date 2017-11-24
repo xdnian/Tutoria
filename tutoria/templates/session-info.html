@@ -37,6 +37,11 @@
           Set Timeslots
         </a>
       </div>
+      <div class="bd-toc-item">
+        <a class="bd-toc-link" href="{% url 'sessionTutoring' %}">
+          My Tutoring Sessions
+        </a>
+      </div>
     {% endif %}
 
     <div class="bd-toc-item">
@@ -66,9 +71,29 @@
       <div class="row">
         <table class="table">
           <tbody>
+
             <tr>
               <th>Tutor</th>
-              <td><p class="card-text">{{ session.timeslot.tutor.get_full_name }}</p></td>
+              <td>
+                <p class="card-text">
+                  {{ session.timeslot.tutor.get_full_name }}
+                  {% if user == session.student %}
+                  <a href="{% url 'chat' name=session.timeslot.tutor.username %}"><button type="button" class="btn btn-secondary wide-btn">Send Message</button></a>
+                  {% endif %}
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <th>Student</th>
+              <td>
+                <p class="card-text">
+                  {{ session.student.get_full_name }}
+                  {% if user == session.timeslot.tutor %}
+                    <a href="{% url 'chat' name=session.student.username %}"><button type="button" class="btn btn-secondary wide-btn">Send Message</button></a>
+                  {% endif %}
+                </p>
+              </td>
             </tr>
 
             <tr>
@@ -96,13 +121,30 @@
               <td>{{ session.status }}</td>
             </tr>
 
+            {% if review != None %}
+              <tr>
+                <th>Review Score</th>
+                <td>{{ review.score }}</td>
+              </tr>
+
+              <tr>
+                <th>Review Comment</th>
+                <td>{{ review.comment }}</td>
+              </tr>
+
+              <tr>
+                <th>Review Anonymity</th>
+                <td>{{ review.isAnonynous }}</td>
+              </tr>
+            {% endif %}
+
           </tbody>
           </thead>
         </table>
       </div>
 
     <a href="javascript:history.go(-1)"><button type="button" class="btn btn-secondary wide-btn">Back</button></a>
-    {% if reviewEnabled %}
+    {% if form %}
       <a href="{% url 'submitReview' pk=sessionID %}"><button type="button" class="btn btn-secondary wide-btn">Submit Review</button></a>
     {% endif %}
     </form>

@@ -5,15 +5,49 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from .forms import UserForm, PasswordResetRequestForm, PasswordResetForm, EditProfileForm, ChangePasswordForm
 from .models import Reset_token, Notification
+from booking.models import Session
+from offering.models import Timeslot
+from .models import Reset_token, Notification, Tutorprofile
 from transaction.models import Wallet
+from django.utils import timezone
 from uuid import uuid4
 from django.template import RequestContext
+import pytz
 
 import os
 
+TIMEZONELOCAL = pytz.timezone('Asia/Hong_Kong')
+
+
 @login_required
 def home(request):
-    return render(request, 'overview.html')
+    utcCurrentTime = timezone.now()
+    timezonelocal = pytz.timezone('Asia/Hong_Kong')
+    currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
+
+    recentTutoringSessions = Session.objects.filter(timeslot__tutor = request.user, timeslot__start__gte = currentTime).order_by('timeslot__start')
+    recentAttendingSessions = Session.objects.filter(student = request.user, timeslot__start__gte = currentTime).order_by('timeslot__start')
+
+    for session in recentTutoringSessions:
+        startlocal = session.timeslot.start.astimezone(TIMEZONELOCAL)
+        endlocal = session.timeslot.end.astimezone(TIMEZONELOCAL)
+        date = startlocal.strftime('%b %d')
+        startTime = startlocal.strftime('%H:%M')
+        endTime = endlocal.strftime('%H:%M')
+
+        slot_time_str = {'date':date, 'startTime':startTime, 'endTime':endTime}
+        session.timeslot.slot_time_str = slot_time_str
+
+    for session in recentAttendingSessions:
+        startlocal = session.timeslot.start.astimezone(TIMEZONELOCAL)
+        endlocal = session.timeslot.end.astimezone(TIMEZONELOCAL)
+        date = startlocal.strftime('%b %d')
+        startTime = startlocal.strftime('%H:%M')
+        endTime = endlocal.strftime('%H:%M')
+
+        slot_time_str = {'date':date, 'startTime':startTime, 'endTime':endTime}
+        session.timeslot.slot_time_str = slot_time_str
+    return render(request, 'overview.html', {'recentTutoringSessions': recentTutoringSessions, 'recentAttendingSessions':recentAttendingSessions})
 
 
 def signup(request):
@@ -26,7 +60,11 @@ def signup(request):
             user.profile.identity = form.cleaned_data.get('identity')
             user.profile.school = form.cleaned_data.get('school')
             user.save()
-            
+
+            if user.profile.identity == 'T':
+                newTutorporfile = Tutorprofile(user=user)
+                newTutorporfile.save()
+
             # create wallet and assosiate it to the user
             newWallet = Wallet(user = user, balance = 0)
             newWallet.save()
@@ -47,12 +85,20 @@ def editProfile(request):
     if request.method == 'POST':
         form = EditProfileForm(request.user, request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            save_msg = {'error': False, 'msg': 'Your edit has been saved.'}
+            msg = form.save()
+            if msg[0] == 'Valid':
+                save_msg = {'error': False, 'msg': 'Your edit has been saved.'}
+            elif msg[0] == 'Course_code':
+                if msg[1] == '':
+                    save_msg = {'error': True, 'msg': 'There is an empty course code (maybe caused an extra \';\'). Please try again.'}
+                else:
+                    save_msg = {'error': True, 'msg': 'Your course code('+ error +') is not valid. Please try again.'}
+            elif msg[0] == 'Identity Change':
+                save_msg = {'error': True, 'msg': 'You have changed your identity to tutor. Please change your tutoring information accordingly and save.'}
         else:
             save_msg = {'error': True, 'msg': 'Error when saving your edit. Please try again.'}
-    else:
-        form = EditProfileForm(request.user)
+    # else:
+    form = EditProfileForm(request.user)
     return render(request, 'profile.html', {'form': form, 'save_msg': save_msg})
 
 def passwordResetRequest(request):
@@ -134,23 +180,30 @@ def changePassword(request):
     if request.method == 'POST':
         form = ChangePasswordForm(request.POST)
         if form.is_valid():
+            oldpassword = form.cleaned_data.get('oldpassword')
             newpassword = form.cleaned_data.get('newpassword')
             confirm_newpassword = form.cleaned_data.get('confirm_newpassword')
-            if newpassword != confirm_newpassword:
+
+            auth_user = authenticate(username=request.user.username, password=oldpassword)
+            if auth_user is None:
                 form = ChangePasswordForm()
-                return render(request, 'change-password.html', {'form': form, 'message': 'The two passwords do not match, please enter again.'})
+                return render(request, 'change-password.html', {'form': form, 'message': 'Please enter your correct old password.'})
             else:
-                validation = validate_password_strength(newpassword)
-                if validation:
-                    u = request.user
-                    u.set_password(newpassword)
-                    u.save()
-                    button = {'label':'Log in', 'link': '/login/'}
-                    return_msg = {'success': True, 'msg': 'Your password has been reset sucessfully.', 'button': button}
-                    return render(request, 'account-result.html', {'return_msg': return_msg})
-                else:
+                if newpassword != confirm_newpassword:
                     form = ChangePasswordForm()
-                    return render(request, 'change-password.html', {'form': form, 'message': 'a password is as least 8 characters long and contains both numbers and letters'})
+                    return render(request, 'change-password.html', {'form': form, 'message': 'The two passwords do not match, please enter again.'})
+                else:
+                    validation = validate_password_strength(newpassword)
+                    if validation:
+                        u = request.user
+                        u.set_password(newpassword)
+                        u.save()
+                        button = {'label':'Log in', 'link': '/login/'}
+                        return_msg = {'success': True, 'msg': 'Your password has been reset sucessfully.', 'button': button}
+                        return render(request, 'account-result.html', {'return_msg': return_msg})
+                    else:
+                        form = ChangePasswordForm()
+                        return render(request, 'change-password.html', {'form': form, 'message': 'a password is as least 8 characters long and contains both numbers and letters'})
     else:
         form = ChangePasswordForm()
     return render(request, 'change-password.html', {'form': form})
