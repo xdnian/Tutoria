@@ -1,52 +1,112 @@
-{% load staticfiles %}
+{% extends 'nav.html' %}
 
-<html>
+<!-- title -->
+{% block title %} Search - Tutoria {% endblock %}
 
-<head>
-    <title>Tutoria Meessenger</title>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+<!-- extra style sheet -->
+{% block stylesheet %}
+  <link href="/static/css/chat.css" rel="stylesheet"> 
+{% endblock %}
 
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<!-- menu -->
+{% block menu %}
+{% if user.is_authenticated %}
+  <div class="bd-toc-item">
+    <a class="bd-toc-link" href="{% url 'home' %}">
+      Overview
+    </a>
+  </div>
 
-    <!-- Latest compiled JavaScript -->
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-</head>
+  <div class="bd-toc-item">
+    <a class="bd-toc-link" href="{% url 'session' %}">
+      My Bookings
+    </a>
+  </div>
 
-<body>
-    <div id="chat-body" class="panel panel-default">
-        <div class="panel-heading">Tutoria Meessenger</div>
-        <div id="msg-list-div" class="panel-body">
-            <ul id="msg-list" class="list-group">
-                {% for obj in chat %}
-                    {% if obj.user_from == request.user %}
-                        <li class="text-right list-group-item">{{ obj.message }}</li>
-                    {% else %}
-                        <li class="text-left list-group-item">{{ obj.message }}</li>
-                    {% endif %}
-                {% empty %}
-                    <li class="text-right list-group-item">No messages yet!</li>
-                {% endfor %}
-                <script>
-                    var chatlist = document.getElementById('msg-list-div');
-                    chatlist.scrollTop = chatlist.scrollHeight;
-                </script>
-            </ul>
-        </div>
+  <div class="bd-toc-item">
+    <a class="bd-toc-link" href="{% url 'search' %}">
+      Search Tutor
+    </a>
+  </div>
+
+  {% if user.profile.identity == 'T' %}
+    <div class="bd-toc-item">
+      <a class="bd-toc-link" href="{% url 'offerslot' %}">
+        Set Timeslots
+      </a>
     </div>
+    <div class="bd-toc-item">
+      <a class="bd-toc-link" href="{% url 'sessionTutoring' %}">
+        My Tutoring Sessions
+      </a>
+    </div>
+  {% endif %}
+
+  <div class="bd-toc-item">
+      <a class="bd-toc-link" href="{% url 'wallet' %}">
+          My Wallet
+      </a>
+  </div>
+
+{% endif %}
+{% endblock %}
+
+{% block content %}
+  <!-- <h1 class="bd-title">Message</h1>  -->
+  <div class="container">
+    <h1 class="bd-title">{{ user_to_name }}</h1> 
 
     <form id="chat-form" method="post" action="/post/">
-        <div id="chat-bottom" class="input-group">
-            <input type="text" id="chat-msg" name="chat-msg" class="form-control"/>
-            <input type="hidden" id="receiver" name="receiver" value="{{user_to_name}}"/>
-            <span class="input-group-btn">
-                <input class="btn btn-default" id="send" type="submit" value="Send"/>
-            </span>
-        </div>
+      <div id="chat-bottom" class="input-group">
+          <input type="text" id="chat-msg" name="chat-msg" class="form-control"/>
+          <input type="hidden" id="receiver" name="receiver" value="{{user_to_name}}"/>
+          <span class="input-group-btn">
+              <input class="btn btn-default" id="send" type="submit" value="Send"/>
+          </span>
+      </div>
     </form>
-</body>
 
-<script src="{% static 'js/chat.js' %}"></script>
-</html>
+    <div id="chat-body" class="panel panel-default">
+      <div id="msg-list">
+        {% for obj in chat %}
+          {% if obj.user_from == request.user %}
+            <div class="row justify-content-end">
+              <div class="col-md-7">
+                <div class="alert alert-light">
+                    <p>{{ obj.message }}</p>
+                  <div class="time">{{ obj.time|date:"H:i M-d" }}</div>
+                </div>
+              </div>
+            </div>
+            
+          {% else %}
+            <div class="row justify-content-start">
+              <div class="col-md-7">
+                <div class="alert alert-info">
+                  <p>{{ obj.message }}</p>
+                  <div class="time">{{ obj.time|date:"H:i M-d" }}</div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+        {% empty %}
+          <p>No messages yet!</p>
+        
+        {% endfor %}
+        <!-- <script>
+          var chatlist = document.getElementById('msg-list-div');
+          chatlist.scrollTop = chatlist.scrollHeight;
+        </script> -->
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- /container -->
+{% endblock %}
+
+{% block script %}
+  <script src="/static/js/chat.js"></script>
+{% endblock %}

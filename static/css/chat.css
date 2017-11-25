@@ -1,9 +1,16 @@
-#chat-bottom {
-    position: fixed;
-    bottom: 10px;
+.alert-light {
+    border-color: #b9b9b9;
 }
 
-.panel-body {
-    overflow-y: scroll;
-    height: 85%;
+#chat-form {
+    margin-bottom: 1rem;
+}
+
+.alert .time {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-bottom: 20px;
+    padding-right: inherit;
+    font-size: .8rem
 }

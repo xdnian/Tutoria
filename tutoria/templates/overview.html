@@ -48,35 +48,51 @@
 <!-- main -->
 {% block content %}
 <h1 class="bd-title">Overview</h1>
-<h3>My Tutoring Sessions</h3>
+
 <!-- View all booked tutorials -->
-  <div class="card-columns" id="all-tutorials">
-    {% for session in recentTutoringSessions %}
-      <div class="card" >
-      <div class="card-body" sessionId="{{ session.id }}">
-        <h4 class="card-title" status="{{ session.status }}">{{ session.topic }}</h4>
-        <p class="card-text">Tutor: {{ session.timeslot.tutor.get_full_name }}
-          <br>Start time: {{ session.timeslot.start }}
-          <br>End time: {{ session.timeslot.end }}</p>
-        <a href="/viewSession/{{session.id}}" class="btn btn-primary session-detail-btn">Details</a>
+{% if user.profile.identity == 'T' %}
 
-      </div>
+    <h3>My Tutoring Sessions</h3>
+    <div class="row">
+        {% for session in recentTutoringSessions %}
+        <div class="col-sm-6" id="all-tutorials">
+            <div class="card" >
+                <div class="card-body" sessionId="{{ session.id }}">
+                    <h4 class="card-title" status="{{ session.status }}">{{ session.topic }}</h4>
+                    <p class="card-text">Tutor: {{ session.timeslot.tutor.get_full_name }}
+                    <br>Student: {{ session.student.get_full_name }}    
+                    <br>Start time: {{ session.timeslot.start }}
+                    <br>End time: {{ session.timeslot.end }}</p>
+                    <a href="/viewSession/{{session.id}}" class="btn btn-primary session-detail-btn">Details</a>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-      <br>
-<h3>My Bookings</h3>
-    {% for session in recentAttendingSessions %}
-      <div class="card" >
-      <div class="card-body" sessionId="{{ session.id }}">
-        <h4 class="card-title" status="{{ session.status }}">{{ session.topic }}</h4>
-        <p class="card-text">Tutor: {{ session.timeslot.tutor.get_full_name }}
-          <br>Start time: {{ session.timeslot.start }}
-          <br>End time: {{ session.timeslot.end }}</p>
-        <a href="/viewSession/{{session.id}}" class="btn btn-primary session-detail-btn">Details</a>
+{% endif %}
+  <h3>My Bookings</h3>
 
-      </div>
+  <div class="row">
+        {% for session in recentAttendingSessions %}
+        <div class="col-sm-6" id="all-tutorials">
+            <div class="card" >
+                <div class="card-body" sessionId="{{ session.id }}">
+                    <h4 class="card-title" status="{{ session.status }}">{{ session.topic }}</h4>
+                    <p class="card-text">Tutor: {{ session.timeslot.tutor.get_full_name }}
+                    <br>Student: {{ session.student.get_full_name }}    
+                    <br>Start time: {{ session.timeslot.start }}
+                    <br>End time: {{ session.timeslot.end }}</p>
+                    <a href="/viewSession/{{session.id}}" class="btn btn-primary session-detail-btn">Details</a>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-  </div>
 
+{% endblock %}
+
+{% block script %}
+<script src="/static/js/view-session.js"></script>
 {% endblock %}

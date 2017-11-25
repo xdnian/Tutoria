@@ -55,7 +55,7 @@
 
 <!-- main -->
 {% block content %}
-  <h1 class="bd-title">{{ tutor.get_full_name }}</h1> 
+  <h1 class="bd-title"><img src="/{{ tutor.profile.picture }}" height="60">{{ tutor.get_full_name }} <a class="chat-link" href="{% url 'chat' name=tutor.username %}"><img src="/static/assets/img/material-design-icons/svg/ic_chat_black_24px.svg"></a></h1> 
 
   <!-- tutor info -->
   <div class="container">
@@ -91,32 +91,36 @@
             <td>HK$ {{ tutor.tutorprofile.price }} / hour</td>
           </tr>
           <tr>
-            <th>Average Review Score</th>
+            <th>Review</th>
             <td>
               {% if tutor.tutorprofile.get_review_average_stars %}
                 
                 {% for i in tutor.tutorprofile.get_review_average_stars.0 %}
-                  <img src="/static/assets/img/material-design-icons/svg/ic_star_black_24px.svg" height="24" width="24">
+                  <img class="inline-star" src="/static/assets/img/material-design-icons/svg/ic_star_black_24px.svg">
                 {% endfor %}
 
                 {% for i in tutor.tutorprofile.get_review_average_stars.1 %}
-                    <img src="/static/assets/img/material-design-icons/svg/ic_star_half_black_24px.svg" height="24" width="24">
+                    <img class="inline-star" src="/static/assets/img/material-design-icons/svg/ic_star_half_black_24px.svg">
                 {% endfor %}
 
                 {% for i in tutor.tutorprofile.get_review_average_stars.2 %}
-                  <img src="/static/assets/img/material-design-icons/svg/ic_star_border_black_24px.svg" height="24" width="24">
+                  <img class="inline-star" src="/static/assets/img/material-design-icons/svg/ic_star_border_black_24px.svg">
                 {% endfor %}
                 <span>{{ tutor.tutorprofile.get_review_average }}</span>
 
               {% else %}
                 Insufficient Reviews
               {% endif %}
+
+              <button type="button" class="btn btn-light btn-sm" id="show-all-review" tutorid="{{tutor.id}}">Show all reviews</button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
+
+  <div id="review-list"></div>
 
   <!-- List all avaliable time -->
   {% if user.id != tutor.id %}

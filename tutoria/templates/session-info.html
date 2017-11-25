@@ -76,9 +76,10 @@
               <th>Tutor</th>
               <td>
                 <p class="card-text">
-                  {{ session.timeslot.tutor.get_full_name }}
+                  <a href="{% url 'viewTutor' pk=session.timeslot.tutor.id %}">{{ session.timeslot.tutor.get_full_name }}</a>
+
                   {% if user == session.student %}
-                    <a href="{% url 'chat' name=session.timeslot.tutor.username %}"><button type="button" class="btn btn-secondary wide-btn">Send Message</button></a>
+                    <a class="chat-link" href="{% url 'chat' name=session.timeslot.tutor.username %}"><img src="/static/assets/img/material-design-icons/svg/ic_chat_black_24px.svg"></a>
                   {% endif %}
                 </p>
               </td>
@@ -109,7 +110,7 @@
                 <p class="card-text">
                   {{ session.student.get_full_name }}
                   {% if user == session.timeslot.tutor %}
-                    <a href="{% url 'chat' name=session.student.username %}"><button type="button" class="btn btn-secondary wide-btn">Send Message</button></a>
+                    <a class="chat-link" href="{% url 'chat' name=session.student.username %}"><img src="/static/assets/img/material-design-icons/svg/ic_chat_black_24px.svg"></a>
                   {% endif %}
                 </p>
               </td>
@@ -172,7 +173,7 @@
 
               <tr>
                 <th>Review Anonymity</th>
-                <td>{{ review.isAnonynous }}</td>
+                <td>{% if review.isAnonymous %}Yes{% else %}No{% endif %}</td>
               </tr>
             {% endif %}
 
@@ -182,8 +183,39 @@
       </div>
 
     <a href="javascript:history.go(-1)"><button type="button" class="btn btn-secondary wide-btn">Back</button></a>
+
     {% if form %}
-      <a href="{% url 'submitReview' pk=sessionID %}"><button type="button" class="btn btn-secondary wide-btn">Submit Review</button></a>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#reviewModal">Submit Review</button>
+      
+      <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <form id="review-form" method="POST"></form>
+              {% csrf_token %} 
+              <div class="modal-header">
+                <h5 class="modal-title" id="reviewModalLabel">New message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                {% for field in form %} 
+                  <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                  </div>
+                {% endfor %}
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Send review</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- <a href="{% url 'submitReview' pk=sessionID %}"><button type="button" class="btn btn-secondary wide-btn">Submit Review</button></a> -->
     {% endif %}
     </form>
 {% endblock %}

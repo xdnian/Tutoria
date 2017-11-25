@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def chat(request, name):
-    c = Chat.objects.filter(user_from=request.user, user_to__username=name)
+    c = Chat.objects.filter((Q(user_from=request.user) & Q(user_to__username=name)) | (Q(user_from__username=name) & Q(user_to=request.user))).order_by('-time')
     return render(request, "chat.html", {'chat': c, 'user_to_name': name})
 
 @login_required
@@ -30,6 +30,9 @@ def Post(request):
 
 @login_required
 def Messages(request, name):
-    receiver = User.objects.get(username=name)
-    c = Chat.objects.filter((Q(user_from=request.user)&Q(user_to=receiver)) | (Q(user_to=request.user)&Q(user_from=receiver))).order_by('time')
+    receiver = User.objects.filter(username=name)
+    if len(receiver) != 0:
+        c = Chat.objects.filter((Q(user_from=request.user)&Q(user_to=receiver)) | (Q(user_to=request.user)&Q(user_from=receiver))).order_by('-time')
+    else:
+        c = Chat.objects.none()
     return render(request, 'messages.html', {'chat': c})
