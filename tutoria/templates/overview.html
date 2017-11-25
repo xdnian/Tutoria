@@ -52,7 +52,7 @@
 <!-- View all booked tutorials -->
 {% if user.profile.identity == 'T' %}
 
-    <h3>My Tutoring Sessions</h3>
+    <h3>Upcoming tutoring sessions</h3>
     <div class="row">
         {% for session in recentTutoringSessions %}
         <div class="col-sm-6" id="all-tutorials">
@@ -68,12 +68,21 @@
                 </div>
             </div>
         </div>
+        {% empty %}
+            <div class="col">
+                <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+                    <span class="text">Currently no events.</span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
         {% endfor %}
     </div>
 {% endif %}
-  <h3>My Bookings</h3>
+    <h3>Upcoming booking sessions</h3>
 
-  <div class="row">
+    <div class="row">
         {% for session in recentAttendingSessions %}
         <div class="col-sm-6" id="all-tutorials">
             <div class="card" >
@@ -88,6 +97,15 @@
                 </div>
             </div>
         </div>
+        {% empty %}
+            <div class="col">
+                <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+                    <span class="text">Currently no events.</span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
         {% endfor %}
     </div>
 

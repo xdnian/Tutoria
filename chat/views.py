@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def chat(request, name):
     c = Chat.objects.filter((Q(user_from=request.user) & Q(user_to__username=name)) | (Q(user_from__username=name) & Q(user_to=request.user))).order_by('-time')
-    return render(request, "chat.html", {'chat': c, 'user_to_name': name})
+    user_to = User.objects.get(username=name)
+    return render(request, "chat.html", {'chat': c, 'user_to': user_to})
 
 @login_required
 def Post(request):

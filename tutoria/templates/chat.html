@@ -6,6 +6,7 @@
 <!-- extra style sheet -->
 {% block stylesheet %}
   <link href="/static/css/chat.css" rel="stylesheet"> 
+  <link href="/static/css/catalogue.css" rel="stylesheet"> 
 {% endblock %}
 
 <!-- menu -->
@@ -54,16 +55,15 @@
 {% block content %}
   <!-- <h1 class="bd-title">Message</h1>  -->
   <div class="container">
-    <h1 class="bd-title">{{ user_to_name }}</h1> 
+    <h1 class="bd-title">{{ user_to.get_full_name }}</h1> 
+    <hr>
 
     <form id="chat-form" method="post" action="/post/">
-      <div id="chat-bottom" class="input-group">
-          <input type="text" id="chat-msg" name="chat-msg" class="form-control"/>
-          <input type="hidden" id="receiver" name="receiver" value="{{user_to_name}}"/>
-          <span class="input-group-btn">
-              <input class="btn btn-default" id="send" type="submit" value="Send"/>
-          </span>
+      <div class="form-group">
+        <textarea name="chat-msg" rows="3" class="form-control" id="chat-msg" placeholder="Input your message here.."></textarea>
       </div>
+      <input type="hidden" id="receiver" name="receiver" value="{{user_to.username}}"/>
+      <input class="btn btn-primary wide-btn" id="send" type="submit" value="Send"/>
     </form>
 
     <div id="chat-body" class="panel panel-default">

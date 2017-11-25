@@ -29,16 +29,6 @@
     margin-bottom: 1rem;
 }
 
-.dropdown-item-link {
-    color: #16181b;
-}
-
-.dropdown-item-link:focus,
-.dropdown-item-link:hover {
-    color: #16181b;
-    text-decoration: none;
-}
-
 .dropdown-item.user-info img {
     vertical-align: top;
     padding-right: .5rem; 

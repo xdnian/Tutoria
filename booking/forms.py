@@ -12,7 +12,7 @@ class TutorForm(forms.Form):
         ('3', 'Chinese University of Hong Kong'), ('4', 'City University of Hong Kong'), 
         ('5', 'The Hong Kong Polytechnic University'), ('6', 'Hong Kong Baptist University'))
     univserity = forms.ChoiceField(label=("Univserity"), required=False, choices=SCHOOL_CHOICES, widget=forms.Select(attrs={'class': 'form-control custom-select'}))
-    course = forms.CharField(label=("Course"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Course code..'}))
+    course = forms.CharField(label=("Course"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Course codes, separate by ";"..'}))
     name = forms.CharField(label=("Name"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Tutor name..'}))
     subject = forms.CharField(label=("Subject"), required=False, max_length=254, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Subject tags, separate by ";"..'}))
     TUTORTYPE_CHOICES = (('A', 'All'),('P', 'Private Tutor'),('C', 'Contracted Tutor'))
