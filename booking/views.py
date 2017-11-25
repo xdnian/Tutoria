@@ -45,21 +45,25 @@ def search(request):
                 allTutors = allTutors.filter(profile__school=univserity)
             if course != '':
                 for tutor in allTutors:
-                    tutor.tutorprofile.courses = tutor.tutorprofile.courses.split(';')
-                    if course not in tutor.tutorprofile.courses:
-                        allTutors = allTutors.exclude(id=tutor.id)
+                    tutor.tutorprofile.courses = tutor.tutorprofile.courses.lower().split(';')
+                    cor = course.lower().split(';')
+                    for each in cor:
+                        if each not in tutor.tutorprofile.courses:
+                            allTutors = allTutors.exclude(id=tutor.id)
             if subject != '':
                 for tutor in allTutors:
-                    tutor.tutorprofile.subjects = tutor.tutorprofile.subjects.split(';')
-                    if subject not in tutor.tutorprofile.subjects:
-                        allTutors = allTutors.exclude(id=tutor.id)
+                    tutor.tutorprofile.subjects = tutor.tutorprofile.subjects.lower().split(';')
+                    sub = subject.lower().split(';')
+                    for each in sub:
+                        if each not in tutor.tutorprofile.subjects:
+                            allTutors = allTutors.exclude(id=tutor.id)
             if name != '':
-                name = name.split(' ')
+                name = name.lower().split(' ')
                 if len(name) == 1:
-                    allTutors = allTutors.filter(Q(first_name=name[0]) | Q(last_name=name[0]))
+                    allTutors = allTutors.filter(Q(first_name__icontains=name[0]) | Q(last_name__icontains=name[0]))
                 else:
-                    allTutors = allTutors.filter((Q(first_name=name[0])&Q(last_name=name[1]))
-                     | (Q(first_name=name[1])&Q(last_name=name[0])))
+                    allTutors = allTutors.filter((Q(first_name__icontains=name[0])&Q(last_name__icontains=name[1]))
+                     | (Q(first_name__icontains=name[1])&Q(last_name__icontains=name[0])))
             if price_min != None:
                 price_min = decimal.Decimal(price_min)
                 allTutors = allTutors.filter(tutorprofile__price__gte=price_min)
