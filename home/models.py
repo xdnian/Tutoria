@@ -48,7 +48,7 @@ class Tutorprofile(models.Model):
         if len(reviews) < 1:
             return None
         else:
-            return reviews.aggregate(Avg('score'))['score__avg']
+            return round(reviews.aggregate(Avg('score'))['score__avg'],2)
 
     def get_formatted_review_average(self):
         avg_score = self.get_review_average()

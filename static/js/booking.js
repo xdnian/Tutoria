@@ -12,13 +12,14 @@ function checkCoupon(coupon) {
     if ($('#id_coupon').val()) {
         $.get("/checkCoupon/" + coupon, function (data, status) {
             if (data == '0') {
-                $('#total').val($('#rate').val())
-                $('#commission').val('0')
+                $('#total').text((Number($('#rate').text()) * 1.05).toFixed(2))
+                $('#commission').text((Number($('#rate').text()) * 0.05).toFixed(2))
                 $('#id_coupon').addClass('is-invalid')
                 $('#id_coupon').removeClass('is-valid')
             } else {
-                $('#total').val(Number($('#rate').val()) * 1.05)
-                $('#commission').val(Number($('#rate').val()) * 0.05)
+                console.log($('#rate').text())
+                $('#total').text($('#rate').text())
+                $('#commission').text('0.00')
                 $('#id_coupon').addClass('is-valid')
                 $('#id_coupon').removeClass('is-invalid')
             }

@@ -264,41 +264,31 @@ def viewSession(request, pk):
     review = None
     form = None
     if session.status == 'Ended' and session.student == request.user:
+        if request.method == 'POST':
+            form = ReviewForm(request.POST)
+            if form.is_valid():
+                score = form.cleaned_data.get('score')
+                comment = form.cleaned_data.get('comment')
+                isAnonymous = form.cleaned_data.get('isAnonymous')
+
+                utcCurrentTime = timezone.now()
+                timezonelocal = pytz.timezone('Asia/Hong_Kong')
+                currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
+                
+                new_review = Review(session = session, score = score, time = currentTime, comment = comment, isAnonymous = isAnonymous)
+                new_review.save()
+
+                session.status = 'Reviewed'
+                session.save()
+            #     save_msg = {'error': False, 'msg': 'Your review has been submitted.'}
+            # else:
+            #     save_msg = {'error': True, 'msg': 'Error when submitting your review. Please try again.'}
         form = ReviewForm()
     elif session.status == 'Reviewed' and session.student == request.user:
         review = Review.objects.get(session = session)
     return render(request, 'session-info.html', {'session':session, 'sessionID':pk, 'payment':payment, 'commission':commission, 'form':form, 'review':review, 'user':request.user})
 
 @login_required
-def submitReview(request, pk):
-    session = Session.objects.get(pk=pk)
-
-    if request.method == 'POST':
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            score = form.cleaned_data.get('score')
-            comment = form.cleaned_data.get('comment')
-            isAnonymous = form.cleaned_data.get('isAnonymous')
-
-            utcCurrentTime = timezone.now()
-            timezonelocal = pytz.timezone('Asia/Hong_Kong')
-            currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
-            
-            new_review = Review(session = session, score = score, time = currentTime, comment = comment, isAnonymous = isAnonymous)
-            new_review.save()
-
-            session.status = 'Reviewed'
-            session.save()
-            return redirect('viewSession', pk=pk)
-            save_msg = {'error': False, 'msg': 'Your review has been submitted.'}
-            #return render(request, 'reviewConfirm.html', {})
-        else:
-            save_msg = {'error': True, 'msg': 'Error when submitting your review. Please try again.'}
-    else:
-        save_msg = {}
-        form = ReviewForm()
-    return render(request, 'submitReview.html', {'form': form, 'save_msg': save_msg, 'session': session})
-
 def getAllReviewFormatted(request, pk):
     user = User.objects.get(id = pk)
     all_reviews = user.tutorprofile.get_all_reviews()

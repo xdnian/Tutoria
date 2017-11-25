@@ -9,9 +9,8 @@ $('#chat-form').on('submit', function(event){
 
         success : function(json){
             $('#chat-msg').val('');
-            $('#msg-list').append('<li class="text-right list-group-item">' + json.msg + '</li>');
-            var chatlist = document.getElementById('msg-list-div');
-            chatlist.scrollTop = chatlist.scrollHeight;
+            $('#msg-list').prepend('<div class="row justify-content-end"><div class="col-md-7"><div class="alert alert-light"><p>' + json.msg + '</p><div class="time">Just now</div></div></div></div>');
+
         }
     });
 });
@@ -24,8 +23,6 @@ function getMessages(){
         var func_url = '/messages/'.concat(receiver);
         $.get(func_url, function(messages){
             $('#msg-list').html(messages);
-            var chatlist = document.getElementById('msg-list-div');
-            chatlist.scrollTop = chatlist.scrollHeight;
         });
     }
     scrolling = false;
@@ -33,10 +30,7 @@ function getMessages(){
 
 var scrolling = false;
 $(function(){
-    $('#msg-list-div').on('scroll', function(){
-        scrolling = true;
-    });
-    refreshTimer = setInterval(getMessages, 500);
+    refreshTimer = setInterval(getMessages, 2000);
 });
 
 $(document).ready(function() {

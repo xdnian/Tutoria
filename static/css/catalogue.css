@@ -147,3 +147,21 @@ table#timeslot-select .available:hover {
     margin-bottom: 2.25rem;
     color: grey;
 }
+
+.comment-avatar {
+    padding-right: 10px;
+}
+
+.inline-star {
+    height: 20px;
+    width: 20px;
+    vertical-align: text-bottom;
+}
+
+#show-all-review {
+    margin-left: 20px;
+}
+
+.chat-link {
+    margin-left: 6px;
+}
