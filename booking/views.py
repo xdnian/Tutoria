@@ -183,7 +183,7 @@ def confirmBooking(request, pk):
                     session.transaction0 = new_transaction
                     session.status = 'Booked'
                     session.save()
-                    Notification(session.student, 'Your session booking on' + 
+                    Notification(session.student, 'Your session booking on ' + 
                         session.timeslot.start.astimezone(TIMEZONELOCAL).strftime('%Y-%m-%d %H:%M') + ' ~ ' + session.timeslot.end.astimezone(TIMEZONELOCAL).strftime('%H:%M') + ' is successful, your have paid HK$' + str(price) + '.')
                     Notification(session.timeslot.tutor, 'Your time slot is booked, a new session has been scheduled on ' + 
                         session.timeslot.start.astimezone(TIMEZONELOCAL).strftime('%Y-%m-%d %H:%M') + ' ~ ' + session.timeslot.end.astimezone(TIMEZONELOCAL).strftime('%H:%M') + '.')
