@@ -221,3 +221,6 @@ def changePassword(request):
     else:
         form = ChangePasswordForm()
     return render(request, 'change-password.html', {'form': form})
+
+def viewAbout(request):
+    return render(request, 'about.html', {})
