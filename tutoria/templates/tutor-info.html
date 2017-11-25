@@ -55,7 +55,7 @@
 
 <!-- main -->
 {% block content %}
-  <h1 class="bd-title">{{ tutor.get_full_name }} <a class="chat-link" href="{% url 'chat' name=tutor.username %}"><img src="/static/assets/img/material-design-icons/svg/ic_chat_black_24px.svg"></a></h1> 
+  <h1 class="bd-title"><img src="/{{ tutor.profile.picture }}" height="60">{{ tutor.get_full_name }} <a class="chat-link" href="{% url 'chat' name=tutor.username %}"><img src="/static/assets/img/material-design-icons/svg/ic_chat_black_24px.svg"></a></h1> 
 
   <!-- tutor info -->
   <div class="container">
