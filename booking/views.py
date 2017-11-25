@@ -45,21 +45,25 @@ def search(request):
                 allTutors = allTutors.filter(profile__school=univserity)
             if course != '':
                 for tutor in allTutors:
-                    tutor.tutorprofile.courses = tutor.tutorprofile.courses.split(';')
-                    if course not in tutor.tutorprofile.courses:
-                        allTutors = allTutors.exclude(id=tutor.id)
+                    tutor.tutorprofile.courses = tutor.tutorprofile.courses.lower().split(';')
+                    cor = course.lower().split(';')
+                    for each in cor:
+                        if each not in tutor.tutorprofile.courses:
+                            allTutors = allTutors.exclude(id=tutor.id)
             if subject != '':
                 for tutor in allTutors:
-                    tutor.tutorprofile.subjects = tutor.tutorprofile.subjects.split(';')
-                    if subject not in tutor.tutorprofile.subjects:
-                        allTutors = allTutors.exclude(id=tutor.id)
+                    tutor.tutorprofile.subjects = tutor.tutorprofile.subjects.lower().split(';')
+                    sub = subject.lower().split(';')
+                    for each in sub:
+                        if each not in tutor.tutorprofile.subjects:
+                            allTutors = allTutors.exclude(id=tutor.id)
             if name != '':
-                name = name.split(' ')
+                name = name.lower().split(' ')
                 if len(name) == 1:
-                    allTutors = allTutors.filter(Q(first_name=name[0]) | Q(last_name=name[0]))
+                    allTutors = allTutors.filter(Q(first_name__icontains=name[0]) | Q(last_name__icontains=name[0]))
                 else:
-                    allTutors = allTutors.filter((Q(first_name=name[0])&Q(last_name=name[1]))
-                     | (Q(first_name=name[1])&Q(last_name=name[0])))
+                    allTutors = allTutors.filter((Q(first_name__icontains=name[0])&Q(last_name__icontains=name[1]))
+                     | (Q(first_name__icontains=name[1])&Q(last_name__icontains=name[0])))
             if price_min != None:
                 price_min = decimal.Decimal(price_min)
                 allTutors = allTutors.filter(tutorprofile__price__gte=price_min)
@@ -145,46 +149,63 @@ def confirmBooking(request, pk):
     if len(sameTutorHistory) == 0:
         check1 = True
     if check1 == True:
-        timeClashHistory = Session.objects.filter(Q(student=request.user) & ~Q(timeslot__tutor=session.timeslot.tutor) & (Q(timeslot__start=session.timeslot.start) | Q(timeslot__end=session.timeslot.end)) & Q(status='Booked'))
+        timeClashBookedSession = Session.objects.filter(Q(student=request.user) & ~Q(timeslot__tutor=session.timeslot.tutor) & 
+            (Q(timeslot__start=session.timeslot.start) | Q(timeslot__end=session.timeslot.end)) & Q(status='Booked'))
         check2 = False
         return_msg = {'success': False, 'msg': ''}
-        if len(timeClashHistory) == 0:
+        if len(timeClashBookedSession) == 0:
             check2 = True
         if check2 == True:
-            session.commission = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(0.05), 2)
-            price = session.timeslot.tutor.tutorprofile.price + session.commission
+            timeClashSelf = Timeslot.objects.filter(Q(tutor=request.user) & (Q(start=session.timeslot.start) | Q(end=session.timeslot.end)) & 
+                (Q(status='Booked') | Q(status='Available')))
+            check_self = False
+            if len(timeClashSelf) == 0:
+                check_self = True
+            if check_self == True:
+                session.commission = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(0.05), 2)
+                price = session.timeslot.tutor.tutorprofile.price + session.commission
 
-            if request.method == 'POST':
-                coupon_code = request.POST.get('coupon', None)
-                check2_5 = Coupon.isValid(coupon_code)
-                if check2_5 == True:
-                    session.commission = 0
-                    price = session.timeslot.tutor.tutorprofile.price
+                if request.method == 'POST':
+                    coupon_code = request.POST.get('coupon', None)
+                    check2_5 = Coupon.isValid(coupon_code)
+                    if check2_5 == True:
+                        session.commission = 0
+                        price = session.timeslot.tutor.tutorprofile.price
 
-            check3 = session.student.profile.wallet.checkBalance(price)
-            
-            if check3 == True:
-                session.student.profile.wallet.withdraw(price)
-                medium = User.objects.get(username='admin')
-                medium.profile.wallet.addBalance(price)
-                utcCurrentTime = timezone.now()
-                timezonelocal = pytz.timezone('Asia/Hong_Kong')
-                currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
-                new_transaction = Transaction(from_wallet = session.student.profile.wallet, to_wallet = medium.profile.wallet, 
-                    time = currentTime, amount = price, description = 'Tutorial payment')
-                new_transaction.save()
-                session.transaction0 = new_transaction
-                session.status = 'Booked'
-                session.save()
-                Notification(session.student, 'Your session booking is successful, your have paid HK$' + str(price) + '.')
-                return_msg = {'success': True,  'msg': 'Booking Successfully Placed'}
+                check3 = session.student.profile.wallet.checkBalance(price)
+                
+                if check3 == True:
+                    session.student.profile.wallet.withdraw(price)
+                    medium = User.objects.get(username='admin')
+                    medium.profile.wallet.addBalance(price)
+                    utcCurrentTime = timezone.now()
+                    timezonelocal = pytz.timezone('Asia/Hong_Kong')
+                    currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
+                    new_transaction = Transaction(from_wallet = session.student.profile.wallet, to_wallet = medium.profile.wallet, 
+                        time = currentTime, amount = price, description = 'Tutorial payment')
+                    new_transaction.save()
+                    session.transaction0 = new_transaction
+                    session.status = 'Booked'
+                    session.save()
+                    Notification(session.student, 'Your session booking on ' + 
+                        session.timeslot.start.astimezone(TIMEZONELOCAL).strftime('%Y-%m-%d %H:%M') + ' ~ ' + session.timeslot.end.astimezone(TIMEZONELOCAL).strftime('%H:%M') + ' is successful, your have paid HK$' + str(price) + '.')
+                    Notification(session.timeslot.tutor, 'Your time slot is booked, a new session has been scheduled on ' + 
+                        session.timeslot.start.astimezone(TIMEZONELOCAL).strftime('%Y-%m-%d %H:%M') + ' ~ ' + session.timeslot.end.astimezone(TIMEZONELOCAL).strftime('%H:%M') + '.')
+                    return_msg = {'success': True,  'msg': 'Booking Successfully Placed'}
+                else:
+                    session.timeslot.status = 'Available'
+                    session.timeslot.save()
+                    Notification(session.student, 'Your session booking is unsuccessful due to insufficient balance.')
+                    session.delete()
+                    button = {'label':'Go to my wallet', 'link': '/wallet/'}
+                    return_msg = {'success': False, 'msg': 'Booking Unsuccessful', 'reason': 'Insufficient balance in your wallet', 'button': button}
             else:
                 session.timeslot.status = 'Available'
                 session.timeslot.save()
-                Notification(session.student, 'Your session booking is unsuccessful due to insufficient balance.')
+                tutor_id = session.timeslot.tutor.id
                 session.delete()
-                button = {'label':'Go to my wallet', 'link': '/wallet/'}
-                return_msg = {'success': False, 'msg': 'Booking Unsuccessful', 'reason': 'Insufficient balance in your wallet', 'button': button}
+                button = {'label':'Go back to browse other timeslots', 'link': '/viewTutor/' + str(tutor_id)}
+                return_msg = {'success': False, 'msg': 'Booking Unsuccessful', 'reason': "A time clash with your teaching time.", 'button': button}
         else:
             session.timeslot.status = 'Available'
             session.timeslot.save()
@@ -229,7 +250,8 @@ def canceling(request, pk):
     new_transaction.save()
     session.transaction1 = new_transaction
     session.save()
-    Notification(session.student, 'Your session has been canceled, a refund of HK$' + str(price) + ' has been added to your wallet.')
+    Notification(session.student, 'Your session on ' + 
+        session.timeslot.start.astimezone(TIMEZONELOCAL).strftime('%Y-%m-%d %H:%M') + ' ~ ' + session.timeslot.end.astimezone(TIMEZONELOCAL).strftime('%H:%M') + ' has been canceled, a refund of HK$' + str(price) + ' has been added to your wallet.')
     return redirect('session')
 
 @login_required
