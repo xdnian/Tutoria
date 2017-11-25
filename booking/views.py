@@ -183,7 +183,10 @@ def confirmBooking(request, pk):
                     session.transaction0 = new_transaction
                     session.status = 'Booked'
                     session.save()
-                    Notification(session.student, 'Your session booking is successful, your have paid HK$' + str(price) + '.')
+                    Notification(session.student, 'Your session booking on' + 
+                        session.timeslot.start.astimezone(TIMEZONELOCAL).strftime('%Y-%m-%d %H:%M') + ' ~ ' + session.timeslot.end.astimezone(TIMEZONELOCAL).strftime('%H:%M') + ' is successful, your have paid HK$' + str(price) + '.')
+                    Notification(session.timeslot.tutor, 'Your time slot is booked, a new session has been scheduled on ' + 
+                        session.timeslot.start.astimezone(TIMEZONELOCAL).strftime('%Y-%m-%d %H:%M') + ' ~ ' + session.timeslot.end.astimezone(TIMEZONELOCAL).strftime('%H:%M') + '.')
                     return_msg = {'success': True,  'msg': 'Booking Successfully Placed'}
                 else:
                     session.timeslot.status = 'Available'
@@ -243,7 +246,8 @@ def canceling(request, pk):
     new_transaction.save()
     session.transaction1 = new_transaction
     session.save()
-    Notification(session.student, 'Your session has been canceled, a refund of HK$' + str(price) + ' has been added to your wallet.')
+    Notification(session.student, 'Your session on ' + 
+        session.timeslot.start.astimezone(TIMEZONELOCAL).strftime('%Y-%m-%d %H:%M') + ' ~ ' + session.timeslot.end.astimezone(TIMEZONELOCAL).strftime('%H:%M') + ' has been canceled, a refund of HK$' + str(price) + ' has been added to your wallet.')
     return redirect('session')
 
 @login_required
