@@ -32,11 +32,11 @@
         <!-- Navbar menu -->
         <ul class="navbar-nav bd-navbar-nav flex-row ml-md-auto d-md-flex">
             <li class="nav-item">
-                <a class="nav-link" href="#">Home</a>
+                <a class="nav-link" href="/">Home</a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="#">About</a>
+                <a class="nav-link" href="{% url 'about'%}">About</a>
             </li>
             {% if user.is_authenticated %}
                 <!-- Dropdown for personal info, displayed as users name -->
