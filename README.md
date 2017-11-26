@@ -6,6 +6,7 @@ This project offers an enhanced system providing immediate, short-term academic 
 ### Prerequisites
 
 Python version 3
+
 Python packages: Django, Pillow
 
 ### Installing
@@ -39,10 +40,9 @@ Open a browser at http://localhost:8000/
 
 
 ## Deployment Limitation
-
-* Server software should meet the requirements of standard Python development. 
-* Compatible with Chrome preferentially. 
-
+ 
+* Compatible with Chrome preferentially.
+* The email system is still in beta, where outbound emails are simulated as command line output
 
 ## Built With
 
@@ -66,6 +66,6 @@ Panacea - Proudly presents
 
 ## Acknowledgments
 
-* **HKU** - For providing valuable testing data
+* **The University of Hong Kong** - For providing valuable testing data
 * **Mr. George Mitcheson, Ms. Jolly Cheng, Mr. Kevin Lam** - For providing professional consulting service for the product
 
