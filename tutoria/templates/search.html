@@ -109,10 +109,12 @@
       <table class="table table-hover table-responsive tablesorter" id="tutor-table">
         <thead>
           <tr>
+            <th scope="col"></th>
             <th scope="col" style="min-width:90px;">Tutor</th>
-            <th scope="col" style="min-width:90px;">
-              Price<span style="color:gray;font-size:0.75rem">(HKD)</span>
+            <th scope="col" style="min-width:60px;">
+              Price <span style="color:gray;font-size:0.75rem;font-weight:normal;">(HKD/hr)</span>
             </th>
+            <th scope="col" class="university-col">University</th>
             <th scope="col">Subjects</th>
             <th scope="col">Reviews</th>
           </tr>
@@ -120,8 +122,10 @@
         <tbody>
           {% for tutor in allTutors %}
           <tr class="tutor-info" tutor-id="{{ tutor.id }}">
-            <th>{{ tutor.first_name }} {{ tutor.last_name }}</th>
-            <td>{{ tutor.tutorprofile.price }}</td>
+            <th><img src="/{{ tutor.profile.picture }}" height="30"></th>
+            <th>{{ tutor.get_full_name }}</th>
+            <td style="text-align:center;">{{ tutor.tutorprofile.price|floatformat:"0" }}</td>
+            <td>{{ tutor.profile.get_school_name }}</td>
             <td>
               {% for tag in tutor.tutorprofile.subjects %}
               <span class="badge badge-secondary subject-tag">{{ tag }}</span>
@@ -131,15 +135,15 @@
               {% if tutor.tutorprofile.get_review_average_stars %}
                 <span style="display:none">{{ tutor.tutorprofile.get_review_average }}</span>
                 {% for i in tutor.tutorprofile.get_review_average_stars.0 %}
-                  <img src="/static/assets/img/material-design-icons/svg/ic_star_black_24px.svg" height="24" width="24">
+                  <img class="inline-star" src="/static/assets/img/material-design-icons/svg/ic_star_black_24px.svg">
                 {% endfor %}
 
                 {% for i in tutor.tutorprofile.get_review_average_stars.1 %}
-                    <img src="/static/assets/img/material-design-icons/svg/ic_star_half_black_24px.svg" height="24" width="24">
+                  <img class="inline-star" src="/static/assets/img/material-design-icons/svg/ic_star_half_black_24px.svg">
                 {% endfor %}
 
                 {% for i in tutor.tutorprofile.get_review_average_stars.2 %}
-                  <img src="/static/assets/img/material-design-icons/svg/ic_star_border_black_24px.svg" height="24" width="24">
+                  <img class="inline-star" src="/static/assets/img/material-design-icons/svg/ic_star_border_black_24px.svg">
                 {% endfor %}
 
               {% else %}

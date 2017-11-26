@@ -94,9 +94,9 @@ def editProfile(request):
                 if msg[1] == '':
                     save_msg = {'error': True, 'msg': 'There is an empty course code (maybe caused an extra \';\'). Please try again.'}
                 else:
-                    save_msg = {'error': True, 'msg': 'Your course code('+ error +') is not valid. Please try again.'}
+                    save_msg = {'error': True, 'msg': 'Your course code('+ msg[1] +') is not valid. Please try again.'}
             elif msg[0] == 'Identity Change':
-                save_msg = {'error': True, 'msg': 'You have changed your identity to tutor. Please change your tutoring information accordingly and save.'}
+                save_msg = {'error': False, 'msg': 'You have changed your identity to tutor. Please change your tutoring information accordingly and save.'}
         else:
             save_msg = {'error': True, 'msg': 'Error when saving your edit. Please try again.'}
     # else:

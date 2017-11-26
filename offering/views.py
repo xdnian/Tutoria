@@ -44,9 +44,9 @@ def addOneDaySlots(user, date):
 
         # private tutor
         if user.tutorprofile.tutortype == 'P': 
-            Timeslot(tutor=user, start=start, end=end, status='Available').save()
+            Timeslot(tutor=user, start=start, end=end, status='Blocked').save()
         # contracted tutor
         else: 
             mid = datetime.datetime(date.year, date.month, date.day, j, 30, 0, 0)
-            Timeslot(tutor=user, start=start, end=mid, status='Available').save()
-            Timeslot(tutor=user, start=mid, end=end, status='Available').save()
+            Timeslot(tutor=user, start=start, end=mid, status='Blocked').save()
+            Timeslot(tutor=user, start=mid, end=end, status='Blocked').save()

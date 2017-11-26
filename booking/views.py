@@ -62,8 +62,8 @@ def search(request):
                 if len(name) == 1:
                     allTutors = allTutors.filter(Q(first_name__icontains=name[0]) | Q(last_name__icontains=name[0]))
                 else:
-                    allTutors = allTutors.filter((Q(first_name__icontains=name[0])&Q(last_name__icontains=name[1]))
-                     | (Q(first_name__icontains=name[1])&Q(last_name__icontains=name[0])))
+                    allTutors = allTutors.filter((Q(first_name__icontains=name[0])|Q(last_name__icontains=name[1]))
+                     | (Q(first_name__icontains=name[1])|Q(last_name__icontains=name[0])))
             if price_min != None:
                 price_min = decimal.Decimal(price_min)
                 allTutors = allTutors.filter(tutorprofile__price__gte=price_min)
@@ -93,8 +93,9 @@ def viewTutor(request, pk):
     currentTimeTruncDate = datetime.datetime.combine(timezone.now(), datetime.datetime.min.time()) 
     tomorrowTimeTruncDate = timezone.localtime(timezone.make_aware(currentTimeTruncDate, TIMEZONELOCAL) + datetime.timedelta(days = 1), TIMEZONELOCAL)
     nextWeekTimeTruncDate = timezone.localtime(timezone.make_aware(currentTimeTruncDate, TIMEZONELOCAL) + datetime.timedelta(days = 7), TIMEZONELOCAL)
-    
+
     allSlots = Timeslot.objects.filter(tutor__id=pk, start__lte = nextWeekTimeTruncDate, start__gte = tomorrowTimeTruncDate).order_by('start')
+
     for slot in allSlots:
         startlocal = slot.start.astimezone(TIMEZONELOCAL)
         endlocal = slot.end.astimezone(TIMEZONELOCAL)

@@ -165,3 +165,7 @@ table#timeslot-select .available:hover {
 .chat-link {
     margin-left: 6px;
 }
+
+#tutor-table thead th {
+    vertical-align: middle;
+}

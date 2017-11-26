@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Profile, Tutorprofile, Course_code
+import decimal
 
 class UserForm(UserCreationForm):
     first_name = forms.CharField()
@@ -62,7 +63,7 @@ class EditProfileForm(forms.Form):
     def save(self):
         self.user.first_name = self.cleaned_data['first_name']
         self.user.last_name = self.cleaned_data['last_name']
-        self.user.profile.email = self.cleaned_data['email']
+        self.user.email = self.cleaned_data['email']
         self.user.profile.phone = self.cleaned_data['phone']
         old_identity = self.user.profile.identity
         self.user.profile.identity = self.cleaned_data['identity']
@@ -89,12 +90,11 @@ class EditProfileForm(forms.Form):
             self.user.tutorprofile.biography = self.cleaned_data['biography']
             self.user.tutorprofile.subjects = self.cleaned_data['subjects']
             self.user.tutorprofile.show_profile = self.cleaned_data['show_profile']
-            self.user.tutorprofile.save()
             if self.user.tutorprofile.tutortype == 'C':
                 self.user.tutorprofile.price = decimal.Decimal(0.00)
             else:
                 self.user.tutorprofile.price = self.cleaned_data['price']
-            
+            self.user.tutorprofile.save()
             if all_course_str != '':
                 individual_course_list = all_course_str.split(';')
                 for course in individual_course_list:

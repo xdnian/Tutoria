@@ -30,7 +30,7 @@ class Command(BaseCommand):
         
         # Begin all sessioins
 
-        allExpiredTimeslots = Timeslot.objects.filter( Q(start__lte=tomorrowTime, status = 'Available')).order_by('start')
+        allExpiredTimeslots = Timeslot.objects.filter( Q(start__lte=tomorrowTime) & (Q(status = 'Available') | Q(status = 'Blocked'))).order_by('start')
         for timeslot in allExpiredTimeslots:
             timeslot.status = 'Unavailable'
             timeslot.save()
@@ -63,7 +63,7 @@ class Command(BaseCommand):
                     time = currentTime, amount = commission, description = 'Commission fee')
                 new_transaction.save()
             medium.profile.wallet.withdraw(price)
-            Notification(session.timeslot.tutor, 'A tutorial session fee of HK$' + str(price) + ' had been added to your wallet.')
+            Notification(session.timeslot.tutor, 'A tutorial session fee of HK$' + str(price-commission) + ' had been added to your wallet.')
             Notification(session.student, 'You are invited to write a review for this tutorial session.')
             session.save()
 

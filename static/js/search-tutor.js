@@ -4,7 +4,8 @@ $(document).ready(function () {
     });
     $("#tutor-table").tablesorter({ 
         headers: { 
-            2: { sorter: false }, 
+            0: { sorter: false }, 
+            4: { sorter: false }
         } //disable third colomn for sorting
     }); 
 });

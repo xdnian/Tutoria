@@ -16,10 +16,10 @@ $(document).ready(function () {
 
     $("#id_tutortype").change(function () {
         if ($(this).val() == "C") {
-            $("#id_price").val(0);
-            $("#id_price").attr("disabled","");
+            $("#id_price").val(0.00);
+            $("#id_price").attr("readonly","");
         } else {
-            $("#id_price").removeAttr("disabled");
+            $("#id_price").removeAttr("readonly");
         }
     });
 });
