@@ -55,12 +55,12 @@ This is the first release of Tutoria. See [tags on this repository] (https://git
 
 ## Authors
 
+Panacea - Proudly presents
 * **Nian Xiaodong**
 * **Tang Chi Ian**
 * **Wang Junjie**
 * **Wang Michelle Yih-chyan**
 
-*Panacea - Proudly presents
 
 ## Acknowledgments
 
