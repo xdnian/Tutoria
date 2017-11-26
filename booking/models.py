@@ -32,3 +32,7 @@ class Review(models.Model):
 
     def __str__(self):
         return 'Score: ' + str(self.score) + ' Comment: ' + self.comment + ' isAnonymous: ' + str(self.isAnonymous) # + ' isValid: ' + str(self.isValid)
+
+    def get_formatted_score(self):
+        stars = int(self.score)
+        return (stars*'*'+(5-stars)*'-')
