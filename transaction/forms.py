@@ -29,7 +29,7 @@ class ChangeBalanceForm(forms.Form):
             amount = self.cleaned_data.get('amount')
             userWallet = Wallet.objects.get(user = user)
 
-            if userWallet.checkBalance(amount) == True:
+            if userWallet.checkBalance(amount):
                 userWallet.withdraw(amount)
                 utcCurrentTime = timezone.now()
                 timezonelocal = pytz.timezone('Asia/Hong_Kong')

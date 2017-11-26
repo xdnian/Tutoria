@@ -70,7 +70,7 @@ def search(request):
             if price_max != None:
                 price_max = decimal.Decimal(price_max)
                 allTutors = allTutors.filter(tutorprofile__price__lte=price_max)
-            if available_only == True:
+            if available_only:
                 start_date = datetime.date.today()
                 end_date = start_date + datetime.timedelta(days=7)
                 maxtime = datetime.datetime(end_date.year, end_date.month, end_date.day, 22, 0, 0, 0)
@@ -149,33 +149,33 @@ def confirmBooking(request, pk):
     check1 = False
     if len(sameTutorHistory) == 0:
         check1 = True
-    if check1 == True:
+    if check1:
         timeClashBookedSession = Session.objects.filter(Q(student=request.user) & ~Q(timeslot__tutor=session.timeslot.tutor) & 
             (Q(timeslot__start=session.timeslot.start) | Q(timeslot__end=session.timeslot.end)) & Q(status='Booked'))
         check2 = False
         return_msg = {'success': False, 'msg': ''}
         if len(timeClashBookedSession) == 0:
             check2 = True
-        if check2 == True:
+        if check2:
             timeClashSelf = Timeslot.objects.filter(Q(tutor=request.user) & (Q(start=session.timeslot.start) | Q(end=session.timeslot.end)) & 
                 (Q(status='Booked') | Q(status='Available')))
             check_self = False
             if len(timeClashSelf) == 0:
                 check_self = True
-            if check_self == True:
+            if check_self:
                 session.commission = round(session.timeslot.tutor.tutorprofile.price*decimal.Decimal(0.05), 2)
                 price = session.timeslot.tutor.tutorprofile.price + session.commission
 
                 if request.method == 'POST':
                     coupon_code = request.POST.get('coupon', None)
                     check2_5 = Coupon.isValid(coupon_code)
-                    if check2_5 == True:
+                    if check2_5:
                         session.commission = 0
                         price = session.timeslot.tutor.tutorprofile.price
 
                 check3 = session.student.profile.wallet.checkBalance(price)
                 
-                if check3 == True:
+                if check3:
                     session.student.profile.wallet.withdraw(price)
                     medium = User.objects.get(username='admin')
                     medium.profile.wallet.addBalance(price)

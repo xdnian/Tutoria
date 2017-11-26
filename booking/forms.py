@@ -56,7 +56,7 @@ class BookingForm(forms.Form):
     def save(self, Student):
 
         for i in range(len(self.allSlots)):
-            if self.cleaned_data["slot{0}".format(i)] == True:
+            if self.cleaned_data["slot{0}".format(i)]:
                 timeslot = self.allSlots[i]
                 timeslot.status = 'Booked'
                 timeslot.save()
