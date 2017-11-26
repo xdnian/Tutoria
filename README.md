@@ -5,11 +5,9 @@ This project offers an enhanced system providing immediate, short-term academic 
 
 ### Prerequisites
 
-Python packages: Django, Pillow, Pytz, Datetime, MySQL, Decimal
+Python version 3
 
-```
-pip3 install pillow
-```
+Python packages: Django, Pillow
 
 ### Installing
 
@@ -17,30 +15,34 @@ pip3 install pillow
 Install packages required:
 
 ```
-pip3 install django pillow pytz datetime mysql decimal sqlite3
+pip install django pillow mysql
 ```
 
 Go to the home directory of Tutoria:
 
 ```
-cd Tutoria
+cd /path/to/Tutoria
 ```
 
 Run server on localhost:
 
 ```
-python3 manage.py runserver
+python manage.py runserver
+```
+To begin automatic background checking and updating the status of bookings, run:
+
+```
+python command.py
 ```
 
-Open a browser at localhost:8000
+Open a browser at http://localhost:8000/
 
 
 
 ## Deployment Limitation
-
-* Server software should meet the requirements of standard Python development. 
-* Compatible with Chrome preferentially. 
-
+ 
+* Compatible with Chrome preferentially.
+* The email system is still in beta, where outbound emails are simulated as command line output
 
 ## Built With
 
@@ -51,7 +53,7 @@ Open a browser at localhost:8000
 
 ## Versioning
 
-This is the first release of Tutoria. See [tags on this repository] (https://github.com/xdnian/Tutoria/). 
+This is the first release of Tutoria. See [Tutoria](https://github.com/xdnian/Tutoria/). 
 
 ## Authors
 
@@ -64,6 +66,6 @@ Panacea - Proudly presents
 
 ## Acknowledgments
 
-* **HKU** - For providing valuable testing data
+* **The University of Hong Kong** - For providing valuable testing data
 * **Mr. George Mitcheson, Ms. Jolly Cheng, Mr. Kevin Lam** - For providing professional consulting service for the product
 
