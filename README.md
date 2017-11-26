@@ -17,7 +17,7 @@ pip install pillow
 Install packages required:
 
 ```
-pip3 install django pillow pytz datetime mysql decimal
+pip3 install django pillow pytz datetime mysql decimal sqlite3
 ```
 
 Go to the home directory of Tutoria:
@@ -36,9 +36,11 @@ Open a browser at localhost:8000
 
 
 
-## Deployment
+## Deployment Limitation
 
-Add additional notes about how to deploy this on a live system
+* Server software should meet the requirements of standard Python development. 
+* Compatible with Chrome preferentially. 
+
 
 ## Built With
 
@@ -52,19 +54,18 @@ This is the first release of Tutoria. See [tags on this repository] (https://git
 
 ## Authors
 
-* 
 * **Nian Xiaodong**
 * **Tang Chi Ian**
 * **Wang Junjie**
 * **Wang Michelle Yih-chyan**
 
 
+## Acknowledgments
+
+
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
-## Acknowledgments
 
-* Server software should meet the requirements of standard Python development. 
-* Front-end documents should meet the W3C Recommendation of Web Design and Applications.
-* Compatible with Chrome preferentially. 
