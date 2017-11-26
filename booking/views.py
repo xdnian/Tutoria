@@ -75,7 +75,9 @@ def search(request):
                 end_date = start_date + datetime.timedelta(days=7)
                 maxtime = datetime.datetime(end_date.year, end_date.month, end_date.day, 22, 0, 0, 0)
                 for tutor in allTutors:
-                    available_timeslot = Timeslot.objects.filter(tutor__id=tutor.id, status='Available', start__lte=maxtime)
+                    currentTimeTruncDate = datetime.datetime.combine(timezone.now(), datetime.datetime.min.time()) 
+                    tomorrowTimeTruncDate = timezone.localtime(timezone.make_aware(currentTimeTruncDate, TIMEZONELOCAL) + datetime.timedelta(days = 1), TIMEZONELOCAL)
+                    available_timeslot = Timeslot.objects.filter(tutor__id=tutor.id, status='Available', start__gte = tomorrowTimeTruncDate, start__lte=maxtime)
                     if len(available_timeslot) == 0:
                         allTutors = allTutors.exclude(id=tutor.id)
             for tutor in allTutors:
@@ -94,17 +96,22 @@ def viewTutor(request, pk):
     tomorrowTimeTruncDate = timezone.localtime(timezone.make_aware(currentTimeTruncDate, TIMEZONELOCAL) + datetime.timedelta(days = 1), TIMEZONELOCAL)
     nextWeekTimeTruncDate = timezone.localtime(timezone.make_aware(currentTimeTruncDate, TIMEZONELOCAL) + datetime.timedelta(days = 7), TIMEZONELOCAL)
 
-    allSlots = Timeslot.objects.filter(tutor__id=pk, start__lte = nextWeekTimeTruncDate, start__gte = tomorrowTimeTruncDate).order_by('start')
+    avaliable_next_week = len(Timeslot.objects.filter(tutor__id=pk, start__lte = nextWeekTimeTruncDate, start__gte = tomorrowTimeTruncDate, status='Available').order_by('start'))
 
-    for slot in allSlots:
-        startlocal = slot.start.astimezone(TIMEZONELOCAL)
-        endlocal = slot.end.astimezone(TIMEZONELOCAL)
-        date = startlocal.strftime('%b %d')
-        startTime = startlocal.strftime('%H:%M')
-        endTime = endlocal.strftime('%H:%M')
+    allSlots = None
 
-        slot_time_str = {'date':date, 'startTime':startTime, 'endTime':endTime}
-        slot.slot_time_str = slot_time_str
+    if avaliable_next_week != 0:
+        allSlots = Timeslot.objects.filter(tutor__id=pk, start__lte = nextWeekTimeTruncDate, start__gte = tomorrowTimeTruncDate).order_by('start')
+
+        for slot in allSlots:
+            startlocal = slot.start.astimezone(TIMEZONELOCAL)
+            endlocal = slot.end.astimezone(TIMEZONELOCAL)
+            date = startlocal.strftime('%b %d')
+            startTime = startlocal.strftime('%H:%M')
+            endTime = endlocal.strftime('%H:%M')
+
+            slot_time_str = {'date':date, 'startTime':startTime, 'endTime':endTime}
+            slot.slot_time_str = slot_time_str
 
     tutor = User.objects.get(id=pk)
     tutor.tutorprofile.courses = tutor.tutorprofile.courses.split(';')
@@ -116,12 +123,42 @@ def viewTutor(request, pk):
 @login_required
 def booking(request, pk):
     # pk is a time slot ID
+    
     timeslot = Timeslot.objects.get(pk=pk)
-    timeslot.status = 'Booked'
-    timeslot.save()
+    if timeslot.status == "Available":
+        timeslot.status = 'Booked'
+        timeslot.save()
 
-    session = Session(student=request.user, timeslot=timeslot, status='Pending')
-    session.save()
+        session = Session(student=request.user, timeslot=timeslot, status='Pending')
+        session.save()
+
+        name = timeslot.tutor.get_full_name()
+
+        timezonelocal = pytz.timezone('Asia/Hong_Kong')
+        startTime = timezone.localtime(timeslot.start, timezonelocal)
+        endTime = timezone.localtime(timeslot.end, timezonelocal)
+
+        dateStr = startTime.strftime('%Y-%m-%d')
+        timeStr = startTime.strftime('%H:%M')  + ' ~ ' + endTime.strftime('%H:%M')
+
+        tutor_price = timeslot.tutor.tutorprofile.price
+        tutor_type = timeslot.tutor.tutorprofile.tutortype
+        commission = round(tutor_price *decimal.Decimal(0.05), 2)
+        school = timeslot.tutor.profile.get_school_name()
+        total_price = tutor_price + commission
+        session_info = {'name': name, 'date':dateStr, 'time':timeStr, 'school': school, 'tutor_price': tutor_price, 'tutor_type': tutor_type, 'total_price': total_price, 'commission': commission}
+        return render(request, 'confirmBooking.html', {'session_info': session_info, 'sessionID':session.id})
+    else:
+        button = {'label':'Go to home page', 'link': '/'}
+        return_msg = {'success': False, 'msg': 'Error', 'reason': "Illegal request.", 'button': button}
+    
+        return render(request, 'nav-result.html', {'return_msg': return_msg})
+
+@login_required
+def continueBooking(request, pk):
+
+    session = Session.objects.get(pk=pk)
+    timeslot = session.timeslot
 
     name = timeslot.tutor.get_full_name()
 

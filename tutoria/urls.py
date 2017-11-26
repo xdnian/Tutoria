@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^search/$', book_views.search, name='search'),
     url(r'^viewTutor/(?P<pk>\d+)/$', book_views.viewTutor, name='viewTutor'),
     url(r'^booking/(?P<pk>\d+)/$', book_views.booking, name='booking'),
+    url(r'^continueBooking/(?P<pk>\d+)/$', book_views.continueBooking, name='continueBooking'),
     url(r'^checkCoupon/(?P<code>\w+)/$', transaction_views.isValidCoupon, name='checkCoupon'),
     url(r'^confirmBooking/(?P<pk>\d+)/$', book_views.confirmBooking, name='confirmBooking'),
     url(r'^cancelConfirmBooking/(?P<pk>\d+)/$', book_views.cancelConfirmBooking, name='cancelConfirmBooking'),

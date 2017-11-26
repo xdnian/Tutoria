@@ -76,8 +76,12 @@
           <br>Student: {{ session.student.get_full_name }}
           <br>Start time: {{ session.timeslot.start }}
           <br>End time: {{ session.timeslot.end }}</p>
-        <a href="/viewSession/{{session.id}}" class="btn btn-primary session-detail-btn">Details</a>
-        {% if session.status == "Booked" or session.status == "Pending" %}
+        {% if session.status == "Pending" %}
+          <a href="/continueBooking/{{session.id}}" class="btn btn-primary session-detail-btn">Continue Booking</a>
+        {% else %}
+          <a href="/viewSession/{{session.id}}" class="btn btn-primary session-detail-btn">Details</a>
+        {% endif %}
+        {% if session.status == "Booked" %}
           <!-- Cancel button notice modal -->
           <button type="button" class="btn btn-danger session-cancel-btn" data-toggle="modal" data-target="#confrimModal">
               Cancel
