@@ -257,12 +257,14 @@ def canceling(request, pk):
 
 @login_required
 def session(request):
-    allSessions = Session.objects.filter(Q(student=request.user) & (Q(status='Booked') | Q(status='Pending')))
+    allSessions = Session.objects.filter(
+        Q(student=request.user) & (Q(status='Booked') | Q(status='Pending') | Q(status='Committed')))
     return render(request, 'records.html', {'allSessions': allSessions, 'active':0})
 
 @login_required
 def sessionHistory(request):
-    allSessions = Session.objects.filter(Q(student=request.user) & ~Q(status='Booked') & ~Q(status='Pending'))
+    allSessions = Session.objects.filter(
+        Q(student=request.user) & ~Q(status='Booked') & ~Q(status='Pending') & ~Q(status='Committed'))
     return render(request, 'records.html', {'allSessions': allSessions, 'active':1})
 
 @login_required
@@ -301,9 +303,9 @@ def viewSession(request, pk):
 
                 session.status = 'Reviewed'
                 session.save()
-            #     save_msg = {'error': False, 'msg': 'Your review has been submitted.'}
-            # else:
-            #     save_msg = {'error': True, 'msg': 'Error when submitting your review. Please try again.'}
+
+                review = new_review
+
         form = ReviewForm()
     elif session.status == 'Reviewed' and session.student == request.user:
         review = Review.objects.get(session = session)

@@ -42,17 +42,6 @@ class BookingForm(forms.Form):
                 self.fields["slot{0}".format(i)] = forms.BooleanField(required=False, 
                     widget=forms.CheckboxInput(attrs={'disabled': '' ,'status': status, 'date':date, 'startTime':startTime, 'endTime':endTime}))
 
-        # utcCurrentTime = timezone.now()
-        # timezonelocal = pytz.timezone('Asia/Hong_Kong')
-        # currentTime = timezone.localtime(utcCurrentTime, timezonelocal)
-
-        # endTime = currentTime + datetime.timedelta(days=7)
-        # if currentTime.minute < 30:
-        #     mintime = datetime.datetime(currentTime.year, currentTime.month, currentTime.day+1, currentTime.hour, 30, 0, 0)
-        # else:
-        #     mintime = datetime.datetime(currentTime.year, currentTime.month, currentTime.day+1, currentTime.hour+1, 0, 0, 0)
-        # maxtime = datetime.datetime(endTime.year, endTime.month, endTime.day, 22, 0, 0, 0)
-        # self.fields['slots'].queryset = Timeslot.objects.filter(tutor__id=TutorID, status='Available', start__lte=maxtime, start__gte=mintime)
     def save(self, Student):
 
         for i in range(len(self.allSlots)):
@@ -64,17 +53,9 @@ class BookingForm(forms.Form):
                 session.save()
                 return session.id
 
-        # timeslot = self.cleaned_data['slots']
-        # timeslot.status = 'Booked'
-        # timeslot.save()
-        # session = Session(student=Student, tutor=timeslot.tutor, start=timeslot.start, end=timeslot.end, status='Pending')
-        # session.save()
-        # return session.id
-        # 
-
 class ReviewForm(forms.Form):
-    SCORE_CHOICE = ((0, '-----'),(1, '*----'),(2, '**---'),(3, '***--'),(4, '****-'),(5, '*****'))
+    SCORE_CHOICE = (('', 'Please select a score'),(0, '0'),(1, '1'),(2, '2'),(3, '3'),(4, '4'),(5, '5'))
 
-    score = forms.ChoiceField(label=("Score"), required=True, choices=SCORE_CHOICE, widget=forms.Select(attrs={'class': 'form-control custom-select'}))
-    comment = forms.CharField(label=("Comment"), required=False, max_length=1000, widget=forms.Textarea(attrs={'rows':3, 'class': 'form-control', 'placeholder': 'Comment ..'}))
-    isAnonymous = forms.BooleanField(label=("IsAnonymous"), required=False, widget=forms.CheckboxInput(attrs={'class': 'form-control-input'}))
+    score = forms.ChoiceField(label=("Score"), label_suffix='', required=True, choices=SCORE_CHOICE, widget=forms.Select(attrs={'class': 'form-control custom-select'}))
+    comment = forms.CharField(label=("Comment"), label_suffix='', required=False, max_length=1000, widget=forms.Textarea(attrs={'rows':3, 'class': 'form-control', 'placeholder': 'Comment is optional..'}))
+    isAnonymous = forms.BooleanField(label=("Submit as anonymous"), label_suffix='', required=False, widget=forms.CheckboxInput(attrs={'class': 'form-control-input'}))
