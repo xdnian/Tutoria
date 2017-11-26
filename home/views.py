@@ -112,6 +112,7 @@ def passwordResetRequest(request):
             email = form.cleaned_data.get('email')
             this_user = User.objects.filter(email=email)
             if len(this_user) != 0:
+                Reset_token.objects.filter(user=this_user[0]).delete()
                 rand_token = uuid4()
                 reset_token = Reset_token(user=this_user[0], token=str(rand_token))
                 reset_token.save()
@@ -151,25 +152,30 @@ def passwordReset(request):
             email = form.cleaned_data.get('email')
             token = form.cleaned_data.get('token')
             newpassword = form.cleaned_data.get('newpassword')
+            confirmNewPassword = form.cleaned_data.get('newpasswordConfirm')
             validation = validate_password_strength(newpassword)
             this_user = User.objects.filter(email=email)
             if len(this_user) != 0:
                 related_token = Reset_token.objects.filter(user=this_user[0])
                 if len(related_token) != 0 and related_token[0].token == token:
                     u = User.objects.get(username=this_user[0].username)
-                    if validation:
-                        u.set_password(newpassword)
-                        u.save()
-                        related_token.delete()
-                        button = {'label':'Confirm', 'link': '/'}
-                        return_msg = {'success': True, 'msg': 'Your password has been reset sucessfully.', 'button': button}
-                        return render(request, 'account-result.html', {'return_msg': return_msg})
+                    if newpassword == confirmNewPassword:
+                        if validation:
+                            u.set_password(newpassword)
+                            u.save()
+                            related_token.delete()
+                            button = {'label':'Confirm', 'link': '/'}
+                            return_msg = {'success': True, 'msg': 'Your password has been reset sucessfully.', 'button': button}
+                            return render(request, 'account-result.html', {'return_msg': return_msg})
+                        else:
+                            form = PasswordResetForm()
+                            return render(request, 'password-reset.html', {'form': form, 'instruct': instruct, 'button_text': button_text, 'message': 'a password is as least 8 characters long and contains both numbers and letters'})
                     else:
                         form = PasswordResetForm()
-                        return render(request, 'password-reset.html', {'form': form, 'instruct': instruct, 'button_text': button_text, 'message': 'a password is as least 8 characters long and contains both numbers and letters'})
+                        return render(request, 'password-reset.html', {'form': form, 'instruct': instruct, 'button_text': button_text, 'message': 'The two passwords do not match, please enter again.'})
                 else:
                     form = PasswordResetForm()
-                    return render(request, 'password-reset.html', {'form': form, 'instruct': instruct, 'button_text': button_text, 'message': 'Wrong token'})
+                    return render(request, 'password-reset.html', {'form': form, 'instruct': instruct, 'button_text': button_text, 'message': 'Invalid or expired token'})
             else:
                 form = PasswordResetForm()
                 return render(request, 'password-reset.html', {'form': form, 'instruct': instruct, 'button_text': button_text, 'message': 'Wrong email'})
