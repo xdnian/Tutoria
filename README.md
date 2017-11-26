@@ -8,7 +8,7 @@ This project offers an enhanced system providing immediate, short-term academic 
 Python packages: Django, Pillow, Pytz, Datetime, MySQL, Decimal
 
 ```
-pip install pillow
+pip3 install pillow
 ```
 
 ### Installing
@@ -44,9 +44,10 @@ Open a browser at localhost:8000
 
 ## Built With
 
+* [Python](https://www.python.org/) - The programming language of HTML and the Web
 * [Django](https://www.djangoproject.com/) - The high-level Python Web framework
-* [JavaScript](https://www.javascript.com/) - The programming language of HTML and the Web
 * [Bootstrap](https://getbootstrap.com/) - Responsive, mobile-first projects on the web with the world's most popular front-end component library.
+* [JQuery](http://jquery.com/) - JavaScript library
 
 ## Versioning
 
@@ -58,16 +59,11 @@ This is the first release of Tutoria. See [tags on this repository] (https://git
 * **Tang Chi Ian**
 * **Wang Junjie**
 * **Wang Michelle Yih-chyan**
-Panacea - Proudly presents
+
+*Panacea - Proudly presents
 
 ## Acknowledgments
 
-@Bootstrap
-@GoogleMaterialIcon
-@JQuery
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
+* **HKU** - For providing valuable testing data
+* **Mr. George Mitcheson, Ms. Jolly Cheng, Mr. Kevin Lam** - For providing professional consulting service for the product
 
