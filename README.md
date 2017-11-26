@@ -45,8 +45,8 @@ Open a browser at localhost:8000
 ## Built With
 
 * [Django](https://www.djangoproject.com/) - The high-level Python Web framework
-* [JavaScript] (https://www.javascript.com/) - The programming language of HTML and the Web
-* [Bootstrap] (https://getbootstrap.com/) - Responsive, mobile-first projects on the web with the world's most popular front-end component library.
+* [JavaScript](https://www.javascript.com/) - The programming language of HTML and the Web
+* [Bootstrap](https://getbootstrap.com/) - Responsive, mobile-first projects on the web with the world's most popular front-end component library.
 
 ## Versioning
 
@@ -58,11 +58,13 @@ This is the first release of Tutoria. See [tags on this repository] (https://git
 * **Tang Chi Ian**
 * **Wang Junjie**
 * **Wang Michelle Yih-chyan**
-
+Panacea - Proudly presents
 
 ## Acknowledgments
 
-
+@Bootstrap
+@GoogleMaterialIcon
+@JQuery
 
 ## License
 
